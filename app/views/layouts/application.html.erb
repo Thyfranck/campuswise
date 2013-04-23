@@ -1,14 +1,58 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Campuswise</title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
+  <head>
+    <title>Campuswise</title>
+    <%= stylesheet_link_tag    "application", :media => "all" %>
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow&v1' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Coustard:900' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Rochester' rel='stylesheet' type='text/css' />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tags %>
 
-<%= yield %>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $("#universityID").change(function () {
+          if($(this).val() == "0") $(this).addClass("empty");
+          else $(this).removeClass("empty")
+        });
+        $("#universityID").change();
+      });
 
-</body>
+      function mycarousel_initCallback(carousel)
+      {
+        // Disable autoscrolling if the user clicks the prev or next button.
+        carousel.buttonNext.bind('click', function() {
+          carousel.startAuto(0);
+        });
+
+        carousel.buttonPrev.bind('click', function() {
+          carousel.startAuto(0);
+        });
+
+        // Pause autoscrolling if the user moves with the cursor over the clip.
+        carousel.clip.hover(function() {
+          carousel.stopAuto();
+        }, function() {
+          carousel.startAuto();
+        });
+      }
+      ;
+
+      jQuery(document).ready(function() {
+        jQuery('#mycarousel').jcarousel({
+          auto: 1,
+          scroll: 1,
+          wrap: 'last',
+          initCallback: mycarousel_initCallback
+        });
+      });
+
+    </script>
+  </head>
+  <body>
+
+    <%= yield %>
+
+  </body>
 </html>
