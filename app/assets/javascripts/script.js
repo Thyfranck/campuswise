@@ -225,6 +225,5 @@ $(document).ready(function() {
 	// Start playing the animation
 	interval = setInterval(function() {
 		navigate("next");
-	}, slideshowSpeed);
-	
+	}, slideshowSpeed);	
 });

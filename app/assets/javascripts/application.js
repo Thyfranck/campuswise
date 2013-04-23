@@ -12,6 +12,7 @@
 //
 //= require jquery-1.9.1
 //= require jquery_ujs
-//= require SpryTabbedPanels
+//= require twitter/bootstrap
 //= require jquery.jcarousel
 //= require script
+//= require custom
