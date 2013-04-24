@@ -1,0 +1,62 @@
+<%= form_for @user do |f| %>
+
+  <div class="field">
+    <%= f.label :school_id, "School Name" %><br />
+    <%= f.select :school_id, options_for_select(School.all.collect{|s| [s.name, s.id]}) %>
+  </div>
+
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.text_field :email %>&nbsp;&nbsp;@
+    <div class="email_postfix"></div>
+  </div>
+  <br/>
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :phone %><br />
+    <%= f.text_field :phone %>
+  </div>
+
+  <div class="field">
+    <%= f.label :facebook, "Facebook Profile Link" %><br />
+    <%= f.text_field :facebook %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password %><br />
+    <%= f.password_field :password %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation %>
+  </div>
+
+  <%= f.submit %>
+<% end %>
+
+<script type="text/javascript">
+<% s = School.all.collect{|s| [s.id, s.email_postfix]} %>
+  school_selection_value = {
+<% s.each_with_index do |sc, index| %>     
+      "<%=sc[0] %>":"<%= sc[1] %>"
+  <%= (s.length - 1 != index) ? "," : nil %>
+<% end %>
+  }
+
+  $(document).ready(function(){
+    var email_postfix_value = school_selection_value[$('#user_school_id').val()]
+    $('.email_postfix').html(email_postfix_value)
+
+    $('#user_school_id').change(function(){
+      var email_postfix_value = school_selection_value[$(this).val()]
+      $('.email_postfix').html(email_postfix_value)
+    })
+  })
+</script>
+
+

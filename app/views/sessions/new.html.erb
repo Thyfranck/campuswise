@@ -1,0 +1,21 @@
+<div class="login">
+  <h3>Login</h3>
+  <br/>
+  <div class="post-entry">
+    <%= form_tag sessions_path, :method => :post do %>
+      <div class="field">
+        <%= label_tag :email %><br />
+        <%= email_field_tag :email %>
+      </div>
+      <div class="field">
+        <%= label_tag :password %><br />
+        <%= password_field_tag :password %>
+      </div>
+      <div class="actions">
+        <%= submit_tag "Login", :class => "button yellow-darkgray" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%= link_to "I Dont have a account?", new_user_path %>

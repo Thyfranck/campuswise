@@ -14,5 +14,6 @@
 //= require jquery_ujs
 //= require twitter/bootstrap
 //= require jquery.jcarousel
+//= require jquery.uniform
 //= require script
 //= require custom

@@ -1,2 +1,44 @@
 #header { height:auto; }
 .headerimg { background:#000 no-repeat center top; width:100%; height:600px; position:absolute; }
+.renting_text {
+    /*    border: 1px solid red;*/
+    display: inline-block;
+    margin-top: 200px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.renting_text_container {
+    text-align: center;
+}
+
+
+.school_select {
+    font-size: 160%;
+    height: 41px;
+    width: 68%;
+}
+
+/*.btn.btn-primary.search_button {
+    height: 26px;
+    margin-left: 2%;
+    vertical-align: middle;
+    width: 23%;
+}*/
+
+.search_box {
+    margin-top: 15px;
+}
+
+.email_postfix {
+    background: none repeat scroll 0 0 #CCCCCC;
+    border: 1px solid #CCCCCC;
+    display: inline-block;
+    height: 29px;
+    margin-left: 7px;
+    width: 200px;
+}
+
+#user_email {
+    float: left;
+}

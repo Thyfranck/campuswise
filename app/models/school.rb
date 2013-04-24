@@ -1,3 +1,5 @@
 class School < ActiveRecord::Base
-  # attr_accessible :title, :body
+  has_many :users
+
+  attr_accessible :name, :email_postfix, :image
 end

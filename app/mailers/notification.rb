@@ -1,12 +1,12 @@
 class Notification < ActionMailer::Base
-  default :from => "\"PIERCE McCoy\" <info@piercemccoy.com>"
+  default :from => "\"CampusWise\" <info@campuswise.com>"
 
   def activation_needed_email(user)
     @user = user
     @url  = activate_user_url(user.activation_token)
     headers['X-SMTPAPI'] = "{\"category\" : \"Activation Needed\"}"
     mail(:to      => user.email,
-      :subject => "Welcome to Pierce / McCoy")
+      :subject => "Welcome to CampusWise")
   end
 
   def activation_success_email(user)
@@ -14,7 +14,7 @@ class Notification < ActionMailer::Base
     @url  = login_url
     headers['X-SMTPAPI'] = "{\"category\" : \"Welcome Email\"}"
     mail(:to => user.email,
-      :subject => "Your account is now activated - Pierce/McCoy")
+      :subject => "Your account is now activated - CampusWise")
   end
   
   def charge_succeeded(event_id)
@@ -43,7 +43,7 @@ class Notification < ActionMailer::Base
     @user = payment.business.user
     headers['X-SMTPAPI'] = "{\"category\" : \"Thank You!\"}"
     mail(:to => @user.email,
-      :subject => "Thank you for forming your business entity with Pierce / McCoy!",
-      :bcc => "info@piercemccoy.com")
+      :subject => "Thank you for forming your business entity with CampusWise!",
+      :bcc => "info@campuswise.com")
   end
 end

@@ -10,6 +10,21 @@
     <%= csrf_meta_tags %>
   </head>
   <body>
+    
+    <% if flash[:alert] -%>
+      <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p class='error'><%=h flash[:alert] %></p>
+      </div>
+    <% end %>
+
+    <% if flash[:notice] -%>
+      <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p><%=h flash[:notice] %></p>
+      </div>
+    <% end %>
+
     <%= yield %>
   </body>
 </html>

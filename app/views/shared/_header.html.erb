@@ -3,4 +3,16 @@
     <div id="headerimg1" class="headerimg"></div>
     <div id="headerimg2" class="headerimg"></div>
   </div>
+  <div class="renting_text_container">
+    <div class="renting_text">
+      <%= image_tag 'renting_txt.png' %><br />
+      <div class="search_box" style="display: inline-block; width: 500px;">
+        <%= form_tag :controller => "static", :action => "find" do %>
+        <%= select_tag :name, options_for_select(School.all.collect{|s| [s.name, s.id]}), :class => "school_select" %>
+        <%= submit_tag "Continue", :class => "btn btn-primary search_button" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
 </div>
