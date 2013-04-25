@@ -1,43 +1,57 @@
-<%= form_for @user do |f| %>
+<%= form_for @user, :html => { :class => 'form-horizontal' } do |f| %>
 
-  <div class="field">
-    <%= f.label :school_id, "School Name" %><br />
-    <%= text_field_tag :school_id, @school.name, :disabled => true %>
-    <%= f.hidden_field :school_id, :value => @school.id %>
-  </div>
+  <%#*<div class="control-group">%>
+    <%#= f.label :school_id, "School Name",  :class => 'control-label' %>
+    <%#*<div class="controls">%>
+      <%#= text_field_tag :school_id, @school.name, :disabled => true %>
+      <%#= f.hidden_field :school_id, :value => @school.id %>
+    <%#*</div>%>
+  <%#*</div>%>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.text_field :email %>&nbsp;&nbsp;@
-    <div class="email_postfix"><%= @school.email_postfix %> </div>
+  <div class="control-group">
+    <%= f.label :email, :class => 'control-label' %>
+    <div class="controls">
+<%= f.text_field :email, :class => 'text_field' %>&nbsp;&nbsp;@
+      <div class="email_postfix"><%= @school.email_postfix %></div>
+    </div>
   </div>
   <br/>
-  <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+  <div class="control-group">
+    <%= f.label :name, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :name, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :phone, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :phone, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :facebook, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :facebook, :class => 'text_field' %>
+    </div>
   </div>
 
-  <div class="field">
-    <%= f.label :phone %><br />
-    <%= f.text_field :phone %>
+  <div class="control-group">
+    <%= f.label :password, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.password_field :password, :class => 'text_field' %>
+    </div>
   </div>
 
-  <div class="field">
-    <%= f.label :facebook, "Facebook Profile Link" %><br />
-    <%= f.text_field :facebook %>
+  <div class="control-group">
+    <%= f.label :password_confirmation, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :password_confirmation, :class => 'text_field' %>
+    </div>
   </div>
 
-  <div class="field">
-    <%= f.label :password %><br />
-    <%= f.password_field :password %>
+  <div class="form-actions">
+    <%= f.submit "Submit",  :class => 'btn btn-primary' %>
   </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation %>
-  </div>
-
-  <%= f.submit %>
 <% end %>
-
 

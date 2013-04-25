@@ -12,20 +12,22 @@ class UsersController < ApplicationController
   end
 
   def new
-    if params[:school]
-      if current_user
-        redirect_to user_path(current_user)
-      else
+    
+    if current_user
+      redirect_to user_path(current_user)
+    else
+      if params[:school]
         @school = School.find(params[:school])
         @user = User.new
         respond_to do |format|
           format.html
           format.json { render json: @user }
         end
+      else
+        redirect_to root_path
       end
-    else
-      redirect_to root_path
     end
+    
   end
 
   def edit

@@ -8,6 +8,18 @@
     text-align: left;
 }
 
+.searching_text {
+    /*    border: 1px solid red;*/
+    display: inline-block;
+    margin-top: 200px;
+    margin-bottom: 2px;
+    text-align: left;
+}
+
+.searching_text input#id {
+    width: 60%
+}
+
 .renting_text_container {
     text-align: center;
 }
@@ -19,12 +31,9 @@
     width: 68%;
 }
 
-/*.btn.btn-primary.search_button {
-    height: 26px;
-    margin-left: 2%;
-    vertical-align: middle;
-    width: 23%;
-}*/
+.search_button {
+    vertical-align: top;
+}
 
 .search_box {
     margin-top: 15px;
@@ -36,7 +45,9 @@
     display: inline-block;
     height: 29px;
     margin-left: 7px;
-    width: 200px;
+    width: auto;
+    padding: 0px 9px;
+    vertical-align: middle;
 }
 
 #user_email {
@@ -51,4 +62,93 @@
 
 .navbar {
     margin-bottom: 0px;
+}
+
+h3.form_headers {
+    margin-left: 8%;
+}
+
+.alert {
+    margin-bottom: 0px;
+}
+
+.footer_heading {
+    color: #464646;
+    float: left;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 45px;
+    width: 100%;
+    margin-top: 14px;
+}
+
+.footer {
+    background: url("/assets/footer_bg.jpg") repeat-x scroll 0 0 transparent;
+    float: left;
+    height: 234px;
+    margin-top: 210px;
+    width: 100%;
+}
+
+
+.abt_rb {
+    color: #464646;
+    float: left;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    height: auto;
+    line-height: 20px;
+    width: 335px;
+}
+
+.second_column.span2.offset1 img {
+    float: left;
+}
+
+
+.social_link_title {
+    display: inherit;
+    margin-left: 14px;
+    vertical-align: middle;
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration: none;
+}
+
+.contact_text {
+    font-size: 12px;
+    margin-left: 34px;
+}
+
+.third_column.span3.offset1 img {
+    float: left;
+}
+
+.contact_segments {
+    margin-top: 10px;
+}
+
+.footerinner {
+    background: none repeat scroll 0 0 #CCCCCC;
+    bottom: 0;
+    color: #536272;
+    float: left;
+    font-family: Arial,Helvetica,sans-serif;
+    height: 40px;
+    position: relative;
+    text-align: center;
+    width: 100%;
+}
+
+.copyright {
+    margin-top: 10px;
+    font-size: 12px
+}
+
+.inner_footer_links {
+    margin-top: 10px;
+    font-size: 12px;
 }

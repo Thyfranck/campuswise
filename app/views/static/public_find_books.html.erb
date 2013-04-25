@@ -1,1 +1,13 @@
 <%= render 'shared/header' %>
+<div class="renting_text_container">
+  <div class="searching_text">
+    <%= image_tag 'renting_txt.png' %><br />
+    <div class="search_box" style="display: inline-block; width: 500px;">
+      <%= form_tag find_path do %>
+        <%= text_field_tag :id, nil ,:placeholder => "Enter Title, Author or ISBN number" %>
+        <%= submit_tag "Search", :class => "btn btn-primary search_button", :disabled => true %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<%= render 'shared/footer' %>
