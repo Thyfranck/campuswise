@@ -8,9 +8,13 @@ class StaticController < ApplicationController
   end
 
   def public_find_books
+    if params[:id]
     @school = School.find(params[:id])
     respond_to do |format|
       format.html
+    end
+    else
+      redirect_to root_path
     end
   end
 end

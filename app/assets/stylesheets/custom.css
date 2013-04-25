@@ -48,6 +48,7 @@
     width: auto;
     padding: 0px 9px;
     vertical-align: middle;
+    border-radius: 5px;
 }
 
 #user_email {
