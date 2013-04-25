@@ -1,4 +1,10 @@
 Campuswise::Application.routes.draw do
+  get "password_resets/create"
+
+  get "password_resets/edit"
+
+  get "password_resets/update"
+
   root :to => "static#home"
   
   devise_for :admin_users, ActiveAdmin::Devise.config
@@ -6,8 +12,8 @@ Campuswise::Application.routes.draw do
 
   match "home"     => "static#home"
 
-  match '/static/find' => 'static#find'
-
+  match '/find' => 'static#public_find_books'
+  
   resources :users, :except => [:index] do
     member do
       get :activate
@@ -18,4 +24,6 @@ Campuswise::Application.routes.draw do
 
   match 'login' => 'sessions#new', :as => :login
   match 'logout' => 'sessions#destroy', :as => :logout
+
+  resources :password_resets, :only => [:create, :edit, :update, :new]
 end

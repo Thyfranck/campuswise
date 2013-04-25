@@ -7,7 +7,10 @@ class StaticController < ApplicationController
     end
   end
 
-  def find
-    
+  def public_find_books
+    @school = School.find(params[:id])
+    respond_to do |format|
+      format.html
+    end
   end
 end

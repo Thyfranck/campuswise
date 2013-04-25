@@ -42,3 +42,13 @@
 #user_email {
     float: left;
 }
+
+.school_name_navbar {
+    font-size: 16px;
+    margin-top: 9px;
+    font-weight: bold;
+}
+
+.navbar {
+    margin-bottom: 0px;
+}

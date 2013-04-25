@@ -16,34 +16,12 @@ class Notification < ActionMailer::Base
     mail(:to => user.email,
       :subject => "Your account is now activated - CampusWise")
   end
-  
-  def charge_succeeded(event_id)
-    @event = BillingEvent.find(event_id)
-    @user = @event.user
-    require "yaml"
-    @charge = HashWithIndifferentAccess.new(YAML.load @event.response)
-    headers['X-SMTPAPI'] = "{\"category\" : \"Payment Succeeded\"}"
-    mail(:to => @user.email,
-      :subject => "Thanks for your payment!")
-  end
 
-  def charge_failed(event_id)
-    @event = BillingEvent.find(event_id)
-    @user = @event.user
-    @business = @event.payment.business
-    require "yaml"
-    @charge = HashWithIndifferentAccess.new(YAML.load @event.response)
-    headers['X-SMTPAPI'] = "{\"category\" : \"Payment Failed\"}"
-    mail(:to => @user.email,
-      :subject => "Your payment is failed!")
-  end
-
-  def email_after_payment(payment)
-    @business = payment.business
-    @user = payment.business.user
-    headers['X-SMTPAPI'] = "{\"category\" : \"Thank You!\"}"
-    mail(:to => @user.email,
-      :subject => "Thank you for forming your business entity with CampusWise!",
-      :bcc => "info@campuswise.com")
+  def reset_password_email(user)
+    @user = user
+    @url  = edit_password_reset_url(user.reset_password_token)
+    headers['X-SMTPAPI'] = "{\"category\" : \"Password Help\"}"
+    mail(:to => user.email,
+      :subject => "Your password reset instructions - CampusWise")
   end
 end

@@ -5,6 +5,7 @@ class SessionsController < ApplicationController
     if current_user
       redirect_to user_path(current_user)
     else
+      @school = School.find(params[:school]) if params[:school]
       @user = User.new
     end
     
@@ -15,7 +16,7 @@ class SessionsController < ApplicationController
       if @user = login(params[:email],params[:password])
         format.html { redirect_to current_user, :notice => "Logged In"}
       else
-        format.html { redirect_to new_user_path}
+        format.html { redirect_to login_path}
         flash[:alert] = "Email or Password was invalid!"
       end
     end

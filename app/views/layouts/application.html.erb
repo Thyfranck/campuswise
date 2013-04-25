@@ -10,7 +10,8 @@
     <%= csrf_meta_tags %>
   </head>
   <body>
-    
+    <%= render 'shared/nav_bar' %>
+
     <% if flash[:alert] -%>
       <div class="alert alert-error">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
