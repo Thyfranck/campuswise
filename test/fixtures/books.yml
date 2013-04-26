@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: 1
+  title: MyString
+  image: MyString
+  author: MyString
+  isbn: MyString
+  publisher: MyString
+  price: 9.99
+  loan_price: 9.99
+  available_status: false
+  available_from: 2013-04-26
+  returning_date: 2013-04-26
+
+two:
+  user_id: 1
+  title: MyString
+  image: MyString
+  author: MyString
+  isbn: MyString
+  publisher: MyString
+  price: 9.99
+  loan_price: 9.99
+  available_status: false
+  available_from: 2013-04-26
+  returning_date: 2013-04-26

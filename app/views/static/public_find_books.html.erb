@@ -1,13 +1,36 @@
-<%= render 'shared/header' %>
-<div class="renting_text_container">
-  <div class="searching_text">
-    <%= image_tag 'renting_txt.png' %><br />
-    <div class="search_box" style="display: inline-block; width: 500px;">
-      <%= form_tag find_path do %>
-        <%= text_field_tag :id, nil ,:placeholder => "Enter Title, Author or ISBN number" %>
-        <%= submit_tag "Search", :class => "btn btn-primary search_button", :disabled => true %>
-      <% end %>
+<html>
+  <head>
+    <title>Campuswise</title>
+    <%= stylesheet_link_tag    "application", :media => "all" %>
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow&v1' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Coustard:900' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Rochester' rel='stylesheet' type='text/css' />
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tags %>
+  </head>
+  <body>
+    <%= render 'shared/nav_bar' %>
+    <%= render 'shared/header' %>
+    <div style="clear:both;"></div>
+    <div class="renting_text_container">
+      <div class="searching_text">
+        <%= image_tag 'renting_txt.png' %><br />
+        <div class="search_box" style="display: inline-block; width: 500px;">
+          <%= form_tag find_path do %>
+            <%= text_field_tag :id, nil ,:placeholder => "Enter Title, Author or ISBN number" %>
+            <%= submit_tag "Search", :class => "btn btn-primary search_button", :disabled => true %>
+          <% end %>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<%= render 'shared/footer' %>
+    <div style="clear:both;"></div>
+    <%= render 'shared/footer' %>
+    <div class="inner_footer_home">
+      <div class="copyright offset1 pull-left">Copyright © 2013 CampusWise, LLC. All Rights Reserved.</div>
+      <div class="inner_footer_links offset5 pull-left">
+        <%= link_to "Privacy Policy", '#'%>  |
+        <%= link_to "Terms & Conditions",'#' %>
+      </div>
+    </div>
+  </body>
+</html>

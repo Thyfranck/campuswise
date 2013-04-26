@@ -8,6 +8,8 @@ gem 'thin'
 gem 'mysql2'
 gem 'sorcery'
 gem 'activeadmin'
+gem 'rmagick'
+gem 'carrierwave'
 
 
 # Gems used only for assets and not required

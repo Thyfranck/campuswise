@@ -1,5 +1,6 @@
 class School < ActiveRecord::Base
-  has_many :users
-
   attr_accessible :name, :email_postfix, :image
+
+  has_many :users
+  has_many :books, :through => :users
 end

@@ -1,29 +1,42 @@
 <div class="navbar navbar-inverse">
   <div class="navbar-inner">
-    <div class="span10 offset1 pull-center">
+    <div class="container">
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
       <%= link_to root_path, :class => "brand" do %>
         <%= image_tag "logo.png", :alt => "logo" %>
       <% end %>
-
-      <% @school ||= (current_user.school if current_user) || nil %>
-      <% if @school %>
-        <% if current_user %>
-          <ul class="nav pull-right">
-            <li class="<%= "active" if current_page?(current_user) %>">
-              <%= link_to "Profile", current_user %></li>
-            <li>
-              <%= link_to "Logout", logout_path %></li>
-          </ul>
-        <% else %>
-          <ul class="nav pull-right">
-            <li class="<%= "active" if current_page?(new_user_path) %>">
-              <%= link_to "Sign Up", new_user_path(:school => @school.id ) %></li>
-            <li class="<%= "active" if current_page?(login_path) %>">
-              <%= link_to "Sign In", login_path(:school => @school.id) %></li>
-          </ul>
-        <% end %>
-        <p class="navbar-text school_name_navbar offset0"><%= @school.name %></p>
-      <% end %>
+      <div class="nav-collapse collapse">
+        <ul class="nav">
+          <% @school ||= (current_user.school if current_user) || nil %>
+          <% if @school %>
+          <li class="active school_name_navbar"><%= @school.name %></li>
+          <% end %>
+        </ul>
+        <form class="navbar-form pull-right">
+          <% @school ||= (current_user.school if current_user) || nil %>
+          <% if @school %>
+            <% if current_user %>
+              <ul class="nav pull-right">
+                <li class="<%= "active" if current_page?(current_user) %>">
+                  <%= link_to "Profile", current_user %></li>
+                <li>
+                  <%= link_to "Logout", logout_path %></li>
+              </ul>
+            <% else %>
+              <ul class="nav pull-right">
+                <li class="<%= "active" if current_page?(new_user_path) %>">
+                  <%= link_to "Sign Up", new_user_path(:school => @school.id ) %></li>
+                <li class="<%= "active" if current_page?(login_path) %>">
+                  <%= link_to "Sign In", login_path(:school => @school.id) %></li>
+              </ul>
+            <% end %>
+          <% end %>
+        </form>
+      </div><!--/.nav-collapse -->
     </div>
   </div>
 </div>

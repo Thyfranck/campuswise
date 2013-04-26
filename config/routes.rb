@@ -1,4 +1,9 @@
 Campuswise::Application.routes.draw do
+
+
+  resources :books
+
+
   get "password_resets/create"
 
   get "password_resets/edit"
@@ -12,7 +17,7 @@ Campuswise::Application.routes.draw do
 
   match "home"     => "static#home"
 
-  match '/find' => 'static#public_find_books'
+  match 'find' => 'static#public_find_books', :as => :find
   
   resources :users, :except => [:index] do
     member do

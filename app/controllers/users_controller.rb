@@ -33,6 +33,7 @@ class UsersController < ApplicationController
   def edit
     @school = current_user.school
     @user = User.find(params[:id])
+    @user.email = @user.email.gsub(/\@\S*/, "")
   end
 
   def create  
@@ -54,13 +55,13 @@ class UsersController < ApplicationController
 
   def update
     @user = User.find(params[:id])
-
+    params[:user][:email] = "#{params[:user][:email]}"+"@"+"#{@user.school.email_postfix}"
     respond_to do |format|
       if @user.update_attributes(params[:user])
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render action: "edit" }
+        format.html { redirect_to edit_user_path(@user), :alert => "Error Occured" }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
