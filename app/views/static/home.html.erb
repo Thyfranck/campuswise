@@ -1,35 +1,29 @@
-<html>
-  <head>
-    <title>Campuswise</title>
-    <%= stylesheet_link_tag    "application", :media => "all" %>
-    <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow&v1' rel='stylesheet' type='text/css' />
-    <link href='http://fonts.googleapis.com/css?family=Coustard:900' rel='stylesheet' type='text/css' />
-    <link href='http://fonts.googleapis.com/css?family=Rochester' rel='stylesheet' type='text/css' />
-    <%= javascript_include_tag "application" %>
-    <%= csrf_meta_tags %>
-  </head>
-  <body>
-    <%= render 'shared/nav_bar' %>
-    <%= render 'shared/header' %>
-    <div class="renting_text_container">
-      <div class="renting_text">
-        <%= image_tag 'renting_txt.png' %><br />
-        <div class="search_box" style="display: inline-block; width: 500px;">
-          <%= form_tag find_path do %>
-            <%= select_tag :id, options_for_select(School.all.collect{|s| [s.name, s.id]}), :class => "school_select" %>
-            <%= submit_tag "Continue", :class => "btn btn-primary search_button" %>
-          <% end %>
+<div class="row" id="slider-container">
+  <div class="span12">
+    <div id="slider">
+      <%= image_tag("1.jpg", :class => "show") %>
+      <%= image_tag("2.jpg") %>
+      <%= image_tag("3.jpg") %>
+      <%= image_tag("4.jpg") %>
+      <%= image_tag("5.jpg") %>
+      <%= image_tag("6.jpg") %>
+    </div>
+
+    <div class="row" id="renting_text_row">
+      <div class="span4"></div>
+      <div class="span4">
+        <div class="renting_text_container">
+          <%= image_tag 'renting_txt.png' %>
+          <br />
+          <div class="search_box">
+            <%= form_tag find_path do %>
+              <%= select_tag :school_id, options_for_select(School.all.collect{|s| [s.name, s.id]}), :class => "school_select" %>
+              <%= submit_tag "Continue", :class => "btn btn-primary search_button" %>
+            <% end %>
+          </div>
         </div>
       </div>
+      <div class="span4"></div>
     </div>
-    <%= render 'shared/footer' %>
-    <div class="inner_footer_home">
-      <div class="copyright offset1 pull-left">Copyright © 2013 CampusWise, LLC. All Rights Reserved.</div>
-      <div class="inner_footer_links offset5 pull-left">
-        <%= link_to "Privacy Policy", '#'%>  |
-        <%= link_to "Terms & Conditions",'#' %>
-      </div>
-    </div>
-  </body>
-</html>
-
+  </div>
+</div>

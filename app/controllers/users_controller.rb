@@ -16,8 +16,7 @@ class UsersController < ApplicationController
     if current_user
       redirect_to user_path(current_user)
     else
-      if params[:school]
-        @school = School.find(params[:school])
+      if current_school.present?
         @user = User.new
         respond_to do |format|
           format.html

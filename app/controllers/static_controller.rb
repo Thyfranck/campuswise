@@ -1,20 +1,21 @@
 class StaticController < ApplicationController
 
   def home
-    @user = User.new
+    session.delete(:school_id)
     respond_to do |format|
-      format.html { render :layout => false }
+      format.html
     end
   end
 
   def public_find_books
-    if params[:id]
-    @school = School.find(params[:id])
+    @school = School.find(params[:school_id])
     respond_to do |format|
-      format.html { render :layout => false }
-    end
-    else
-      redirect_to root_path
+      if @school.present?
+        session[:school_id] = @school.id
+        format.html
+      else
+        format.html { redirect_to root_path }
+      end
     end
   end
 end

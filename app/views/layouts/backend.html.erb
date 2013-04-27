@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Campuswise</title>
+    <%= stylesheet_link_tag    "application", :media => "all" %>
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow&v1' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Coustard:900' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Rochester' rel='stylesheet' type='text/css' />
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tags %>
+  </head>
+  <body>
+    <%= render 'shared/nav_bar' %>
+    <div class="container">
+      <% if flash[:alert] -%>
+        <div class="alert alert-error">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <p class='error'><%=h flash[:alert] %></p>
+        </div>
+      <% end %>
+
+      <% if flash[:notice] -%>
+        <div class="alert alert-success">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <p><%=h flash[:notice] %></p>
+        </div>
+      <% end %>
+      <%= yield %>
+    </div>
+    <%= render 'shared/inner_footer' %>
+  </body>
+</html>

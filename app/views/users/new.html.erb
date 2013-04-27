@@ -1,3 +1,9 @@
-<h3 class="form_headers">New User</h3>
-<%= render 'form' %>
-<%= link_to "Already have an account", login_path(:school => @school) %>
+<div class="container">
+  <div class="row">
+    <div class="span12">
+      <h3>New User</h3>
+      <%= render 'form' %>
+      <%= link_to "Already have an account", login_path(:school => @school) %>
+    </div>
+  </div>
+</div>
