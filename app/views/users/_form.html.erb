@@ -1,18 +1,12 @@
 <%= form_for @user, :html => { :class => 'form-horizontal' } do |f| %>
 
-  <%#*<div class="control-group">%>
-  <%#= f.label :school_id, "School Name",  :class => 'control-label' %>
-  <%#*<div class="controls">%>
-  <%#= text_field_tag :school_id, @school.name, :disabled => true %>
   <%= f.hidden_field :school_id, :value => @school.id %>
-  <%#*</div>%>
-  <%#*</div>%>
 
   <div class="control-group">
     <%= f.label :email, :class => 'control-label' %>
     <div class="controls">
       <%= f.text_field :email, :class => 'text_field' %>&nbsp;&nbsp;@
-      <div class="email_postfix"><%= @school.email_postfix %></div>
+      <%= @school.email_postfix %>
     </div>
   </div>
   <br/>
@@ -26,12 +20,6 @@
     <%= f.label :phone, :class => 'control-label' %>
     <div class="controls">
       <%= f.text_field :phone, :class => 'text_field' %>
-    </div>
-  </div>
-  <div class="control-group">
-    <%= f.label :facebook, :class => 'control-label' %>
-    <div class="controls">
-      <%= f.text_field :facebook, :class => 'text_field' %>
     </div>
   </div>
 
