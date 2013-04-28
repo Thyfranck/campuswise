@@ -4,6 +4,20 @@
       <%= controller.action_name.capitalize %>
       User
     </legend>
+
+    <% if @user.errors.any? %>
+      <div id="error_explanation" class="alert alert-error">
+        <h4>
+          <%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:
+        </h4>
+        <ul>
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
     <%= f.hidden_field :school_id, :value => @school.id %>
 
     <div class="control-group">
