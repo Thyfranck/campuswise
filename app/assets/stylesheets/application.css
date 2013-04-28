@@ -10,6 +10,7 @@
  *
  *= require_self
  *= require bootstrap_and_overrides.css.less
+ *= require bootstrap-select
  *= require jquery.jscrollpane
  *= require uniform.aristo
  *= require custom

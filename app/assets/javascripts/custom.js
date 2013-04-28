@@ -1,8 +1,9 @@
 $(document).ready(function(){
     $('.carousel').carousel({
         interval: 3000
-    })
-    $("select").uniform();
+    });
+    $(".uniform").uniform();
+    $('.selectpicker').selectpicker();
     slideShow();
 });
 

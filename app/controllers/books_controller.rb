@@ -1,6 +1,8 @@
 class BooksController < ApplicationController
   before_filter :require_login
 
+  layout "dashboard"
+
   def index
     @books = current_user.books
   end

@@ -6,7 +6,7 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
     respond_to do |format|
-      format.html
+      format.html {render layout: "dashboard"}
       format.json { render json: @user }
     end
   end
@@ -33,6 +33,7 @@ class UsersController < ApplicationController
     @school = current_user.school
     @user = User.find(params[:id])
     @user.email = @user.email.gsub(/\@\S*/, "")
+    render layout: "dashboard"
   end
 
   def create  

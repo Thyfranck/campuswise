@@ -19,13 +19,28 @@
 
     <%= render "shared/nav_bar" %>
 
-    <div class="container-fluid">
+    <div class="container-fluid dashboard">
       <div class="row-fluid">
         <div class="span12">
-          <%= yield %>
+          <div class="container">
+            <div class="row span10 offset1">
+              <% flash.each do |name, msg| %>
+                <div class="alert alert-<%= name == :notice ? "success" : "error" %>">
+                  <a class="close" data-dismiss="alert">x</a>
+                  <%= msg %>
+                </div>
+              <% end %>
+              <div class="row">
+                <%= render "shared/dashboard_sidebar" %>
+                <div class="span9 well">
+                  <%= yield %>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div><!--/row-->
-    </div> <!-- /container -->
+      </div>
+    </div>
 
     <%= render "shared/footer" %>
   </body>
