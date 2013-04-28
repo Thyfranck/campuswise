@@ -1,16 +1,11 @@
 $(document).ready(function(){
+    $('.carousel').carousel({
+        interval: 3000
+    })
     $("select").uniform();
     slideShow();
-    setInterval('fixSliderHeight()',1000);
 });
 
-function fixSliderHeight(){
-    var height = $("#slider img").height();
-    $("#slider").height(height+"px");
-    $("#slider-container").height(height+"px");
-    var top = parseInt(height / 1.3);
-    $("#renting_text_row").css('margin-top', "-"+ top + 'px');
-}
 
 function slideShow() {
     $('#slider img').css({

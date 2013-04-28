@@ -1,57 +1,73 @@
-<footer>
-  <div class="row" id="footer-top" >
-    <div class="span4 offset2">
-      <h4>About CampusWise</h4>
-      <div class="about-us">
-        CampusWise is a website designed to make college life more convenient with exclusivity and organized interaction among students allowing them to share their books amongst each other. Our goal is to make social marketing exclusive to each campus for only students on that campus which ensures a safe and manageable market within each university. We aim to shift the economics of textbooks and put the student in control.
+<div class="container-fluid" id="footer-top">
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="container">
+        <div class="row span10 offset1">
+          <div class="row">
+            <div class="span4">
+              <h4>About CampusWise</h4>
+              <div class="about-us">
+                CampusWise is a website designed to make college life more convenient with exclusivity and organized interaction among students allowing them to share their books amongst each other. Our goal is to make social marketing exclusive to each campus for only students on that campus which ensures a safe and manageable market within each university. We aim to shift the economics of textbooks and put the student in control.
+              </div>
+            </div>
+
+            <div class="second_column span3 offset1">
+              <h4>Social Connection</h4>
+              <%= link_to 'https://www.facebook.com/CampusWise', :target => "_blank" do %>
+                <%= image_tag 'fb.jpg', :alt => "facebook" %>
+                <div class="social_link_title">Facebook</div>
+              <% end %>
+              <br/>
+              <br/>
+
+              <%= link_to 'https://twitter.com/campus_wise', :target => "_blank" do %>
+                <%= image_tag 'tw.jpg', :alt => "twitter" %>
+                <div class="social_link_title">Twitter</div>
+              <% end %>
+            </div>
+
+            <div class="third_column span3 offset1">
+              <h4>Get In Touch</h4>
+              <div class="contact_segments">
+                <%= image_tag "/assets/phn.jpg" %>
+                <div class="contact_text">571-354-0343</div>
+              </div>
+              <div class="contact_segments">
+                <%= image_tag "/assets/mail.jpg" %>
+                <div class="contact_text">info@CampusWise.com</div>
+              </div>
+              <div class="contact_segments">
+                <%= image_tag "/assets/map.jpg" %>
+                <div class="contact_text">111 Granby Street Norfolk,<br /> VA 23510</div>
+              </div>
+              <div class="contact_segments">
+                <div class="payment_cards_logo"><%= image_tag "/assets/payment-cards.png" %></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div class="second_column span3 offset1">
-      <h4>Social Connection</h4>
-      <%= link_to 'https://www.facebook.com/CampusWise', :target => "_blank" do %>
-        <%= image_tag 'fb.jpg', :alt => "facebook" %>
-        <div class="social_link_title">Facebook</div>
-      <% end %>
-      <br/>
-      <br/>
-
-      <%= link_to 'https://twitter.com/campus_wise', :target => "_blank" do %>
-        <%= image_tag 'tw.jpg', :alt => "twitter" %>
-        <div class="social_link_title">Twitter</div>
-      <% end %>
-    </div>
-
-    <div class="third_column span3">
-      <h4>Get In Touch</h4>
-      <div class="contact_segments">
-        <%= image_tag "/assets/phn.jpg" %>
-        <div class="contact_text">571-354-0343</div>
-      </div>
-      <div class="contact_segments">
-        <%= image_tag "/assets/mail.jpg" %>
-        <div class="contact_text">info@CampusWise.com</div>
-      </div>
-      <div class="contact_segments">
-        <%= image_tag "/assets/map.jpg" %>
-        <div class="contact_text">111 Granby Street Norfolk,<br /> VA 23510</div>
-      </div>
-      <div class="contact_segments">
-        <div class="payment_cards_logo"><%= image_tag "/assets/payment-cards.png" %></div>
-      </div>
-
-    </div>
-
-  </div>
-
-  <div class="row" id="footer-bottom">
-    <div class="span4 offset2">
-      Copyright © 2013 CampusWise, LLC. All Rights Reserved.
-    </div>
-    <div class="span1 pull-right"></div>
-    <div class="span3 pull-right">
-      <%= link_to "Privacy Policy", '#'%>  |
-      <%= link_to "Terms & Conditions",'#' %>
     </div>
   </div>
-</footer>
+</div>
+
+
+<div class="container-fluid" id="footer-bottom">
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="container">
+        <div class="row span10 offset1">
+          <div class="row">
+            <div class="span5">
+              Copyright © 2013 CampusWise, LLC. All Rights Reserved.
+            </div>
+            <div class="span3 pull-right">
+              <%= link_to "Privacy Policy", '#'%>  |
+              <%= link_to "Terms & Conditions",'#' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

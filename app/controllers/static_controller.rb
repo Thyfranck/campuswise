@@ -2,6 +2,9 @@ class StaticController < ApplicationController
 
   def home
     session.delete(:school_id)
+    
+    @school_images = SchoolImage.order("created_at desc")
+
     respond_to do |format|
       format.html
     end
