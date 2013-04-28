@@ -48,13 +48,12 @@
 }
 
 #slider-container{
-    height: 480px;
+    background-color: #eee;
 }
 
-#slider{
-    position: relative;
-    height: 480px;
-    overflow: hidden;
+
+#slider img{
+    display: none;
 }
 
 #slider img.show{
@@ -66,30 +65,87 @@
 }
 
 .container-fluid{
-    padding-left: 0pc;
+    padding-left: 0px;
     padding-right: 0px;
 }
 
 .renting_text_container{
     text-align: center;
-}
-
-#renting_text_row{
-    margin-top: -370px;
-}
-
-.renting_text_container{
     position: absolute;
+    top: 25%;
+    left: 50%;
+    margin-left: -15%;
+    width: 30%;
     z-index: 100;
 }
 
-footer{
-    background-color: #E0E0E0;
-    padding-top: 20px;
+@media (max-width: 800px){
+    .renting_text_container{
+        position: relative;
+        left: 0px;
+        margin-left: 0px;
+        width: 100%;
+        padding-top: 10px;
+    }
 }
 
-footer #footer-top{
+/* Books Slider */
+
+#books-slider{
+    background: url('/assets/new_top_bg.png');
+    height: 145px;
+}
+
+@media (max-width: 767px){
+    #books-slider{
+        margin-bottom: 200px;
+    }
+}
+
+#books-slider-head{
+    height: 43px;
+}
+
+#books-slider-head .nav-link{
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 13px;
+    padding-top: 10px;
+    font-weight: bold;
+}
+
+#books-slider-head .nav-link a{
+    color: #fff;
+}
+
+#books-slider-head .nav-link.active a{
+    color: #1D95CB;
+}
+
+.carousel,
+.carousel-inner{
+    margin-bottom: 0px;
+}
+
+.slide-content{
+    width: 99%;
+    height: 99px;
+    border: 1px solid red;
+}
+
+#books-slider li.span4{
+    margin-bottom: 0px;
+}
+
+#books-slider ul.thumbnails{
+    margin-bottom: 0px;
+}
+
+/*  Footer Content */
+
+#footer-top{
+    background-color: #E0E0E0;
     padding-bottom: 10px;
+    padding-top: 10px;
 }
 
 .second_column.span2.offset1 img {
@@ -116,12 +172,12 @@ footer #footer-top{
     margin-top: 10px;
 }
 
-footer h4{
+#footer-top h4{
     color: #464646;
     font-size: 16px;
 }
 
-footer .about-us {
+#footer-top .about-us {
     color: #464646;
     float: left;
     font-family: Arial,Helvetica,sans-serif;

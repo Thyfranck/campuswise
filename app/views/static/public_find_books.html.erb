@@ -9,21 +9,17 @@
       <%= image_tag("6.jpg") %>
     </div>
 
-    <div class="row" id="renting_text_row">
-      <div class="span4"></div>
-      <div class="span4">
-        <div class="renting_text_container">
-          <%= image_tag 'renting_txt.png' %>
-          <br />
-          <div class="search_box">
-            <%= form_tag find_path do %>
-              <%= text_field_tag :id, nil ,:placeholder => "Enter Title, Author or ISBN number" %>
-              <%= submit_tag "Search", :class => "btn btn-primary search_button" %>
-            <% end %>
-          </div>
-        </div>
+    <div class="renting_text_container">
+      <%= image_tag 'renting_txt.png' %>
+      <br />
+      <div class="search_box">
+        <%= form_tag find_path do %>
+          <%= text_field_tag :id, nil ,:placeholder => "Enter Title, Author or ISBN number" %>
+          <%= submit_tag "Search", :class => "btn btn-primary search_button" %>
+        <% end %>
       </div>
-      <div class="span4"></div>
     </div>
   </div>
 </div>
+
+<%= render "shared/books_slider" %>
