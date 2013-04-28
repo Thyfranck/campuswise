@@ -33,6 +33,8 @@ mail.jpg: mail-5d415305959369426749af8935e321be.jpg
 mail/index.jpg: mail-5d415305959369426749af8935e321be.jpg
 map.jpg: map-eb6e7c70a5d96fdd527139550f0a395f.jpg
 map/index.jpg: map-eb6e7c70a5d96fdd527139550f0a395f.jpg
+new_top_bg.png: new_top_bg-58cb9ffaa0a4a010143b3c68fbaaee8d.png
+new_top_bg/index.png: new_top_bg-58cb9ffaa0a4a010143b3c68fbaaee8d.png
 payment-cards.png: payment-cards-15467c8b43dbf7acf910b2a1d88a88ed.png
 payment-cards/index.png: payment-cards-15467c8b43dbf7acf910b2a1d88a88ed.png
 phn.jpg: phn-aac5a627cdfce53ea115bbca1fc90c23.jpg
@@ -49,12 +51,12 @@ uniform/sprite-aristo.png: uniform/sprite-aristo-42715402efe1dd5e2e6298b6349db77
 uniform/sprite-aristo/index.png: uniform/sprite-aristo-42715402efe1dd5e2e6298b6349db771.png
 active_admin.js: active_admin-74c5a2a0ebd04577979929732488c14b.js
 active_admin/index.js: active_admin-74c5a2a0ebd04577979929732488c14b.js
-application.js: application-09dd3aad209c07f3f23cabd0bfcb4ceb.js
-application/index.js: application-09dd3aad209c07f3f23cabd0bfcb4ceb.js
+application.js: application-7a37294ab0a9b2359b06d2af114be30f.js
+application/index.js: application-7a37294ab0a9b2359b06d2af114be30f.js
 active_admin.css: active_admin-f6eab3903eabe26e294bb5e070593cb6.css
 active_admin/index.css: active_admin-f6eab3903eabe26e294bb5e070593cb6.css
-application.css: application-8cbeb051bc62b622c9c997abae6357ff.css
-application/index.css: application-8cbeb051bc62b622c9c997abae6357ff.css
+application.css: application-059cd1aea555cf0f33736b33270acc72.css
+application/index.css: application-059cd1aea555cf0f33736b33270acc72.css
 fontawesome-webfont.eot: fontawesome-webfont-635909f146e208b3509acdf3b154bf0d.eot
 fontawesome-webfont/index.eot: fontawesome-webfont-635909f146e208b3509acdf3b154bf0d.eot
 fontawesome-webfont.ttf: fontawesome-webfont-6a4e273908b7e43d9e479d38b8ae5957.ttf
