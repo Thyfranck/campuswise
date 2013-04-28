@@ -48,9 +48,12 @@
 }
 
 #slider-container{
-    background-color: #eee;
+    background-color: #555;
 }
 
+#school_id{
+    background-color: #fff;
+}
 
 #slider img{
     display: none;
