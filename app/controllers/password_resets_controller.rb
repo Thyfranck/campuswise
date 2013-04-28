@@ -4,7 +4,6 @@ class PasswordResetsController < ApplicationController
   # request password reset.
   # you get here when the user entered his email in the reset password form and submitted it.
   def new
-    @school = current_school
   end
 
   def create
