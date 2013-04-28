@@ -13,6 +13,7 @@
 //= require jquery-1.9.1
 //= require jquery_ujs
 //= require twitter/bootstrap
+//= require bootstrap-select
 //= require jquery.jcarousel
 //= require jquery.uniform
 //= require custom

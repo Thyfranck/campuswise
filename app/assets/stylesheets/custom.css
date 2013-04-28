@@ -203,3 +203,9 @@
 a:hover{
     text-decoration: none;
 }
+
+/* Dashboard */
+
+.dashboard{
+    margin-top: 20px;
+}

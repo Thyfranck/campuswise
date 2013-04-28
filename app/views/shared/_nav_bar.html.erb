@@ -8,7 +8,7 @@
           <span class="icon-bar"></span>
         </a>
 
-        <%= link_to image_tag("logo.png"), root_path, :class => "brand" %>
+        <%= link_to image_tag("logo.png"), current_user ? find_path : root_path, :class => "brand" %>
 
         <ul class="nav">
           <% if current_school.present? %>

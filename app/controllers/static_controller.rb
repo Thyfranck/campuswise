@@ -1,7 +1,7 @@
 class StaticController < ApplicationController
 
   def home
-    session.delete(:school_id)
+    session.delete(:school_id) unless current_user
     
     @school_images = SchoolImage.order("created_at desc")
 
@@ -11,7 +11,12 @@ class StaticController < ApplicationController
   end
 
   def public_find_books
-    @school = School.find(params[:school_id])
+    if current_school
+      @school = current_school
+    else
+      @school = School.find(params[:school_id])
+    end
+    
     @school_images = @school.school_images.order("created_at desc")
     
     if @school_images.count < 2
