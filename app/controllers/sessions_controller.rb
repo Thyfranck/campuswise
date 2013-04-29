@@ -14,6 +14,7 @@ class SessionsController < ApplicationController
   def create
     respond_to do |format|
       if @user = login(params[:email],params[:password])
+        session[:school_id] = @user.school.id
         format.html { redirect_to current_user, :notice => "Logged In"}
       else
         format.html { redirect_to login_path}
