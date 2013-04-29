@@ -3,28 +3,57 @@
   <h1><%=t '.title', :default => model_class.model_name.human %></h1>
 </div>
 
-<dl class="dl-horizontal">
-  <dt><strong><%= model_class.human_attribute_name(:title) %>:</strong></dt>
-  <dd><%= @book.title %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:image) %>:</strong></dt>
-  <dd><%= image_tag  @book.image_url(:thumb) %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:author) %>:</strong></dt>
-  <dd><%= @book.author %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:isbn) %>:</strong></dt>
-  <dd><%= @book.isbn %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:publisher) %>:</strong></dt>
-  <dd><%= @book.publisher %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:price) %>:</strong></dt>
-  <dd><%= @book.price %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:loan_price) %>:</strong></dt>
-  <dd><%= @book.loan_price %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:available) %>:</strong></dt>
-  <dd><%= @book.available == true ? "Yes" : "No" %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:available_from) %>:</strong></dt>
-  <dd><%= @book.available_from %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:returning_date) %>:</strong></dt>
-  <dd><%= @book.returning_date %></dd>
-</dl>
+<p>
+  <b> Title:</b>
+  <%= @book.title %>
+</p>
+
+<p>
+  <b> Author:</b>
+  <%= @book.author %>
+</p>
+
+<p>
+  <b> Publisher:</b>
+  <%= @book.publisher %>
+</p>
+
+
+<p>
+  <b> Image:</b>
+  <%= image_tag @book.image_url(:thumb) %>
+</p>
+
+<p>
+  <b> ISBN:</b>
+  <%= @book.isbn %>
+</p>
+
+<p>
+  <b> Price:</b>
+  <%= @book.price %>
+</p>
+
+<p>
+  <b> Loan Price:</b>
+  <%= @book.loan_price %>
+</p>
+
+<p>
+  <b> Available:</b>
+  <%= @book.available == true ? "Yes" : "No" %>
+</p>
+
+<p>
+  <b> Available from:</b>
+  <%= @book.available_from %>
+</p>
+
+<p>
+  <b> Returning Date:</b>
+  <%= @book.returning_date %>
+</p>
+
 
 <div class="form-actions">
   <%= link_to t('.back', :default => t("helpers.links.back")),

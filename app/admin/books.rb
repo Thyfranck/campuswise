@@ -2,6 +2,15 @@ ActiveAdmin.register Book do
   config.per_page = 50
   actions :all, :except => [:new, :edit]
 
+  filter :user
+  filter :title
+  filter :available
+  filter :available_from
+  filter :returning_date
+  filter :price
+  filter :loan_price
+  filter :created_at
+
   index do
     selectable_column
     column :id
@@ -22,5 +31,4 @@ ActiveAdmin.register Book do
     column :created_at
     default_actions
   end
-  
 end

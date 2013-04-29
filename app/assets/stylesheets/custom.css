@@ -209,3 +209,19 @@ a:hover{
 .dashboard{
     margin-top: 20px;
 }
+
+.form-actions {
+    border-top: 0px solid #ffffff;
+}
+
+.footer-columns {
+    padding: 20px;
+}
+
+#footer-bottom {
+    padding: 20px;
+}
+
+.no_background_color {
+    background-color: #ffffff;
+}

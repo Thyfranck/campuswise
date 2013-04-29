@@ -6,11 +6,10 @@
       <div class="control-group">
         <%= label_tag :email, "Email",:class => 'control-label' %>
         <div class="controls">
-          <%= email_field_tag :email %>
+          <%= email_field_tag :email, nil ,:required => true %>
         </div>
       </div>
-
-      <div class="form-actions">
+      <div class="form-actions no_background_color">
         <%= submit_tag "Reset my password!", :class => 'btn btn-primary' %><br/>
       </div>
     </fieldset>

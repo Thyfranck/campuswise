@@ -1,24 +1,20 @@
-<%- model_class = Book -%>
-<div class="page-header">
-  <h1><%=t '.title', :default => model_class.model_name.human.pluralize %></h1>
-</div>
-<table class="table table-striped">
+<table class="table table-hover">
   <thead>
     <tr>
-      <th><%= model_class.human_attribute_name(:title) %></th>
-      <th><%= model_class.human_attribute_name(:image) %></th>
-      <th><%= model_class.human_attribute_name(:loan_price) %></th>
-      <th><%= model_class.human_attribute_name(:available) %></th>
-      <th><%= model_class.human_attribute_name(:available_from) %></th>
-      <th><%= model_class.human_attribute_name(:returning_date) %></th>
-      <th><%=t '.actions', :default => t("helpers.actions") %></th>
+      <th>Title</th>
+      <th>Image</th>
+      <th>Loan Price</th>
+      <th>Available</th>
+      <th>Available From</th>
+      <th>Returning Date</th>
     </tr>
   </thead>
+
   <tbody>
     <% @books.each do |book| %>
       <tr>
-        <td><%= book.title %></td>
-        <td><%= image_tag(book.image_url(:thumb)) if book.image.present? %></td>
+        <td><%= book.title%> </td>
+        <td><%= image_tag book.image_url(:thumb) %></td>
         <td><%= book.loan_price %></td>
         <td><%= book.available == true ? "Yes" : "No" %></td>
         <td><%= book.available_from %></td>
@@ -34,11 +30,10 @@
           <%= link_to t('.show', :default => t("helpers.links.show")),
             book_path(book), :class => 'btn btn-mini' %>
         </td>
+
+
       </tr>
     <% end %>
   </tbody>
-</table>
 
-<%= link_to t('.new', :default => t("helpers.links.new")),
-  new_book_path,
-  :class => 'btn btn-primary' %>
+</table>

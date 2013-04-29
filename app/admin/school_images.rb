@@ -7,7 +7,9 @@ ActiveAdmin.register SchoolImage do
     selectable_column
     column :id
     column :school
-    column :image_identifier
+    column :image do |school_image|
+      image_tag(school_image.image_url(:thumb)) if school_image.image.present?
+    end
     default_actions
   end
 
