@@ -18,8 +18,8 @@
       </div>
 
       <div class="form-actions <%= "no_background_color" unless current_user %>">
-        <%= submit_tag "Login", :class => 'btn btn-primary' %>
-        <%= link_to 'I Forgot My Password', new_password_reset_path(:school => @school), :class => "btn btn-danger"  %>
+        <%= submit_tag "Login", :class => 'btn btn-primary have_a_account' %>
+        <%= link_to 'I Forgot My Password', new_password_reset_path(:school => @school), :class => "btn btn-danger have_a_account"  %>
       </div>
     </fieldset>
   <% end %>

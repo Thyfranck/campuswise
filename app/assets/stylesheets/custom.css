@@ -188,6 +188,7 @@
     height: auto;
     line-height: 20px;
     text-align: justify;
+    margin-bottom: 40px;
 }
 
 
@@ -238,4 +239,12 @@ a:hover{
 
 .no_book_image {
     border-radius :27px;
+}
+
+.have_a_account {
+    margin-top: 10px;
+}
+
+.first-footer {
+    padding-bottom: 0;
 }

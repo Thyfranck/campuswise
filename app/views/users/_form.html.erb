@@ -69,7 +69,7 @@
     <% end %>
 
     <div class="form-actions <%= "no_background_color" if @user.new_record? %>">
-      <%= f.submit "Sign Up",  :class => 'btn btn-primary' %>
+      <%= f.submit :class => 'btn btn-primary have_a_account' %>
       <% if @user.new_record? %>
         <%= link_to "Already Have a account", login_path(:school => @school), :class => "have_a_account btn btn-info" %>
       <% end %>
