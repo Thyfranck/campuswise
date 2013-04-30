@@ -1,68 +1,77 @@
-<%- model_class = Book -%>
-<div class="page-header">
-  <h1><%=t '.title', :default => model_class.model_name.human %></h1>
+  <div class="page-header">
+    <h1>Book Details</h1>
+  </div>
+
+<div class="span4 ">
+  <p>
+    <b> Title:</b>
+    <%= @book.title %>
+  </p>
+
+  <p>
+    <b> Author:</b>
+    <%= @book.author %>
+  </p>
+
+  <p>
+    <b> Publisher:</b>
+    <%= @book.publisher %>
+  </p>
+
+
+
+
+  <p>
+    <b> ISBN:</b>
+    <%= @book.isbn %>
+  </p>
+
+  <p>
+    <b> Price:</b>
+    <%= @book.price %>
+  </p>
+
+  <p>
+    <b> Loan Price:</b>
+    <%= @book.loan_price %>
+  </p>
+
+  <p>
+    <b> Available:</b>
+    <%= @book.available == true ? "Yes" : "No" %>
+  </p>
+
+  <p>
+    <b> Available from:</b>
+    <%= @book.available_from %>
+  </p>
+
+  <p>
+    <b> Returning Date:</b>
+    <%= @book.returning_date %>
+  </p>
+  <div class="form-actions">
+    <%= link_to t('.back', :default => t("helpers.links.back")),
+      books_path, :class => 'btn'  %>
+    <%= link_to t('.edit', :default => t("helpers.links.edit")),
+      edit_book_path(@book), :class => 'btn' %>
+    <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+      book_path(@book),
+      :method => 'delete',
+      :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+      :class => 'btn btn-danger' %>
+  </div>
 </div>
 
-<p>
-  <b> Title:</b>
-  <%= @book.title %>
-</p>
-
-<p>
-  <b> Author:</b>
-  <%= @book.author %>
-</p>
-
-<p>
-  <b> Publisher:</b>
-  <%= @book.publisher %>
-</p>
-
-
-<p>
-  <b> Image:</b>
-  <%= image_tag @book.image_url(:thumb) %>
-</p>
-
-<p>
-  <b> ISBN:</b>
-  <%= @book.isbn %>
-</p>
-
-<p>
-  <b> Price:</b>
-  <%= @book.price %>
-</p>
-
-<p>
-  <b> Loan Price:</b>
-  <%= @book.loan_price %>
-</p>
-
-<p>
-  <b> Available:</b>
-  <%= @book.available == true ? "Yes" : "No" %>
-</p>
-
-<p>
-  <b> Available from:</b>
-  <%= @book.available_from %>
-</p>
-
-<p>
-  <b> Returning Date:</b>
-  <%= @book.returning_date %>
-</p>
-
-
-<div class="form-actions">
-  <%= link_to t('.back', :default => t("helpers.links.back")),
-    books_path, :class => 'btn'  %>
-  <%= link_to t('.edit', :default => t("helpers.links.edit")),
-    edit_book_path(@book), :class => 'btn' %>
-  <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
-    book_path(@book),
-    :method => 'delete',
-    :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
-    :class => 'btn btn-danger' %>
+<div class="span3 offset1">
+  <p>
+    <%  if @book.image.present?  %>
+      <%= image_tag @book.image_url(:book)%>
+    <% else %>
+      <%= image_tag 'no_book_image.jpeg', :class => "no_book_image"  %>
+    <% end %>
+  </p>
 </div>
+
+
+

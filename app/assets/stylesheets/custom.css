@@ -196,8 +196,6 @@
     color: #536272;
     font-family: Arial,Helvetica,sans-serif;
     font-size: 12px;
-    padding-top: 10px;
-    padding-bottom: 10px;
 }
 
 a:hover{
@@ -219,9 +217,25 @@ a:hover{
 }
 
 #footer-bottom {
-    padding: 20px;
+    padding: 8px 22px;
 }
 
 .no_background_color {
     background-color: #ffffff;
+}
+
+.min_height_section {
+    min-height: 305px;
+}
+
+.navbar .nav > li > a {
+    padding: 6px 15px;
+}
+
+.nav_user_action {
+    margin-top: 6px;
+}
+
+.no_book_image {
+    border-radius :27px;
 }
