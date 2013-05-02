@@ -16,4 +16,6 @@
 //= require bootstrap-select
 //= require jquery.jcarousel
 //= require jquery.uniform
+//= require jquery.ui.autocomplete
+//= require search
 //= require custom

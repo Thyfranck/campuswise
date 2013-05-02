@@ -1,10 +1,10 @@
-<%= form_for @book, :html => { :class => 'form-horizontal' } do |f| %>
+<%= form_for @book, :html => { :class => 'form-horizontal', :multipart => true } do |f| %>
   <fieldset>
     <legend>
       <%= controller.action_name.capitalize %>
       Book
     </legend>
-    
+
     <% if @book.errors.any? %>
       <div id="error_explanation" class="alert alert-error">
         <h4>
@@ -17,7 +17,16 @@
         </ul>
       </div>
     <% end %>
-    
+
+    <%= form_tag search_path, :class => "form-horizontal", :remote => true do %>
+      <div class="control-group">
+        <div class="controls">
+          <%= text_field_tag :value, nil ,:placeholder => "Enter Title, Author or ISBN number", :class => 'text_field search_field' %>
+          <%= submit_tag "Search",:name => 'search',:class => "btn btn-primary search_button" %>
+        </div>
+      </div>
+    <% end %>
+
     <div class="control-group">
       <%= f.label :title, :class => 'control-label' %>
       <div class="controls">
@@ -30,6 +39,16 @@
         <%= f.file_field :image, :class => 'text_field uniform' %>
       </div>
     </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <div class="hidden_image"  style="display:none">
+          <img alt="image" src=""></img>
+          <%#= f.text_field :remote_image_url %>
+        </div>
+      </div>
+    </div>
+
     <div class="control-group">
       <%= f.label :author, :class => 'control-label' %>
       <div class="controls">
@@ -37,7 +56,7 @@
       </div>
     </div>
     <div class="control-group">
-      <%= f.label :isbn, :class => 'control-label' %>
+      <%= f.label :isbn, "ISBN", :class => 'control-label' %>
       <div class="controls">
         <%= f.text_field :isbn, :class => 'text_field' %>
       </div>

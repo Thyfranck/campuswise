@@ -9,7 +9,10 @@ gem 'mysql2'
 gem 'sorcery'
 gem 'activeadmin'
 gem 'rmagick'
-gem 'carrierwave'
+gem 'carrierwave', '0.5.8'
+gem 'googlebooks'
+gem 'jquery-ui-rails'
+gem 'scoped_search'
 
 
 # Gems used only for assets and not required

@@ -13,6 +13,8 @@ Campuswise::Application.routes.draw do
   match "home"     => "static#home"
 
   match 'school-home' => 'static#public_find_books', :as => :find
+  match '/search' => 'books#search', :as => :search
+  match '/public_search' => 'static#public_search'
   
   resources :users, :except => [:index] do
     member do

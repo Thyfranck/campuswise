@@ -13,5 +13,6 @@
  *= require bootstrap-select
  *= require jquery.jscrollpane
  *= require uniform.aristo
+ *= require jquery.ui.all
  *= require custom
  */

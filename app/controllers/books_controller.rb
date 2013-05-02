@@ -19,7 +19,6 @@ class BooksController < ApplicationController
         flash[:notice] = "Request Completed"
       else
         format.html {render :action => 'new'}
-        flash[:alert] = "Error Occured"
       end
     end
   end
@@ -40,7 +39,6 @@ class BooksController < ApplicationController
         flash[:notice] = "Request Completed"
       else
         format.html {render :action => 'edit'}
-        flash[:alert] = "Error Occured"
       end
     end
   end
@@ -55,6 +53,19 @@ class BooksController < ApplicationController
         format.html {redirect_to user_path(current_user)}
         flash[:alert] = "Error Occured"
       end
+    end
+  end
+
+  def search
+    @books = GoogleBooks.search(params[:value], {:count => 10})
+    @search_result = @books.map {|book| { :image_link => book.image_link,
+        :publisher => book.publisher,
+        :title => book.title,
+        :authors => book.authors,
+        :isbn => book.isbn
+      }}
+    respond_to do |format|
+      format.json { render :json => @search_result }
     end
   end
 end
