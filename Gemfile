@@ -13,6 +13,8 @@ gem 'carrierwave', '0.5.8'
 gem 'googlebooks'
 gem 'jquery-ui-rails'
 gem 'scoped_search'
+gem 'mechanize'
+gem 'will_paginate', '~> 3.0'
 
 
 # Gems used only for assets and not required

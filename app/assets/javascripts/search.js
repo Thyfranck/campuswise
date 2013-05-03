@@ -6,7 +6,7 @@ function book_image(message) {
     $('#uniform-book_image').parent().parent().hide();
     $(".hidden_image img").attr("src", message);
     $(".hidden_image").show();
-    $('#book_remote_image_url').val(message + "/books.jpeg");
+    $('#remote_url').val(message);
 }
 
 function author(message){
@@ -35,12 +35,12 @@ $(document).ready(function(){
                     searchData = data;
                     response( $.map( data, function(item) {
                         return {
-                            label: item.title + ", " + item.isbn,
+                            label: item.title + " by " + item.authors,
                             only_label : item.title,
                             isbn : item.isbn,
                             author : item.authors,
                             publisher : item.publisher,
-                            image : item.image_link
+                            image : item.image
                         }
                     }));
                 }

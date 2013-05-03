@@ -35,9 +35,13 @@ class StaticController < ApplicationController
 
   def public_search
     @books = current_school.books
-    @books = @books.search_for(params[:search])
+    @books = @books.search_for(params[:search]).paginate(:page => params[:page], :per_page => 6)
     respond_to do |format|
       format.html
     end
+  end
+
+  def show_public
+    @book = Book.find(params[:id])
   end
 end

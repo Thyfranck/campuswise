@@ -4,22 +4,35 @@ class BooksController < ApplicationController
   layout "dashboard"
 
   def index
-    @books = current_user.books
+    @books = current_user.books.paginate(:page => params[:page], :per_page => 6)
   end
 
   def new
     @book = current_user.books.new
+    if params[:google_book_id]
+      @book.set_google(params[:google_book_id])
+    end
   end
 
   def create
-    @book = current_user.books.new(params[:book])
-    respond_to do |format|
-      if @book.save
-        format.html {redirect_to books_path}
-        flash[:notice] = "Request Completed"
-      else
-        format.html {render :action => 'new'}
+    unless params[:search] == "Search"
+      @book = current_user.books.new(params[:book])
+      unless params[:remote_url].blank?
+        @book.set_google_image(params[:remote_url], current_user)
       end
+      respond_to do |format|
+        if @book.save
+          unless params[:remote_url].blank?
+            File.delete("tmp/books/book_#{current_user.id}.jpg")
+          end
+          format.html {redirect_to books_path}
+          flash[:notice] = "Request Completed"
+        else
+          format.html {render :action => 'new'}
+        end
+      end
+    else
+      redirect_to search_path(:value => params[:value])
     end
   end
 
@@ -57,8 +70,15 @@ class BooksController < ApplicationController
   end
 
   def search
-    @books = GoogleBooks.search(params[:value], {:count => 10})
-    @search_result = @books.map {|book| { :image_link => book.image_link,
+    if params[:book_page] and params[:next]
+      @book_page = params[:book_page].to_i + 1
+    elsif params[:book_page] and params[:previous] and params[:book_page].to_i > 1
+      @book_page = params[:book_page].to_i - 1
+    else
+      @book_page = 1
+    end
+    @books = GoogleBooks.search(params[:value], {:count => 10, :page => (@book_page or 1) })
+    @search_result = @books.map {|book| { :image => book.image_link(:zoom => 1),
         :publisher => book.publisher,
         :title => book.title,
         :authors => book.authors,
@@ -66,6 +86,14 @@ class BooksController < ApplicationController
       }}
     respond_to do |format|
       format.json { render :json => @search_result }
+      format.html
+    end
+  end
+
+  def show_search
+    @book = GoogleBooks.search(params[:id]).first
+    respond_to do |format|
+      format.html
     end
   end
 end

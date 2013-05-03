@@ -22,7 +22,7 @@
       <div class="control-group">
         <div class="controls">
           <%= text_field_tag :value, nil ,:placeholder => "Enter Title, Author or ISBN number", :class => 'text_field search_field' %>
-          <%= submit_tag "Search",:name => 'search',:class => "btn btn-primary search_button" %>
+          <%= submit_tag "Search", :name => 'search',:class => "btn btn-primary search_button" %>
         </div>
       </div>
     <% end %>
@@ -30,21 +30,25 @@
     <div class="control-group">
       <%= f.label :title, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :title, :class => 'text_field' %>
-      </div>
-    </div>
-    <div class="control-group">
-      <%= f.label :image, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.file_field :image, :class => 'text_field uniform' %>
+        <%= f.text_field :title , :class => 'text_field'%>
       </div>
     </div>
 
+    <% if @book.remote_image.blank? %>
+      <div class="control-group">
+        <%= f.label :image, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.file_field :image, :class => 'text_field uniform' %>
+        </div>
+      </div>
+    <% end %>
+
+
     <div class="control-group">
       <div class="controls">
-        <div class="hidden_image"  style="display:none">
-          <img alt="image" src=""></img>
-          <%#= f.text_field :remote_image_url %>
+        <div class="hidden_image"  style="<%= "display:none" unless @book.remote_image.present? %>">
+          <img alt="image" src="<%= @book.remote_image %>"></img>
+          <%= hidden_field_tag :remote_url, @book.remote_image.present? ? @book.remote_image : "" %>
         </div>
       </div>
     </div>
@@ -52,13 +56,13 @@
     <div class="control-group">
       <%= f.label :author, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :author, :class => 'text_field' %>
+        <%= f.text_field :author, :class => 'text_field'%>
       </div>
     </div>
     <div class="control-group">
       <%= f.label :isbn, "ISBN", :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :isbn, :class => 'text_field' %>
+        <%= f.text_field :isbn, :class => 'text_field'%>
       </div>
     </div>
     <div class="control-group">
@@ -105,3 +109,9 @@
     </div>
   </fieldset>
 <% end %>
+
+<style>
+  .ui-autocomplete-loading {
+    background:url('/assets/ui-anim_basic_16x16.gif') no-repeat right center;
+  }
+</style>

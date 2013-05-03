@@ -32,7 +32,7 @@
               <% end %>
               <div class="row">
                 <%= render "shared/dashboard_sidebar" %>
-                <div class="span9 well">
+                <div class="span9 well <%= "no_padding" if current_page?(search_path) %>">
                   <%= yield %>
                 </div>
               </div>

@@ -1,0 +1,40 @@
+<div class="page-header">
+  <h1>Book Details</h1>
+</div>
+
+<div class="span4 ">
+  <p>
+    <b> Title:</b>
+    <%= @book.title %>
+  </p>
+
+  <p>
+    <b> Author:</b>
+    <%= @book.authors %>
+  </p>
+
+  <p>
+    <b> Publisher:</b>
+    <%= @book.publisher %>
+  </p>
+
+  <p>
+    <b> ISBN:</b>
+    <%= @book.isbn %>
+  </p>
+
+  <%= link_to "Add this Book", new_book_path(:google_book_id => @book.id), :class => 'btn btn-primary' %>
+</div>
+
+<div class="span3 offset1">
+  <p>
+    <% if @book.image_link.present?  %>
+      <%= image_tag @book.image_link %>
+    <% else %>
+      <%= image_tag 'no_book_image.jpeg', :class => "no_book_image"  %>
+    <% end %>
+  </p>
+</div>
+
+
+
