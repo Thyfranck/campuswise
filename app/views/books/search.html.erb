@@ -6,7 +6,11 @@
     <div class="searched_books">
 
       <div class="search_book_image">
-        <%= image_tag book.image_link %>
+        <% unless book.image_link.blank? %>
+          <%= image_tag book.image_link %>
+        <% else %>
+          <%= image_tag 'no_book_image.jpeg'%>
+        <% end %>
       </div>
 
       <div class="search_book_text">
