@@ -1,31 +1,69 @@
-<%= form_for @book, :html => { :class => 'form-horizontal' } do |f| %>
+<%= form_for @book, :html => { :class => 'form-horizontal', :multipart => true } do |f| %>
   <fieldset>
     <legend>
       <%= controller.action_name.capitalize %>
       Book
     </legend>
+
+    <% if @book.errors.any? %>
+      <div id="error_explanation" class="alert alert-error">
+        <h4>
+          <%= pluralize(@book.errors.count, "error") %> prohibited this user from being saved:
+        </h4>
+        <ul>
+          <% @book.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <div style="width:inherit">Type a keyword related to your books and you will get some quick suggestion, If you don't find your desired book then click on the search button to get more results.</div>
+    <br/>
+    <%= form_tag search_path, :class => "form-horizontal", :remote => true do %>
+      <div class="control-group">
+        <div class="controls">
+          <%= text_field_tag :value, nil ,:placeholder => "Enter Title, Author or ISBN number", :class => 'text_field search_field' %>
+          <%= submit_tag "Search", :name => 'search',:class => "btn btn-primary search_button" %>
+        </div>
+      </div>
+    <% end %>
+
     <div class="control-group">
       <%= f.label :title, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :title, :class => 'text_field' %>
+        <%= f.text_field :title , :class => 'text_field'%>
       </div>
     </div>
+
+    <% if @book.remote_image.blank? %>
+      <div class="control-group">
+        <%= f.label :image, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.file_field :image, :class => 'text_field uniform' %>
+        </div>
+      </div>
+    <% end %>
+
+
     <div class="control-group">
-      <%= f.label :image, :class => 'control-label' %>
       <div class="controls">
-        <%= f.file_field :image, :class => 'text_field uniform' %>
+        <div class="hidden_image"  style="<%= "display:none" unless @book.remote_image.present? %>">
+          <img alt="image" src="<%= @book.remote_image %>"></img>
+          <%= hidden_field_tag :remote_url, @book.remote_image.present? ? @book.remote_image : "" %>
+        </div>
       </div>
     </div>
+
     <div class="control-group">
       <%= f.label :author, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :author, :class => 'text_field' %>
+        <%= f.text_field :author, :class => 'text_field'%>
       </div>
     </div>
     <div class="control-group">
-      <%= f.label :isbn, :class => 'control-label' %>
+      <%= f.label :isbn, "ISBN", :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :isbn, :class => 'text_field' %>
+        <%= f.text_field :isbn, :class => 'text_field'%>
       </div>
     </div>
     <div class="control-group">
@@ -72,3 +110,9 @@
     </div>
   </fieldset>
 <% end %>
+
+<style>
+  .ui-autocomplete-loading {
+    background:url('/assets/ui-anim_basic_16x16.gif') no-repeat right center;
+  }
+</style>

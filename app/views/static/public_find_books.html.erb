@@ -10,8 +10,8 @@
       <%= image_tag 'renting_txt.png' %>
       <br />
       <div class="search_box">
-        <%= form_tag find_path, :class => "form-horizontal", :remote => true do %>
-          <%= text_field_tag :id, nil ,:placeholder => "Enter Title, Author or ISBN number" %>
+        <%= form_tag public_search_path, :class => "form-horizontal" do %>
+          <%= text_field_tag :search, nil ,:placeholder => "Enter Title, Author or ISBN number" %>
           <%= submit_tag "Search", :class => "btn btn-primary search_button" %>
         <% end %>
       </div>
@@ -20,3 +20,35 @@
 </div>
 
 <%= render "shared/books_slider" %>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#value').change(function(){
+      myVar = setInterval(function(){myTimer()},1000);
+    });
+
+    prevValue = null;
+      
+    function myTimer(){
+      inputValue = $("#value").val();
+      if(inputValue == prevValue){
+        clearInterval(myVar);
+      }
+      else{
+        prevValue = inputValue
+        ajax_call();
+      }
+    }
+    function ajax_call(){
+      inputValue = $("#value").val();
+      $.ajax({
+        type: 'GET',
+        url: '/school-home',
+        data: {
+          value : inputValue
+        },
+        dataType: "script"
+      });
+    };
+  });
+</script>

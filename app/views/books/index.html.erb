@@ -1,44 +1,33 @@
-<%- model_class = Book -%>
-<div class="page-header">
-  <h1><%=t '.title', :default => model_class.model_name.human.pluralize %></h1>
-</div>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th><%= model_class.human_attribute_name(:title) %></th>
-      <th><%= model_class.human_attribute_name(:image) %></th>
-      <th><%= model_class.human_attribute_name(:loan_price) %></th>
-      <th><%= model_class.human_attribute_name(:available) %></th>
-      <th><%= model_class.human_attribute_name(:available_from) %></th>
-      <th><%= model_class.human_attribute_name(:returning_date) %></th>
-      <th><%=t '.actions', :default => t("helpers.actions") %></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @books.each do |book| %>
-      <tr>
-        <td><%= book.title %></td>
-        <td><%= image_tag(book.image_url(:thumb)) if book.image.present? %></td>
-        <td><%= book.loan_price %></td>
-        <td><%= book.available == true ? "Yes" : "No" %></td>
-        <td><%= book.available_from %></td>
-        <td><%= book.returning_date %></td>
-        <td>
-          <%= link_to t('.edit', :default => t("helpers.links.edit")),
-            edit_book_path(book), :class => 'btn btn-mini' %>
-          <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
-            book_path(book),
-            :method => :delete,
-            :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
-            :class => 'btn btn-mini btn-danger' %>
-          <%= link_to t('.show', :default => t("helpers.links.show")),
-            book_path(book), :class => 'btn btn-mini' %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<legend>
+    <h3>Your Books</h3>
+  </legend>
+<% if @books.any? %>
+<%= will_paginate @books %>
+<% @books.each do |book| %>
+  <div class="searched_books">
 
-<%= link_to t('.new', :default => t("helpers.links.new")),
-  new_book_path,
-  :class => 'btn btn-primary' %>
+    <div class="search_book_image">
+      <% if book.image.present?  %>
+        <td><%= image_tag book.image_url %></td>
+        <% else %>
+        <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
+        <% end %>
+    </div>
+
+    <div class="search_book_text">
+      <div class="book_title">
+      <b><%= book.title.truncate(50) %></b><br/>
+      </div>
+      by <i><%= book.author.truncate(50) %></i><br/>
+      ISBN : <%= book.isbn %><br/>
+      Publisher : <%= book.publisher %><br/>
+      Available : <%= book.available == true ? "Yes" : "No" %><br/>
+      <%= link_to "Show Details", book_path(book.id), :class => 'btn btn-mini btn-info' %>
+    </div>
+   
+  </div>
+<% end %>
+
+<% else %>
+<b><h3>Currently you have no books</h3></b>
+<% end %>

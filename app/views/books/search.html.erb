@@ -1,0 +1,37 @@
+<legend>
+  <h3>&nbsp;&nbsp;&nbsp;Search results</h3>
+</legend>
+<% if @books.any? %>
+  <% @books.each do |book| %>
+    <div class="searched_books">
+
+      <div class="search_book_image">
+        <% unless book.image_link.blank? %>
+          <%= image_tag book.image_link %>
+        <% else %>
+          <%= image_tag 'no_book_image.jpeg'%>
+        <% end %>
+      </div>
+
+      <div class="search_book_text">
+        <div class="book_title">
+          <b><%= book.title.truncate(50) %></b><br/>
+        </div>
+        by <i><%= book.authors.truncate(50) %></i><br/>
+        ISBN : <%= book.isbn %><br/>
+        Publisher : <%= book.publisher %><br/>
+        <%= link_to "Show Details", show_search_path(:id => book.id), :class => 'btn btn-mini btn-info' %>
+        <%= link_to "Add this Book", new_book_path(:google_book_id => book.id), :class => 'btn btn-mini btn-primary' %>
+      </div>
+
+    </div>
+  <% end %>
+
+  <%= link_to "Previous" ,search_path(:value => params[:value], :book_page => @book_page, :previous => "previous"), :class => 'btn btn-primary' %>&nbsp;&nbsp;&nbsp;
+  <%= link_to "Next", search_path(:value => params[:value], :book_page => @book_page, :next => "next"), :class => 'btn btn-primary' %>
+
+<% else %>
+
+  <b><h1 style="text-align: center;">No results found<br/><br/> OR <br/><br/>Empty Keyword</h1></b>
+
+<% end %>
