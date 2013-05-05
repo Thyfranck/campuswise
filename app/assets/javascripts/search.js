@@ -3,10 +3,12 @@ function book_title( message ) {
 }
 
 function book_image(message) {
-    $('#uniform-book_image').parent().parent().hide();
-    $(".hidden_image img").attr("src", message);
-    $(".hidden_image").show();
-    $('#remote_url').val(message);
+    if (message.length > 0){
+        $('#uniform-book_image').parent().parent().hide();
+        $(".hidden_image img").attr("src", message);
+        $(".hidden_image").show();
+        $('#remote_url').val(message);
+    }
 }
 
 function author(message){
