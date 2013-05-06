@@ -5,9 +5,9 @@
 <% if @books.any? %>
   <%= will_paginate @books %>
   <% @books.each do |book| %>
-    <div class="searched_books">
+    <div class="searched_books span5">
 
-      <div class="search_book_image">
+      <div class="search_book_image span4">
         <% if book.image.present?  %>
           <td><%= image_tag book.image_url %></td>
         <% else %>
@@ -15,8 +15,8 @@
         <% end %>
       </div>
 
-      <div class="search_book_text">
-        <div class="book_title">
+      <div class="search_book_text span7">
+        <div class="book_title span12">
           <b><%= book.title.truncate(50) %></b><br/>
         </div>
         by <i><%= book.author.truncate(50) %></i><br/>
