@@ -7,10 +7,13 @@ class Book < ActiveRecord::Base
   validates :title, :presence => true 
   
   belongs_to :user
+  has_many :exchanges
 
   mount_uploader :image, ImageUploader
 
   scoped_search :on => [:author, :isbn, :publisher, :title]
+  scope :available, :conditions => {:available => true}
+  scope :not_my_book, lambda { |current_user| where(["user_id != ?",current_user])}
 
   def set_google(book_id)
     google_book = GoogleBooks.search(book_id).first

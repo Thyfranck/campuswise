@@ -3,6 +3,8 @@ Campuswise::Application.routes.draw do
 
   resources :books
 
+  resources :exchanges
+
 
   get "password_resets/create"
 
@@ -17,6 +19,8 @@ Campuswise::Application.routes.draw do
   match '/public_search' => 'static#public_search'
   match '/show_search' => 'books#show_search'
   match '/show_public' => 'static#show_public'
+  match '/search_for_borrow' => 'books#search_for_borrow'
+  match '/dashboard' => 'users#dashboard'
 
   
   resources :users, :except => [:index] do

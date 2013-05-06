@@ -96,4 +96,15 @@ class BooksController < ApplicationController
       format.html
     end
   end
+
+  def search_for_borrow
+    if params[:browse] == true
+      @books = Book.available.not_my_book(current_user.id)
+    else
+      @books = Book.available.not_my_book(current_user.id).search_for(params[:search]).paginate(:page => params[:page], :per_page => 6)
+    end 
+    respond_to do |format|
+      format.html
+    end
+  end
 end

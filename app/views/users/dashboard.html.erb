@@ -1,0 +1,13 @@
+<% if @notifications.any? %>
+  <% @notifications.each do |notification| %>
+    <div>
+      <h4><%= notification.content %></h4>
+      <% if notification.exchange.user_id != current_user.id  %>
+        <%= link_to "Approve", exchange_path(notification.exchange_id), :method => :put, :class => "btn btn-small btn-primary" %>
+        <%= link_to "Deny", exchange_path(notification.exchange_id), :method => :delete, :class => "btn btn-small btn-primary" %>
+      <% end %>
+    </div>
+  <% end %>
+<% else %>
+  <h4>No new requests.</h4>
+<% end %>

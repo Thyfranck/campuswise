@@ -86,4 +86,11 @@ class UsersController < ApplicationController
       not_authenticated
     end
   end
+
+  def dashboard
+    @notifications = current_user.dashboard_notifications
+    respond_to do |format|
+      format.html {render :layout => "dashboard"}
+    end
+  end
 end
