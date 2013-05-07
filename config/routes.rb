@@ -21,6 +21,8 @@ Campuswise::Application.routes.draw do
   match '/show_public' => 'static#show_public'
   match '/search_for_borrow' => 'books#search_for_borrow'
   match '/dashboard' => 'users#dashboard'
+  match '/remove_notification' => 'users#remove_notification'
+  match '/borrow_requests' => 'users#borrow_requests'
 
   
   resources :users, :except => [:index] do

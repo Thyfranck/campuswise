@@ -59,17 +59,8 @@
         :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
         :class => 'btn btn-danger' %>
     </div>
-  <% elsif current_user and current_user.already_borrowed_this_book(@book.id) %>
-  You Already borrowed this book
-  <% elsif current_user %>
-  <%= link_to "Borrow This Book", exchanges_path(:id => @book.id), :method => :post ,:confirm => "Are You sure want to borrow this book? $ #{@book.loan_price.present? ? @book.loan_price : "0"} will be deducted from your account.",:class => 'btn btn-primary'  %>
-  <br/>
-  <br/>
-  <h4>Rent this book now and save your money!</h4>
-  <%= link_to 'Sign Up!', new_user_path, :class => 'btn btn-primary' %>
   <% end %>
 </div>
-
 <div class="span3 offset1">
   <p>
     <%  if @book.image.present?  %>
@@ -78,6 +69,20 @@
       <%= image_tag 'no_book_image.jpeg', :class => "no_book_image"  %>
     <% end %>
   </p>
+  <% if current_user and @book.user != current_user %>
+    <% if current_user.already_borrowed_this_book(@book.id) %>
+      <h5 style="color: red">You Already borrowed this book</h5>
+    <% elsif current_user.already_sent_request(@book.id) %>
+      <h5 style="color: red">Your borrow request for this book is pending for approval</h5>
+    <% elsif @book.available == false %>
+      <p style="color: red">This book is not available</p>
+    <% else %>
+      <%= link_to "Borrow This Book", exchanges_path(:id => @book.id), :method => :post ,:confirm => "Are You sure want to borrow this book? $ #{@book.loan_price.present? ? @book.loan_price : "0"} will be deducted from your account.",:class => 'btn btn-primary'  %>
+    <% end %>
+  <% elsif !current_user %>
+    <h5 style="color: red" >Rent this book now and save your money!</h5>
+    <%= link_to 'Sign Up!', new_user_path, :class => 'btn btn-primary' %>
+  <% end %>
 </div>
 
 

@@ -4,6 +4,17 @@ class User < ActiveRecord::Base
   belongs_to :school
   has_many :books, :dependent => :destroy
   has_many :exchanges
+  def accepted_exchanges
+    self.exchanges.where(:accepted => true)
+  end
+
+  def pending_exchanges
+    self.exchanges.where(:accepted => false)
+  end
+
+  has_many :pending_reverse_exchanges, :through => :books, :conditions => "accepted = false" ,:source => :exchanges #for request receiver(book owner)
+  has_many :accepted_reverse_exchanges, :through => :books, :conditions => "accepted = true" ,:source => :exchanges #for request receiver(book owner)
+
   has_many :dashboard_notifications
 
   attr_accessible :name, :email, :password, :password_confirmation, :facebook, 
@@ -17,6 +28,10 @@ class User < ActiveRecord::Base
   validates_confirmation_of :password, :if => :password
 
   def already_borrowed_this_book(book)
-    self.exchanges.find_by_book_id_and_user_id(book, self.id)
+    self.exchanges.find_by_book_id_and_user_id_and_accepted(book, self.id, true)
+  end
+
+  def already_sent_request(book)
+    self.exchanges.find_by_book_id_and_user_id_and_accepted(book, self.id, false)
   end
 end

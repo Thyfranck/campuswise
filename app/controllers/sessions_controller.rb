@@ -15,7 +15,7 @@ class SessionsController < ApplicationController
     respond_to do |format|
       if @user = login(params[:email],params[:password])
         session[:school_id] = @user.school.id
-        format.html { redirect_to dashboard_path, :notice => "Logged In"}
+        format.html { redirect_back_or_to dashboard_path, :notice => "Logged In"}
       else
         format.html { redirect_to login_path}
         flash[:alert] = "Email or Password was invalid!"

@@ -24,9 +24,19 @@ class ExchangesController < ApplicationController
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
       if @exchange.update_attributes(:accepted => true)
-        format.html {redirect_to dashboard_path, :notice => "You Accepted the request"}
+        @exchange.destroy_other_pending_requests
+        format.html {redirect_to request.referrer, :notice => "You Accepted the request"}
       else
-        format.html {redirect_to dashboard_path, :alert => "You Rejected the request"}
+        format.html {redirect_to request.referrer, :alert => "Error Occured"}
+      end
+    end
+  end
+
+  def destroy
+    @exchange = Exchange.find(params[:id])
+    respond_to do |format|
+      if @exchange.destroy
+        format.html {redirect_to request.referrer, :alert => "You Rejected the request"}
       end
     end
   end

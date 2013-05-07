@@ -93,4 +93,21 @@ class UsersController < ApplicationController
       format.html {render :layout => "dashboard"}
     end
   end
+
+  def remove_notification
+    @notification = DashboardNotification.find(params[:id])
+    respond_to do |format|
+      if @notification.destroy
+        format.html { redirect_to dashboard_path}
+      else
+        format.html { redirect_to dashboard_path, :alert => 'Error Occured'}
+      end  
+    end
+  end
+
+  def borrow_requests
+    respond_to do |format|
+      format.html {render :layout => "dashboard"}
+    end
+  end
 end
