@@ -1,10 +1,13 @@
 class Book < ActiveRecord::Base
-  attr_accessible :author, :available_from, :available, :image,:isbn, :loan_price, :price, :publisher, :returning_date, :title, :user_id
+  attr_accessible :author, :available_from, :available, :image,:isbn,
+    :loan_price, :price, :publisher, :returning_date,
+    :title, :user_id, :requested
 
   attr_accessor :remote_image
   validates :author, :presence => true
   validates :isbn, :presence => true 
-  validates :title, :presence => true 
+  validates :title, :presence => true
+  validates :loan_price, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   
   belongs_to :user
   has_many :exchanges
@@ -12,7 +15,7 @@ class Book < ActiveRecord::Base
   mount_uploader :image, ImageUploader
 
   scoped_search :on => [:author, :isbn, :publisher, :title]
-  scope :available, :conditions => {:available => true}
+  scope :available_now, :conditions => {:available => true}
   scope :not_my_book, lambda { |current_user| where(["user_id != ?",current_user])}
 
   def set_google(book_id)
@@ -29,5 +32,13 @@ class Book < ActiveRecord::Base
     agent.pluggable_parser.default = Mechanize::Download
     agent.get(remote_url).save("#{Rails.root}/tmp/books/book_#{current_user.id}.jpg")
     self.image = File.open("tmp/books/book_#{current_user.id}.jpg")
+  end
+
+  def lended
+    if self.exchanges.where(:accepted => true).any?
+      return true
+    else
+      return false
+    end
   end
 end

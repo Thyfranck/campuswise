@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130506091750) do
+ActiveRecord::Schema.define(:version => 20130508064834) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -58,8 +58,9 @@ ActiveRecord::Schema.define(:version => 20130506091750) do
     t.boolean  "available"
     t.date     "available_from"
     t.date     "returning_date"
-    t.datetime "created_at",                                    :null => false
-    t.datetime "updated_at",                                    :null => false
+    t.datetime "created_at",                                                       :null => false
+    t.datetime "updated_at",                                                       :null => false
+    t.boolean  "requested",                                     :default => false
   end
 
   create_table "dashboard_notifications", :force => true do |t|

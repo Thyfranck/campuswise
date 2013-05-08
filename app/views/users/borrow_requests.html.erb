@@ -2,14 +2,15 @@ You can manage your borrow requests Here.
 
 <div class="tabbable"> <!-- Only required for left/right tabs -->
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#tab1" data-toggle="tab">Borrowed Books (<%= "#{current_user.accepted_exchanges.count}" %>)</a></li>
-    <li><a href="#tab2" data-toggle="tab">Waiting for Owner's Approval (<%= "#{current_user.pending_exchanges.count}" %>)</a></li>
-    <li><a href="#tab3" data-toggle="tab">Waiting for Your Approval (<%= "#{current_user.pending_reverse_exchanges.count}" %>)</a></li>
-    <li><a href="#tab4" data-toggle="tab">Lended (<%= "#{current_user.accepted_reverse_exchanges.count}" %>)</a></li>
+    <li class="active"><a href="#tab1" data-toggle="tab">Borrowed Books (<%= "#{@borrowed_books.count}" %>)</a></li>
+    <li><a href="#tab2" data-toggle="tab">Waiting for Owner's Approval (<%= "#{@pending_for_owner.count}" %>)</a></li>
+    <li><a href="#tab3" data-toggle="tab">Waiting for Your Approval (<%= "#{@pending_for_me.count}" %>)</a></li>
+    <li><a href="#tab4" data-toggle="tab">Lended (<%= "#{@lended.count}" %>)</a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="tab1">
-      <% if current_user.accepted_exchanges.any? %>
+      <% if @borrowed_books.any? %>
+      <%= will_paginate @borrowed_books %>
       <table class="table table-hover table-bordered">
         <thead>
         <th>Book Title</th>
@@ -17,7 +18,7 @@ You can manage your borrow requests Here.
         <th>Returning Time</th>
         <th></th>
         </thead>
-        <% current_user.accepted_exchanges.each do |exchange| %>
+        <% @borrowed_books.each do |exchange| %>
           <% @book = Book.find(exchange.book_id) %>
           <tbody>
             <tr>
@@ -34,14 +35,15 @@ You can manage your borrow requests Here.
       <% end %>
     </div>
     <div class="tab-pane" id="tab2">
-      <% if current_user.pending_exchanges.any? %>
+      <% if @pending_for_owner.any? %>
+      <%= will_paginate @pending_for_owner %>
       <table class="table table-hover table-bordered">
         <thead>
         <th>Book Title</th>
         <th>Request Sent At</th>
         <th></th>
         </thead>
-        <% current_user.pending_exchanges.each do |exchange| %>
+        <% @pending_for_owner.each do |exchange| %>
           <% @book = Book.find(exchange.book_id) %>
           <tbody>
             <tr>
@@ -57,7 +59,8 @@ You can manage your borrow requests Here.
       <% end %>
     </div>
     <div class="tab-pane" id="tab3">
-      <% if current_user.pending_reverse_exchanges.any? %>
+      <% if @pending_for_me.any? %>
+      <%= will_paginate @pending_for_me %>
       <table class="table table-hover table-bordered">
         <thead>
         <th>Book Title</th>
@@ -65,7 +68,7 @@ You can manage your borrow requests Here.
         <th>Requester Name</th>
         <th></th>
         </thead>
-        <% current_user.pending_reverse_exchanges.each do |exchange| %>
+        <% @pending_for_me.each do |exchange| %>
           <% @book = Book.find(exchange.book_id) %>
           <tbody>
             <tr>
@@ -87,7 +90,8 @@ You can manage your borrow requests Here.
     </div>
 
     <div class="tab-pane" id="tab4">
-      <% if current_user.accepted_exchanges.any? %>
+      <% if @lended.any? %>
+      <%= will_paginate @lended %>
       <table class="table table-hover table-bordered">
         <thead>
         <th>Title</th>
@@ -96,7 +100,7 @@ You can manage your borrow requests Here.
         <th>Borrower info</th>
         <th>Payment Info</th>
         </thead>
-        <% current_user.accepted_reverse_exchanges.each do |exchange| %>
+        <% @lended.each do |exchange| %>
           <% @book = Book.find(exchange.book_id) %>
           <tbody>
             <tr>

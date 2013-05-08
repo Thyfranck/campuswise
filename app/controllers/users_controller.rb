@@ -106,6 +106,10 @@ class UsersController < ApplicationController
   end
 
   def borrow_requests
+    @borrowed_books = current_user.accepted_exchanges.paginate(:page => params[:page], :per_page => 6)
+    @pending_for_owner = current_user.pending_exchanges.paginate(:page => params[:page], :per_page => 6)
+    @pending_for_me = current_user.pending_reverse_exchanges.paginate(:page => params[:page], :per_page => 6)
+    @lended = current_user.accepted_reverse_exchanges.paginate(:page => params[:page], :per_page => 6)
     respond_to do |format|
       format.html {render :layout => "dashboard"}
     end

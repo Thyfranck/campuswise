@@ -24,6 +24,7 @@
         by <i><%= book.authors.truncate(50) %></i><br/>
         ISBN : <%= book.isbn %><br/>
         Publisher : <%= book.publisher %><br/>
+        Loan Price : <%= book.loan_price %><br/>
         <%= link_to "Show Details", show_search_path(:id => book.id), :class => 'btn btn-mini btn-info' %>
         <%= link_to "Add this Book", new_book_path(:google_book_id => book.id), :class => 'btn btn-mini btn-primary' %>
       </div>

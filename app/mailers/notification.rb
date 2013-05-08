@@ -39,7 +39,7 @@ class Notification < ActionMailer::Base
     @user = borrower
     @owner  = owner
     @book = book
-    @url = dashboard_url
+    @url = borrow_requests_url
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
     mail(:to => @user.email,
       :subject => "Congratulation Your Borrow request has been accepted - CampusWise")
@@ -49,7 +49,6 @@ class Notification < ActionMailer::Base
     @user = borrower
     @owner  = owner
     @book = book
-    @url = dashboard_url
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
     mail(:to => @user.email,
       :subject => "Your book borrow request was rejected - CampusWise")

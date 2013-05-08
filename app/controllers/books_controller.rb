@@ -12,6 +12,9 @@ class BooksController < ApplicationController
     if params[:google_book_id]
       @book.set_google(params[:google_book_id])
     end
+    if params[:request]
+      @requested_book = true
+    end
   end
 
   def create
@@ -98,11 +101,21 @@ class BooksController < ApplicationController
   end
 
   def search_for_borrow
-    if params[:browse] == true
-      @books = Book.available.not_my_book(current_user.id)
+    @current_school_books = current_school.books
+    if params[:browse] == true     
+      @books = @current_school_books.available_now.not_my_book(current_user.id)
     else
-      @books = Book.available.not_my_book(current_user.id).search_for(params[:search]).paginate(:page => params[:page], :per_page => 6)
+      @books = @current_school_books.available_now.not_my_book(current_user.id).search_for(params[:search]).paginate(:page => params[:page], :per_page => 6)
     end 
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  def requested_books
+    @books = current_school.books
+    @my_requested_books = current_user.books.where(:requested => true).order("created_at DESC")
+    @requested_books = @books.where(:requested => true).order("created_at DESC")
     respond_to do |format|
       format.html
     end

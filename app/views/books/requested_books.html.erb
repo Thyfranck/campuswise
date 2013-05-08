@@ -1,0 +1,62 @@
+You can manage your requested books and can what other users in your campus requesting right now.
+
+<div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">Recent requests (<%= "#{@requested_books.count}" %>)</a></li>
+    <li><a href="#tab2" data-toggle="tab">My requests (<%= "#{@my_requested_books.count}" %>)</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+      <% if @requested_books.any? %>
+        <table class="table table-hover table-bordered">
+          <thead>
+          <th>Book Title</th>
+          <th>Requested At</th>
+          <th></th>
+          </thead>
+          <% @requested_books.each do |book| %>
+            <tbody>
+              <tr>
+                <td><%= book.title %></td>
+                <td><%= book.created_at.strftime("%d %m %Y") %></td>
+                <td style="text-align:center">
+                  <%= link_to "Show", book_path(book.id), :class => "btn btn-mini btn-primary" %>
+                  <% if book.user == current_user %>
+                    <%= link_to "Delete", book_path(book.id), :method => :delete, :confirm => "Are you Sure?" ,:class => "btn btn-mini btn-primary" %>
+                  <% end %>
+                </td>
+              </tr>
+            </tbody>
+          <% end %>
+        </table>
+      <% else %>
+        Currently Empty.
+      <% end %>
+    </div>
+    <div class="tab-pane" id="tab2">
+      <% if @my_requested_books.any? %>
+        <table class="table table-hover table-bordered">
+          <thead>
+          <th>Book Title</th>
+          <th>Requested At</th>
+          <th></th>
+          </thead>
+          <% @my_requested_books.each do |book| %>
+            <tbody>
+              <tr>
+                <td><%= book.title %></td>
+                <td><%= book.created_at.strftime("%d %m %Y") %></td>
+                <td style="text-align:center">
+                  <%= link_to "Show", book_path(book.id), :class => "btn btn-mini btn-primary" %>
+                  <%= link_to "Delete", book_path(book.id), :method => :delete, :confirm => "Are you Sure?" ,:class => "btn btn-mini btn-primary" %>
+                </td>
+              </tr>
+            </tbody>
+          <% end %>
+        </table>
+      <% else %>
+        Currently Empty.
+      <% end %>
+    </div>
+  </div>
+</div>

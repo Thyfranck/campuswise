@@ -23,6 +23,7 @@ Campuswise::Application.routes.draw do
   match '/dashboard' => 'users#dashboard'
   match '/remove_notification' => 'users#remove_notification'
   match '/borrow_requests' => 'users#borrow_requests'
+  match '/requested_books' => 'books#requested_books'
 
   
   resources :users, :except => [:index] do

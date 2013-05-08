@@ -72,39 +72,38 @@
         <%= f.text_field :publisher, :class => 'text_field' %>
       </div>
     </div>
-    <div class="control-group">
-      <%= f.label :price, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.number_field :price, :class => 'number_field' %>
+    
+    <% unless @book.requested == true or @requested_book == true %>
+      <div class="control-group">
+        <%= f.label :loan_price, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.number_field :loan_price, :class => 'number_field' %>
+        </div>
       </div>
-    </div>
-    <div class="control-group">
-      <%= f.label :loan_price, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.number_field :loan_price, :class => 'number_field' %>
+      <div class="control-group">
+        <%= f.label :available, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.check_box :available, :class => 'check_box' %>
+        </div>
       </div>
-    </div>
-    <div class="control-group">
-      <%= f.label :available, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.check_box :available, :class => 'check_box' %>
+      <div class="control-group">
+        <%= f.label :available_from, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.date_select :available_from, {}, :class => 'span3 selectpicker' %>
+        </div>
       </div>
-    </div>
-    <div class="control-group">
-      <%= f.label :available_from, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.date_select :available_from, {}, :class => 'span3 selectpicker' %>
+      <div class="control-group">
+        <%= f.label :returning_date, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.date_select :returning_date, {}, :class => 'span3 selectpicker' %>
+        </div>
       </div>
-    </div>
-    <div class="control-group">
-      <%= f.label :returning_date, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.date_select :returning_date, {}, :class => 'span3 selectpicker' %>
-      </div>
-    </div>
+    <% else @requested_book == true %>
+          <%= f.hidden_field :requested, :value => true %>
+    <% end %>
 
     <div class="form-actions">
-      <%= f.submit nil, :class => 'btn btn-primary' %>
+      <%= f.submit "Submit", :class => 'btn btn-primary' %>
       <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
         books_path, :class => 'btn' %>
     </div>

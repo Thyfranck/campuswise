@@ -7,9 +7,11 @@
     <li class="nav-header">Books Information</li>
     <li><%= link_to "Add a new book", new_book_path %></li>
     <li><%= link_to "My books", books_path %></li>
+    <li><%= link_to "Book requests", requested_books_path %></li>
     <li class="nav-header">Books Borrow Information</li>
     <li><%= link_to "Borrow a book", new_exchange_path %></li>
     <li><%= link_to "Manage Borrow Requests", borrow_requests_path %></li>
+    <li><%= link_to "Request For a Book", new_book_path(:request => true) %></li>
     <li class="nav-header">Payment Information</li>
     <li><%= link_to "Total Balance", '#' %></li>
     <li><%= link_to "Withdraw balance", '#' %></li>

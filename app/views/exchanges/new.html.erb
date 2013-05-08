@@ -11,3 +11,5 @@ Or you can search for a Specific Book below
   <%= text_field_tag :search, nil ,:placeholder => "Enter Title, Author, Publisher or ISBN number", :class => "span6" %>
   <%= submit_tag "Search", :class => "btn btn-primary search_button" %>
 <% end %>
+Or if you don't find your desired books in our site you can post it
+&nbsp;<%= link_to "Here", new_book_path(:requested => true) %> so that other users can see it.
