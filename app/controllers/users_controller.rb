@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_filter :require_login, :except => [:new, :create, :activate]
+  before_filter :require_login, :except => [:new, :create, :activate, :sms_verification, :verify_code ]
 
 
   def show
@@ -43,6 +43,7 @@ class UsersController < ApplicationController
       params[:user][:email] =  "#{params[:user][:email]}"+"@"+"#{@email_postfix}"
     end
     @user = User.new(params[:user])
+    @user.set_phone_verification
     respond_to do |format|
       if @user.save
         format.html { redirect_to login_path(:school => @school), notice: 'Please Check your email for verification code.' }
@@ -87,8 +88,28 @@ class UsersController < ApplicationController
     end
   end
 
+  def sms_verification
+    @user = User.find(params[:id])
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  def verify_code
+    @code = params[:code]
+    @logged_user = User.find(params[:logged_user])
+    @user = User.find_by_phone_verification(@code)
+    if @user == @logged_user
+      @user.verify_phone
+      auto_login(@user)
+      redirect_to dashboard_path, :notice => "Your phone is now verified"
+    else
+      redirect_to sms_verification_path, :alert => "Invalid Code"
+    end
+  end
+
   def dashboard
-    @notifications = current_user.dashboard_notifications
+    @notifications = current_user.dashboard_notifications.order("created_at DESC")
     respond_to do |format|
       format.html {render :layout => "dashboard"}
     end

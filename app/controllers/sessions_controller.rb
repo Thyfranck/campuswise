@@ -12,16 +12,33 @@ class SessionsController < ApplicationController
   end
 
   def create
-    respond_to do |format|
-      if @user = login(params[:email],params[:password])
-        session[:school_id] = @user.school.id
-        format.html { redirect_back_or_to dashboard_path, :notice => "Logged In"}
+    if @user = User.authenticate(params[:email],params[:password])
+      if @user.phone_verified == "verified"
+        auto_login(@user)
       else
-        format.html { redirect_to login_path}
+        redirect_to sms_verification_path(:id => @user.id)
+      end
+    else
+      redirect_to login_path
+      @user = User.find_by_email(params[:email])
+      if @user and @user.activation_state == "pending"
+        flash[:alert] = "Please check your Email to activate your account."
+      else
         flash[:alert] = "Email or Password was invalid!"
       end
     end
   end
+
+#  def create
+#    respond_to do |format|
+#      if @user = login(params[:email],params[:password])
+#        session[:school_id] = @user.school.id
+#        format.html { redirect_back_or_to dashboard_path, :notice => "Logged In"}
+#      else
+#
+#      end
+#    end
+#  end
 
   def destroy
     logout

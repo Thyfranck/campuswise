@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130508064834) do
+ActiveRecord::Schema.define(:version => 20130508111751) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -95,14 +95,14 @@ ActiveRecord::Schema.define(:version => 20130508064834) do
 
   create_table "users", :force => true do |t|
     t.integer  "school_id"
-    t.string   "email",                                          :null => false
+    t.string   "email",                                                  :null => false
     t.string   "name"
     t.string   "phone"
     t.string   "facebook"
     t.string   "crypted_password"
     t.string   "salt"
-    t.datetime "created_at",                                     :null => false
-    t.datetime "updated_at",                                     :null => false
+    t.datetime "created_at",                                             :null => false
+    t.datetime "updated_at",                                             :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_token_expires_at"
     t.datetime "reset_password_email_sent_at"
@@ -115,6 +115,8 @@ ActiveRecord::Schema.define(:version => 20130508064834) do
     t.string   "activation_state"
     t.string   "activation_token"
     t.datetime "activation_token_expires_at"
+    t.string   "phone_verification"
+    t.string   "phone_verified",                  :default => "pending"
   end
 
   add_index "users", ["activation_token"], :name => "index_users_on_activation_token"

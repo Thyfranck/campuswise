@@ -24,6 +24,8 @@ Campuswise::Application.routes.draw do
   match '/remove_notification' => 'users#remove_notification'
   match '/borrow_requests' => 'users#borrow_requests'
   match '/requested_books' => 'books#requested_books'
+  match '/sms_verification' => 'users#sms_verification'
+  match '/verify_code' => 'users#verify_code'
 
   
   resources :users, :except => [:index] do

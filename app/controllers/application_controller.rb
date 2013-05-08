@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-
+  
   def current_school
     @school ||= session[:school_id].present? ? School.find(session[:school_id]) : nil
   end

@@ -1,0 +1,15 @@
+<div class="span3"></div>
+<div class="span5">
+  <fieldset>
+    <legend>Phone Verification</legend>
+    <%= form_tag verify_code_path, :class => "form-horizontal" do %>
+      <div class="control-group">
+        <div class="controls">
+          <%= text_field_tag :code, nil ,:placeholder => "Enter the code received by sms" %>
+          <%= hidden_field_tag :logged_user, @user.id %>
+          <%= submit_tag "Verify", :class => "btn btn-primary search_button" %>
+        </div>
+      </div>
+    <% end %>
+  </fieldset>
+</div>
