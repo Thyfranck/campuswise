@@ -1,7 +1,7 @@
 class TwilioRequest
   if Rails.env.development?
-    @account_sid = 'ACc31a5fe9fd352e8ab8d266ece26a4fda'
-    @auth_token = 'be2a9b437bac5c870641a81bb985f016'
+    @account_sid = 'ACb0deab9f219b8e066b5e05672105b973'
+    @auth_token = '3b64a49adb2dbbfca04db68a63acd4de'
   elsif Rails.env.staging? or Rails.env.production?
     @account_sid = ''
     @auth_token = ''

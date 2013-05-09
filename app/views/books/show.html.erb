@@ -24,8 +24,13 @@
   </p>
   <% unless @book.requested == true %>
     <p>
-      <b> Loan Price:</b>
-      <%= @book.loan_price %>
+      <b> Loan Rates</b>
+      <ul>
+        <li>Daily : <%= @book.loan_daily %></li>
+        <li>Weekly : <%= @book.loan_weekly %></li>
+        <li>Monthly : <%= @book.loan_monthly %></li>
+        <li>Full Semester : <%= @book.loan_semister %></li>
+      </ul>
     </p>
 
     <p>
@@ -39,7 +44,7 @@
     </p>
 
     <p>
-      <b> Returning Date:</b>
+      <b> Available Till:</b>
       <%= @book.returning_date %>
     </p>
   <% end %>
@@ -78,7 +83,7 @@
     <% elsif @book.available == false %>
       <p style="color: red">This book is not available</p>
     <% elsif @book.available == true %>
-      <%= link_to "Borrow This Book", exchanges_path(:id => @book.id), :method => :post ,:confirm => "Are You sure want to borrow this book? $ #{@book.loan_price.present? ? @book.loan_price : "0"} will be deducted from your account.",:class => 'btn btn-primary'  %>
+      <%= link_to "Borrow This Book", exchanges_path(:id => @book.id), :method => :post ,:confirm => "Are you sure want to borrow this book?",:class => 'btn btn-primary'  %>
     <% end %>
   <% elsif !current_user %>
     <h5 style="color: red" >Rent this book now and save your money!</h5>

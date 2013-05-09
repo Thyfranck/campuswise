@@ -11,8 +11,7 @@ class UsersController < ApplicationController
     end
   end
 
-  def new
-    
+  def new   
     if current_user
       redirect_to user_path(current_user)
     else
@@ -38,16 +37,18 @@ class UsersController < ApplicationController
 
   def create  
     @school = School.find(params[:user][:school_id])
-    @email_postfix = @school.present? ? "#{@school.email_postfix }" : nil
-    unless params[:user][:email].blank?
-      params[:user][:email] =  "#{params[:user][:email]}"+"@"+"#{@email_postfix}"
-    end
+#    @email_postfix = @school.present? ? "#{@school.email_postfix }" : nil
+#    unless params[:user][:email].blank?
+#      params[:user][:email] =  "#{params[:user][:email]}"+"@"+"#{@email_postfix}"
+#    end
     @user = User.new(params[:user])
+    @user.make_email_format
     @user.set_phone_verification
     respond_to do |format|
       if @user.save
         format.html { redirect_to login_path(:school => @school), notice: 'Please Check your email for verification code.' }
       else
+        @user.email = @user.email.gsub(/\@\S*/, "")
         format.html { render action: "new" }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
@@ -80,6 +81,7 @@ class UsersController < ApplicationController
 
   def activate
     if (@user = User.load_from_activation_token(params[:id]))
+      @user.update_attribute(:phone_verified, "not_verified")
       @user.activate!
       @school = @user.school
       redirect_to(login_path(:school => @school), :notice => 'User was successfully activated. Use your email and password to login.')
@@ -91,20 +93,23 @@ class UsersController < ApplicationController
   def sms_verification
     @user = User.find(params[:id])
     respond_to do |format|
-      format.html
+      if @user.phone_verified == "verified"
+        format.html { redirect_to dashboard_path, :notice => "Logged in"}
+      else
+        format.html
+      end     
     end
   end
 
   def verify_code
-    @code = params[:code]
-    @logged_user = User.find(params[:logged_user])
-    @user = User.find_by_phone_verification(@code)
-    if @user == @logged_user
+    @verified_user = User.find(params[:logged_user])
+    @user = User.find_by_phone_verification(params[:code])
+    if @verified_user == @user
       @user.verify_phone
       auto_login(@user)
       redirect_to dashboard_path, :notice => "Your phone is now verified"
     else
-      redirect_to sms_verification_path, :alert => "Invalid Code"
+      redirect_to sms_verification_path(:id => @verified_user.id), :alert => "Invalid Code"
     end
   end
 

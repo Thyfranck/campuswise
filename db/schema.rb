@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130508111751) do
+ActiveRecord::Schema.define(:version => 20130509100806) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -53,14 +53,17 @@ ActiveRecord::Schema.define(:version => 20130508111751) do
     t.string   "author"
     t.string   "isbn"
     t.string   "publisher"
-    t.decimal  "price",          :precision => 10, :scale => 0
-    t.decimal  "loan_price",     :precision => 10, :scale => 0
+    t.decimal  "purchase_price", :precision => 10, :scale => 0
     t.boolean  "available"
     t.date     "available_from"
     t.date     "returning_date"
     t.datetime "created_at",                                                       :null => false
     t.datetime "updated_at",                                                       :null => false
     t.boolean  "requested",                                     :default => false
+    t.decimal  "loan_daily",     :precision => 10, :scale => 0
+    t.decimal  "loan_weekly",    :precision => 10, :scale => 0
+    t.decimal  "loan_monthly",   :precision => 10, :scale => 0
+    t.decimal  "loan_semister",  :precision => 10, :scale => 0
   end
 
   create_table "dashboard_notifications", :force => true do |t|

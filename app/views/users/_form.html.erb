@@ -38,35 +38,30 @@
     <div class="control-group">
       <%= f.label :phone, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :phone, :class => 'text_field' %>
+        <%= f.text_field :phone, :class => 'text_field', :required => true %>
       </div>
     </div>
 
-    <% if @user.new_record? %>
-      <div class="control-group">
-        <%= f.label :password, :class => 'control-label' %>
-        <div class="controls">
-          <%= f.password_field :password, :class => 'text_field',:required => true %>
-        </div>
+    <div class="control-group">
+      <%= f.label :facebook, "Facebook ID", :class => 'control-label' %>
+      <div class="controls">
+        <%= f.text_field :facebook, :class => 'text_field' %>
       </div>
+    </div>
 
-      <div class="control-group">
-        <%= f.label :password_confirmation, :class => 'control-label' %>
-        <div class="controls">
-          <%= f.password_field :password_confirmation, :class => 'text_field', :required => true %>
-        </div>
+    <div class="control-group">
+      <%= f.label :password, :class => 'control-label' %>
+      <div class="controls">
+        <%= f.password_field :password, :class => 'text_field',:required => true %>
       </div>
+    </div>
 
-    <% else %>
-
-      <div class="control-group">
-        <%= f.label :facebook, :class => 'control-label' %>
-        <div class="controls">
-          <%= f.text_field :facebook, :class => 'text_field' %>
-        </div>
+    <div class="control-group">
+      <%= f.label :password_confirmation, :class => 'control-label' %>
+      <div class="controls">
+        <%= f.password_field :password_confirmation, :class => 'text_field', :required => true %>
       </div>
-
-    <% end %>
+    </div>
 
     <div class="form-actions <%= "no_background_color" if @user.new_record? %>">
       <%= f.submit :class => 'btn btn-primary have_a_account' %>
@@ -74,7 +69,6 @@
         <%= link_to "Already Have a account", login_path(:school => @school), :class => "have_a_account btn btn-info" %>
       <% end %>
     </div>
-  </fieldset>
-
-<% end %>
+  <% end %>
+</fieldset>
 

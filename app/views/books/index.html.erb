@@ -22,7 +22,6 @@
       ISBN : <%= book.isbn %><br/>
       Publisher : <%= book.publisher %><br/>
       Available : <%= book.available == true ? "Yes" : "No" %><br/>
-      Loan price : <%= book.loan_price %><br/>
       <%= link_to "Show Details", book_path(book.id), :class => 'btn btn-mini btn-info' %>
     </div>
    

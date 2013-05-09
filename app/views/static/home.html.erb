@@ -2,7 +2,7 @@
   <div class="span12">
     <div id="slider">
       <% @school_images.each_with_index do |school_image, index| %>
-        <%= image_tag(school_image.image.to_s, :class => "#{index == 0 ? 'show' : 'hide'}") %>
+        <%= image_tag(school_image.image.to_s, :class => "center-styled-image #{index == 0 ? 'show' : 'hide'}") %>
       <% end %>
     </div>
 

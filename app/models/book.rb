@@ -1,13 +1,17 @@
 class Book < ActiveRecord::Base
   attr_accessible :author, :available_from, :available, :image,:isbn,
-    :loan_price, :price, :publisher, :returning_date,
-    :title, :user_id, :requested
+    :loan_price, :purchase_price, :publisher, :returning_date,
+    :title, :user_id, :requested, :loan_daily, :loan_weekly, :loan_monthly, :loan_semister
 
   attr_accessor :remote_image
   validates :author, :presence => true
   validates :isbn, :presence => true 
   validates :title, :presence => true
-  validates :loan_price, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :purchase_price, :numericality => {:greater_than_or_equal => 5}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_daily, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_weekly, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_monthly, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_semister, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   
   belongs_to :user
   has_many :exchanges
