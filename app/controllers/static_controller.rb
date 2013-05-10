@@ -2,6 +2,7 @@ class StaticController < ApplicationController
 
   def home
     session.delete(:school_id) unless current_user
+    @recent_books = Book.order("created_at DESC")
     
     @school_images = SchoolImage.order("created_at desc")
 
@@ -11,6 +12,7 @@ class StaticController < ApplicationController
   end
 
   def public_find_books
+    @recent_books = Book.order("created_at DESC")
     if current_school
       @school = current_school
     else
