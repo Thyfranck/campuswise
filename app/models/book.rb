@@ -7,11 +7,11 @@ class Book < ActiveRecord::Base
   validates :author, :presence => true
   validates :isbn, :presence => true 
   validates :title, :presence => true
-  validates :purchase_price, :numericality => {:greater_than_or_equal => 5}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_daily, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_weekly, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_monthly, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_semister, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+#  validates :purchase_price, :presence => false ,:numericality => {:greater_than_or_equal => 5}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_daily, :presence => true ,:numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_weekly, :presence => true, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_monthly, :presence => true, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_semister, :presence => true, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   
   belongs_to :user
   has_many :exchanges

@@ -3,7 +3,11 @@ class ExchangeObserver < ActiveRecord::Observer
 
   def before_create(record)
     if record.class == Exchange
-      if Book.find(record.book_id).available == false
+      if Book.find(record.book_id).available == false #check if the book is available
+        return false
+      end
+
+      if Book.find(record.book_id).user.id == User.find(record.user_id).id #making sure  the user doesn't exchange between in his own books.
         return false
       end
     end
@@ -21,17 +25,16 @@ class ExchangeObserver < ActiveRecord::Observer
         :content => "#{@request_sender.name} wants to borrow your book \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" ")
       if @dashboard_notification.save
         Notification.notify_book_owner(@request_receiver, @request_sender, @requested_book).deliver
+        @to = @request_receiver.phone
+        @body = "#{@request_sender.name} wants to borrow your book \"#{@requested_book.title.truncate(50)}\"-Campuswise"
+        @from = "(972)885-5027"
+        TwilioRequest.send_sms(@from, @to, @body)
       end
     end
   end
 
-  def before_update(record)
-    if record.class == Book
-      return false if record.lended == true
-    end
-  end
-
   def after_update(record)
+    
     if record.class == Exchange and record.accepted == true
       @request_sender = User.find(record.user_id)
       @request_receiver = User.find(record.book.user_id)
@@ -48,6 +51,11 @@ class ExchangeObserver < ActiveRecord::Observer
         Book.find(record.book_id).update_attribute(:available, false)
         @dashboard_notification.save
         Notification.notify_book_borrower_accept(@request_receiver, @request_sender, @requested_book).deliver
+        @to = @request_sender.phone
+        @body = "Congratulation #{@request_receiver.name} has accepted your borrow request for the book \"#{@requested_book.title.truncate(50)}\"-Campuswise"
+        @from = "(972)885-5027"
+        TwilioRequest.send_sms(@from, @to, @body)
+        record.destroy_other_pending_requests
       end
     end
   end
@@ -76,6 +84,10 @@ class ExchangeObserver < ActiveRecord::Observer
         )
         @dashboard_notification.save
         Notification.notify_book_borrower_reject(@request_receiver, @request_sender, @requested_book).deliver
+        @to = @request_sender.phone
+        @body = "Sorry borrow request for the book \"#{@requested_book.title.truncate(50)}\" was rejected this time -Campuswise"
+        @from = "(972)885-5027"
+        TwilioRequest.send_sms(@from, @to, @body)
       elsif Book.find(record.book_id).available == false
         Book.find(record.book_id).update_attribute(:available, true)
       end

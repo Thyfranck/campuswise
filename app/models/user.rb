@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
       @to = self.phone
       @body = "Please enter this code #{self.phone_verification} -Campuswise"
       @from = "(972)885-5027"
-      TwilioRequest.send_verification_code(@from, @to, @body)
+      TwilioRequest.send_sms(@from, @to, @body)
     else
       return true
     end

@@ -69,6 +69,9 @@ $(document).ready(function(){
         open: function() {
             $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
         },
+        open: function(){
+                $('.ui-autocomplete').css('width', '290px');
+        },
         close: function() {
             $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
         }

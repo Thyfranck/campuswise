@@ -8,7 +8,7 @@
     <% if @book.errors.any? %>
       <div id="error_explanation" class="alert alert-error">
         <h4>
-          <%= pluralize(@book.errors.count, "error") %> prohibited this user from being saved:
+          Please fill correctly following <%= pluralize(@book.errors.count, "field") %>.
         </h4>
         <ul>
           <% @book.errors.full_messages.each do |msg| %>
@@ -31,7 +31,7 @@
     <div class="control-group">
       <%= f.label :title, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :title , :class => 'text_field'%>
+        <%= f.text_field :title , :class => 'text_field', :required => true%>
       </div>
     </div>
 
@@ -57,50 +57,51 @@
     <div class="control-group">
       <%= f.label :author, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :author, :class => 'text_field'%>
+        <%= f.text_field :author, :class => 'text_field', :required => true%>
       </div>
     </div>
     <div class="control-group">
       <%= f.label :isbn, "ISBN", :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :isbn, :class => 'text_field'%>
+        <%= f.text_field :isbn, :class => 'text_field', :required => true%>
       </div>
     </div>
     <div class="control-group">
       <%= f.label :publisher, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :publisher, :class => 'text_field' %>
+        <%= f.text_field :publisher, :class => 'text_field', :required => true %>
       </div>
     </div>
-    
-    <legend>Loan Rates</legend>
+
+
     <% unless @book.requested == true or @requested_book == true %>
+      <legend>Loan Rates</legend>
       <div class="control-group">
         <h5><%= f.label :loan_daily, "Daily", :class => 'control-label' %></h5>
         <div class="controls">
-          <%= f.number_field :loan_daily, :class => 'number_field' %>
+          <%= f.number_field :loan_daily, :class => 'number_field', :required => true %><div class="number_error" style="color:red"></div>
         </div>
       </div>
-    <div class="control-group">
+      <div class="control-group">
         <%= f.label :loan_weekly, "Weekly", :class => 'control-label' %>
         <div class="controls">
-          <%= f.number_field :loan_weekly, :class => 'number_field' %>
+          <%= f.number_field :loan_weekly, :class => 'number_field', :required => true %><div class="number_error" style="color:red"></div>
         </div>
       </div>
-    <div class="control-group">
-        <%= f.label :loan_monthly, "Monthly", :class => 'control-label' %>
+      <div class="control-group">
+        <%= f.label :loan_monthly, "Monthly", :class => 'control-label' %><div style="color:red"></div>
         <div class="controls">
-          <%= f.number_field :loan_monthly, :class => 'number_field' %>
+          <%= f.number_field :loan_monthly, :class => 'number_field', :required => true %><div class="number_error" style="color:red"></div>
         </div>
       </div>
-    <div class="control-group">
+      <div class="control-group">
         <%= f.label :loan_semister, "Full Semester", :class => 'control-label' %>
         <div class="controls">
-          <%= f.number_field :loan_semister, :class => 'number_field' %>
+          <%= f.number_field :loan_semister, :class => 'number_field', :required => true %><div class="number_error" style="color:red"></div>
         </div>
       </div>
-    
-    <legend>Availability</legend>
+
+      <legend>Availability</legend>
       <div class="control-group">
         <%= f.label :available, :class => 'control-label' %>
         <div class="controls">
@@ -120,7 +121,7 @@
         </div>
       </div>
     <% else @requested_book == true %>
-          <%= f.hidden_field :requested, :value => true %>
+      <%= f.hidden_field :requested, :value => true %>
     <% end %>
 
     <div class="form-actions">

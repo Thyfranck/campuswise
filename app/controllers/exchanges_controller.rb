@@ -24,7 +24,6 @@ class ExchangesController < ApplicationController
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
       if @exchange.update_attributes(:accepted => true)
-        @exchange.destroy_other_pending_requests
         format.html {redirect_to request.referrer, :notice => "You Accepted the request"}
       else
         format.html {redirect_to request.referrer, :alert => "Error Occured"}

@@ -72,12 +72,12 @@
   </p>
 
   <% if current_user and @book.user_id == current_user.id and @book.lended == true %>
-    <h5 style="color: red">This book is already borrowed, you cant edit this book until it is returned.</h5>
+    <h5 style="color: red">This book is already borrowed or in a borrow process. You can't edit this book now.</h5>
   <% end %>
 
   <% if current_user and @book.user != current_user %>
     <% if current_user.already_borrowed_this_book(@book.id) %>
-      <h5 style="color: red">You Already borrowed this book</h5>
+      <h5 style="color: red">You borrowed this book</h5>
     <% elsif current_user.already_sent_request(@book.id) %>
       <h5 style="color: red">Your borrow request for this book is pending for approval</h5>
     <% elsif @book.available == false %>

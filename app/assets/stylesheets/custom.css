@@ -48,7 +48,8 @@
 }
 
 #slider-container{
-    background-color: #555;
+    /*    background-color: #555;*/
+    background-color: transparent;
 }
 
 #school_id{
@@ -92,6 +93,14 @@
     }
 }
 
+@media (min-width: 1701px){
+    #slider {
+        -moz-box-shadow:    -145px 0 25px -12px #000000 inset, 145px 0 25px -12px #000000 inset;
+        -webkit-box-shadow: -145px 0 25px -12px #000000 inset, 145px 0 25px -12px #000000 inset;
+        box-shadow: -145px 0 25px -12px #000000 inset, 145px 0 25px -12px #000000 inset;
+    }
+}
+
 /* Books Slider */
 
 #books-slider{
@@ -132,7 +141,6 @@
 .slide-content{
     width: 99%;
     height: 99px;
-    border: 1px solid red;
 }
 
 #books-slider li.span4{
@@ -350,39 +358,41 @@ a:hover{
     margin: 0 auto;
 }
 
-.slide-content {
-    border: 1px solid white;
-}
-
 .slider_book_image {
-    border: 1px solid white;
-    height: 92px;
-    margin-top: 3px;
-}
-
-.slider_book_text {
-    border: 1px solid white;
-    height: 92px;
-    margin-top: 3px;
+    border: 4px solid white;
+    border-radius: 9px;
+    margin-top: 5px;
 }
 
 .center-styled-image {
     margin: 0 auto;
-    -moz-box-shadow:    inset 0 0 10px #000000;
-    -webkit-box-shadow: inset 0 0 10px #000000;
-    box-shadow:         inset 0 0 10px #000000;
+    z-index: -1;
+    position: relative;
 }
 
 #slider {
-    background-color: #000000;
-
+    background-color: transparent;
 }
 
 .slider_book_image > img {
-    height: 100%;
+    height: 80px;
     width: 100%;
+    border-radius: 5px;
 }
 
 .slider_book_text {
     color: white;
+    height: 80px;
+    margin-top: 10px;
 }
+
+.slider_book_text .title {
+    font-family: 'Comic Sans MS';
+    font-weight: bold;
+}
+
+.slide-content .author {
+    font-family: sans-serif;
+}
+
+

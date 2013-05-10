@@ -7,7 +7,7 @@ class TwilioRequest
     @auth_token = ''
   end
 
-  def self.send_verification_code(from, to, body)
+  def self.send_sms(from, to, body)
     @client = Twilio::REST::Client.new(@account_sid, @auth_token)
     @client.account.sms.messages.create(
       :from => from,

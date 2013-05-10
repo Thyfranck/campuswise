@@ -4,7 +4,7 @@ class BooksController < ApplicationController
   layout "dashboard"
 
   def index
-    @books = current_user.books.paginate(:page => params[:page], :per_page => 6)
+    @books = current_user.books.where(:requested => false).paginate(:page => params[:page], :per_page => 6)
   end
 
   def new
@@ -45,12 +45,20 @@ class BooksController < ApplicationController
 
   def edit
     @book = Book.find(params[:id])
+    respond_to do |format|
+      if @book.lended
+        format.html {redirect_to book_path(@book)}
+      else
+        format.html
+      end
+    end  
   end
 
   def update
     @book= Book.find(params[:id])
     respond_to do |format|
-      if @book.update_attributes(params[:book])
+      unless @book.lended == true
+        @book.update_attributes(params[:book])
         format.html {redirect_to books_path}
         flash[:notice] = "Request Completed"
       else
