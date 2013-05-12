@@ -12,7 +12,7 @@
       <%= image_tag 'renting_txt.png' %>
       <br />
       <div class="search_box">
-        <%= form_tag find_path, :class => "form-horizontal" do %>
+        <%= form_tag school_home_path, :class => "form-horizontal" do %>
           <%= select_tag :school_id, options_for_select(School.all.collect{|s| [s.name, s.id]}), :class => "uniform" %>
           <%= submit_tag "Continue", :class => "btn btn-primary search_button" %>
         <% end %>

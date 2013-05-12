@@ -1,5 +1,5 @@
 class BooksController < ApplicationController
-  before_filter :require_login
+  before_filter :require_login, :except => [:show, :available]
 
   layout "dashboard"
 
@@ -41,6 +41,7 @@ class BooksController < ApplicationController
 
   def show
     @book = Book.find(params[:id])
+    render :layout => "application", :template => "books/public_view" if current_user.blank?
   end
 
   def edit
@@ -108,19 +109,15 @@ class BooksController < ApplicationController
     end
   end
 
-  def search_for_borrow
-    @current_school_books = current_school.books
-    if params[:browse] == true     
-      @books = @current_school_books.available_now.not_my_book(current_user.id)
-    else
-      @books = @current_school_books.available_now.not_my_book(current_user.id).search_for(params[:search]).paginate(:page => params[:page], :per_page => 6)
-    end 
-    respond_to do |format|
-      format.html
-    end
+  def available
+    @books = current_school.books.available_now
+    @books = @books.not_my_book(current_user.id) if current_user
+    @books = @books.search_for(params[:search]) if params[:search].present?
+    @books = @books.paginate(:page => params[:page], :per_page => 6)
+    render :layout => "application", :template => "books/public_search" if current_user.blank?
   end
 
-  def requested_books
+  def requested
     @books = current_school.books
     @my_requested_books = current_user.books.where(:requested => true).order("created_at DESC")
     @requested_books = @books.where(:requested => true).order("created_at DESC")

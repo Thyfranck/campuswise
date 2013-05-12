@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   belongs_to :school
   has_many :books, :dependent => :destroy
   has_many :exchanges
+  
   def accepted_exchanges
     self.exchanges.where(:accepted => true)
   end
@@ -17,7 +18,9 @@ class User < ActiveRecord::Base
 
   has_many :dashboard_notifications
 
-  attr_accessible :name, :email, :password, :password_confirmation, 
+  attr_accessor :current_password
+
+  attr_accessible :name, :email, :password, :password_confirmation, :current_password,
     :facebook, :phone_verification, :phone_verified,
     :school_id, :phone
   
@@ -52,10 +55,13 @@ class User < ActiveRecord::Base
 
   def send_sms_verification
     if self.phone_verified == "pending"
+      if self.phone_verification.blank?
+        self.set_phone_verification
+        self.save
+      end
       @to = self.phone
       @body = "Please enter this code #{self.phone_verification} -Campuswise"
-      @from = "(972)885-5027"
-      TwilioRequest.send_sms(@from, @to, @body)
+      TwilioRequest.send_sms(@body, @to)
     else
       return true
     end

@@ -5,7 +5,10 @@ class SessionsController < ApplicationController
     if current_user
       redirect_to user_path(current_user)
     else
-      @school = School.find(params[:school]) if params[:school]
+      if params[:school]
+        @school = School.find(params[:school])
+        session[:school_id] = @school.id
+      end
       @user = User.new
     end
     
@@ -18,28 +21,17 @@ class SessionsController < ApplicationController
         auto_login(@user)
         redirect_back_or_to dashboard_path, :notice => "Logged in"
       else
-        redirect_to sms_verification_path(:id => @user.id)
+        redirect_to sms_verification_user_path(@user)
       end
-    else
-      redirect_to login_path      
+    else     
       if @user = User.authenticate_without_active_check(params[:email],params[:password])
         flash[:alert] = "Please check your Email to activate your account."
       else
         flash[:alert] = "Email or Password was invalid!"
       end
+      redirect_to login_path 
     end
   end
-
-  #  def create
-  #    respond_to do |format|
-  #      if @user = login(params[:email],params[:password])
-  #        session[:school_id] = @user.school.id
-  #        format.html { redirect_back_or_to dashboard_path, :notice => "Logged In"}
-  #      else
-  #
-  #      end
-  #    end
-  #  end
 
   def destroy
     logout

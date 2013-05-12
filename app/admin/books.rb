@@ -7,8 +7,6 @@ ActiveAdmin.register Book do
   filter :available
   filter :available_from
   filter :returning_date
-  filter :price
-  filter :loan_price
   filter :created_at
 
   index do
@@ -26,8 +24,6 @@ ActiveAdmin.register Book do
     end
     column :available_from
     column :returning_date
-    column :price
-    column :loan_price
     column :created_at
     default_actions
   end

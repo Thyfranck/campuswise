@@ -21,17 +21,17 @@
     <%= f.hidden_field :school_id, :value => @school.id %>
 
     <div class="control-group">
-      <%= f.label :email, :class => 'control-label' %>
+      <%= f.label :name, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :email,:class => 'text_field', :required => true %>&nbsp;&nbsp;@
-        <%= @school.email_postfix %>
+        <%= f.text_field :name,:class => 'text_field',:required => true %>
       </div>
     </div>
 
     <div class="control-group">
-      <%= f.label :name, :class => 'control-label' %>
+      <%= f.label :email, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :name,:class => 'text_field',:required => true %>
+        <%= f.text_field :email,:class => 'text_field', :required => true %>&nbsp;&nbsp;@
+        <%= @school.email_postfix %>
       </div>
     </div>
 
@@ -42,26 +42,28 @@
       </div>
     </div>
 
-    <div class="control-group">
-      <%= f.label :facebook, "Facebook ID", :class => 'control-label' %>
-      <div class="controls">
-        <%= f.text_field :facebook, :class => 'text_field' %>
+    <% unless @user.new_record? %>
+      <div class="control-group">
+        <%= f.label :facebook, "Facebook ID", :class => 'control-label' %>
+        <div class="controls">
+          <%= f.text_field :facebook, :class => 'text_field' %>
+        </div>
       </div>
-    </div>
+    <% else %>
+      <div class="control-group">
+        <%= f.label :password, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.password_field :password, :class => 'text_field',:required => true %>
+        </div>
+      </div>
 
-    <div class="control-group">
-      <%= f.label :password, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.password_field :password, :class => 'text_field',:required => true %>
+      <div class="control-group">
+        <%= f.label :password_confirmation, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.password_field :password_confirmation, :class => 'text_field', :required => true %>
+        </div>
       </div>
-    </div>
-
-    <div class="control-group">
-      <%= f.label :password_confirmation, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.password_field :password_confirmation, :class => 'text_field', :required => true %>
-      </div>
-    </div>
+    <% end %>
 
     <div class="form-actions <%= "no_background_color" if @user.new_record? %>">
       <%= f.submit :class => 'btn btn-primary have_a_account' %>

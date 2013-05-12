@@ -27,8 +27,7 @@ class ExchangeObserver < ActiveRecord::Observer
         Notification.notify_book_owner(@request_receiver, @request_sender, @requested_book).deliver
         @to = @request_receiver.phone
         @body = "#{@request_sender.name} wants to borrow your book \"#{@requested_book.title.truncate(50)}\"-Campuswise"
-        @from = "(972)885-5027"
-        TwilioRequest.send_sms(@from, @to, @body)
+        TwilioRequest.send_sms(@body, @to)
       end
     end
   end
@@ -53,8 +52,7 @@ class ExchangeObserver < ActiveRecord::Observer
         Notification.notify_book_borrower_accept(@request_receiver, @request_sender, @requested_book).deliver
         @to = @request_sender.phone
         @body = "Congratulation #{@request_receiver.name} has accepted your borrow request for the book \"#{@requested_book.title.truncate(50)}\"-Campuswise"
-        @from = "(972)885-5027"
-        TwilioRequest.send_sms(@from, @to, @body)
+        TwilioRequest.send_sms(@body, @to)
         record.destroy_other_pending_requests
       end
     end
@@ -86,8 +84,7 @@ class ExchangeObserver < ActiveRecord::Observer
         Notification.notify_book_borrower_reject(@request_receiver, @request_sender, @requested_book).deliver
         @to = @request_sender.phone
         @body = "Sorry borrow request for the book \"#{@requested_book.title.truncate(50)}\" was rejected this time -Campuswise"
-        @from = "(972)885-5027"
-        TwilioRequest.send_sms(@from, @to, @body)
+        TwilioRequest.send_sms(@body, @to)
       elsif Book.find(record.book_id).available == false
         Book.find(record.book_id).update_attribute(:available, true)
       end

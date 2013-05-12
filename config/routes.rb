@@ -1,36 +1,31 @@
 Campuswise::Application.routes.draw do
 
 
-  resources :books
+  resources :books do
+    collection do
+      get :available
+      get :requested
+    end
+  end
 
   resources :exchanges
 
-
-  get "password_resets/create"
-
-  get "password_resets/edit"
-
-  get "password_resets/update"
-
-  match "home"     => "static#home"
-
-  match 'school-home' => 'static#public_find_books', :as => :find
   match '/search' => 'books#search', :as => :search
-  match '/public_search' => 'static#public_search'
   match '/show_search' => 'books#show_search'
-  match '/show_public' => 'static#show_public'
-  match '/search_for_borrow' => 'books#search_for_borrow'
   match '/dashboard' => 'users#dashboard'
   match '/remove_notification' => 'users#remove_notification'
   match '/borrow_requests' => 'users#borrow_requests'
-  match '/requested_books' => 'books#requested_books'
-  match '/sms_verification' => 'users#sms_verification'
-  match '/verify_code' => 'users#verify_code'
+
+  match 'school-home' => 'static#school_home', :as => :school_home
 
   
   resources :users, :except => [:index] do
     member do
       get :activate
+      get :change_password
+      get :sms_verification
+      post :verify_code
+      get :send_verification_sms
     end
   end
 

@@ -1,15 +1,17 @@
 <br/>
 <br/>
 You can browse all the available books in your campus   
-<%= link_to "here", search_for_borrow_path(:browse => true), :class => "btn btn-small btn-info"  %>
+<%= link_to "here", available_books_path, :class => "btn btn-small btn-info"  %>
 <br/>
 <br/>
 Or you can search for a Specific Book below
 <br/>
 <br/>
-<%= form_tag search_for_borrow_path, :class => "form-horizontal search_borrow" do %>
+<%= form_tag available_books_path, :class => "form-horizontal search_borrow", :method => :get do %>
   <%= text_field_tag :search, nil ,:placeholder => "Enter Title, Author, Publisher or ISBN number", :class => "span6" %>
   <%= submit_tag "Search", :class => "btn btn-primary search_button" %>
 <% end %>
 Or if you don't find your desired books in our site you can post it
-&nbsp;<%= link_to "Here", new_book_path(:requested => true) %> so that other users can see it.
+&nbsp;
+<%= link_to "Here", new_book_path(:requested => true) %>
+so that other users can see it.

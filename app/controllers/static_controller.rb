@@ -11,7 +11,7 @@ class StaticController < ApplicationController
     end
   end
 
-  def public_find_books
+  def school_home
     @recent_books = Book.order("created_at DESC")
     if current_school
       @school = current_school
@@ -32,18 +32,5 @@ class StaticController < ApplicationController
         format.html { redirect_to root_path }
       end
     end
-  end
-
-
-  def public_search
-    @books = current_school.books
-    @books = @books.search_for(params[:search]).paginate(:page => params[:page], :per_page => 6)
-    respond_to do |format|
-      format.html
-    end
-  end
-
-  def show_public
-    @book = Book.find(params[:id])
   end
 end

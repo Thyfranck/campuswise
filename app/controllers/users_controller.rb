@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_filter :require_login, :except => [:new, :create, :activate, :sms_verification, :verify_code ]
+  before_filter :require_login, :except => [:new, :create, :activate, :sms_verification, :verify_code, :send_verification_sms ]
 
 
   def show
@@ -37,10 +37,10 @@ class UsersController < ApplicationController
 
   def create  
     @school = School.find(params[:user][:school_id])
-#    @email_postfix = @school.present? ? "#{@school.email_postfix }" : nil
-#    unless params[:user][:email].blank?
-#      params[:user][:email] =  "#{params[:user][:email]}"+"@"+"#{@email_postfix}"
-#    end
+    #    @email_postfix = @school.present? ? "#{@school.email_postfix }" : nil
+    #    unless params[:user][:email].blank?
+    #      params[:user][:email] =  "#{params[:user][:email]}"+"@"+"#{@email_postfix}"
+    #    end
     @user = User.new(params[:user])
     @user.make_email_format
     @user.set_phone_verification
@@ -57,13 +57,19 @@ class UsersController < ApplicationController
 
   def update
     @user = User.find(params[:id])
-    params[:user][:email] = "#{params[:user][:email]}"+"@"+"#{@user.school.email_postfix}"
+    params[:user][:email] = "#{params[:user][:email]}"+"@"+"#{@user.school.email_postfix}" if params[:user][:email].present?
     respond_to do |format|
       if @user.update_attributes(params[:user])
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { redirect_to edit_user_path(@user), :alert => "Error Occured" }
+        format.html { 
+          if params[:user][:current_password].present?
+            render action: "change_password", layout: "dashboard"
+          else
+            redirect_to edit_user_path(@user) 
+          end
+        }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
@@ -90,6 +96,19 @@ class UsersController < ApplicationController
     end
   end
 
+  def change_password
+    @user = User.find(params[:id])
+    respond_to do |format|
+      format.html { render layout: "dashboard" }
+    end
+  end
+
+  def send_verification_sms
+    @user = User.find(params[:id])
+    @user.send_sms_verification
+    redirect_to sms_verification_user_path(@user), :notice => "Verification sms sent! Please check your mobile phone."
+  end
+
   def sms_verification
     @user = User.find(params[:id])
     respond_to do |format|
@@ -102,14 +121,14 @@ class UsersController < ApplicationController
   end
 
   def verify_code
-    @verified_user = User.find(params[:logged_user])
-    @user = User.find_by_phone_verification(params[:code])
+    @user = User.find(params[:id])
+    @verified_user = User.find_by_phone_verification(params[:code])
     if @verified_user == @user
       @user.verify_phone
       auto_login(@user)
-      redirect_to dashboard_path, :notice => "Your phone is now verified"
+      redirect_to dashboard_path, :notice => "Your phone is now verified!"
     else
-      redirect_to sms_verification_path(:id => @verified_user.id), :alert => "Invalid Code"
+      redirect_to sms_verification_user_path(@user), :alert => "Invalid Code"
     end
   end
 
