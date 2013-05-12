@@ -18,4 +18,5 @@
 //= require jquery.uniform
 //= require jquery.ui.autocomplete
 //= require search
+//= require book
 //= require custom

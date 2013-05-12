@@ -1,0 +1,136 @@
+You can manage your borrow requests Here.
+
+<div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">Borrowed Books (<%= "#{@borrowed_books.count}" %>)</a></li>
+    <li><a href="#tab2" data-toggle="tab">Waiting for Owner's Approval (<%= "#{@pending_for_owner.count}" %>)</a></li>
+    <li><a href="#tab3" data-toggle="tab">Waiting for Your Approval (<%= "#{@pending_for_me.count}" %>)</a></li>
+    <li><a href="#tab4" data-toggle="tab">Lended (<%= "#{@lended.count}" %>)</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+      <% if @borrowed_books.any? %>
+        <%= will_paginate @borrowed_books %>
+        <table class="table table-hover table-bordered">
+          <thead>
+          <th>Book Title</th>
+          <th>Borrowed Date</th>
+          <th>Returning Time</th>
+          <th>Owner contact info</th>
+          <th>Book Action</th>
+          </thead>
+          <% @borrowed_books.each do |exchange| %>
+            <% @book = Book.find(exchange.book_id) %>
+            <tbody>
+              <tr>
+                <td><%= @book.title %></td>
+                <td><%= exchange.created_at.strftime("%m/%d/%Y") %></td>
+                <td><%= @book.returning_date.strftime("%m/%d/%Y") %></td>
+                <td>
+                  <ul>
+                    <li>Name : <%= User.find(@book.user_id).name %></li>
+                    <li>Email: <%= User.find(@book.user_id).email %></li>
+                    <li>Phone: <%= User.find(@book.user_id).phone %></li>
+                    <li>Facebook: <%= User.find(@book.user_id).facebook %></li>
+                  </ul>
+                </td>
+                <td style="text-align:center"><%= link_to "Show", book_path(@book), :class => "btn btn-mini btn-primary" %></td>
+              </tr>
+            </tbody>
+          <% end %>
+        </table>
+      <% else %>
+        Currently Empty.
+      <% end %>
+    </div>
+    <div class="tab-pane" id="tab2">
+      <% if @pending_for_owner.any? %>
+        <%= will_paginate @pending_for_owner %>
+        <table class="table table-hover table-bordered">
+          <thead>
+          <th>Book Title</th>
+          <th>Request Sent At</th>
+          <th></th>
+          </thead>
+          <% @pending_for_owner.each do |exchange| %>
+            <% @book = Book.find(exchange.book_id) %>
+            <tbody>
+              <tr>
+                <td><%= @book.title %></td>
+                <td><%= exchange.created_at.strftime("%m/%d/%Y") %></td>
+                <td style="text-align:center"><%= link_to "Show", book_path(@book), :class => "btn btn-mini btn-primary" %></td>
+              </tr>
+            </tbody>
+          <% end %>
+        </table>
+      <% else %>
+        Currently Empty.
+      <% end %>
+    </div>
+    <div class="tab-pane" id="tab3">
+      <% if @pending_for_me.any? %>
+        <%= will_paginate @pending_for_me %>
+        <table class="table table-hover table-bordered">
+          <thead>
+          <th>Book Title</th>
+          <th>Request Received At</th>
+          <th>Requester Name</th>
+          <th></th>
+          </thead>
+          <% @pending_for_me.each do |exchange| %>
+            <% @book = Book.find(exchange.book_id) %>
+            <tbody>
+              <tr>
+                <td><%= @book.title %></td>
+                <td><%= exchange.created_at.strftime("%m/%d/%Y") %></td>
+                <td><%= User.find(exchange.user_id).name %></td>
+                <td style="min-width:145px;">
+                  <%= link_to "Approve", exchange_path(exchange.id), :method => :put, :class => "btn btn-mini btn-primary" %>
+                  <%= link_to "Deny", exchange_path(exchange.id), :method => :delete, :class => "btn btn-mini btn-primary" %>
+                  <%= link_to "Show", book_path(@book), :class => "btn btn-mini btn-primary" %>
+                </td>
+              </tr>
+            </tbody>
+          <% end %>
+        </table>
+      <% else %>
+        Currently Empty.
+      <% end %>
+    </div>
+
+    <div class="tab-pane" id="tab4">
+      <% if @lended.any? %>
+        <%= will_paginate @lended %>
+        <table class="table table-hover table-bordered">
+          <thead>
+          <th>Title</th>
+          <th>Borrowed Date</th>
+          <th>Returning Time</th>
+          <th>Borrower info</th>
+          <th>Payment Info</th>
+          </thead>
+          <% @lended.each do |exchange| %>
+            <% @book = Book.find(exchange.book_id) %>
+            <tbody>
+              <tr>
+                <td><%= @book.title %></td>
+                <td><%= exchange.created_at.strftime("%m/%d/%Y") %></td>
+                <td><%= @book.returning_date.strftime("%m/%d/%Y") %></td>
+                <td>
+                  <ul>
+                    <li>Name : <%= User.find(exchange.user_id).name %></li>
+                    <li>Email: <%= User.find(exchange.user_id).email %></li>
+                    <li>Phone: <%= User.find(exchange.user_id).phone %></li>
+                  </ul>
+                </td>
+                <td></td>
+              </tr>
+            </tbody>
+          <% end %>
+        </table>
+      <% else %>
+        Currently Empty.
+      <% end %>
+    </div>
+  </div>
+</div>

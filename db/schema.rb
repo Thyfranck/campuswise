@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130428193842) do
+ActiveRecord::Schema.define(:version => 20130509100806) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -53,13 +53,33 @@ ActiveRecord::Schema.define(:version => 20130428193842) do
     t.string   "author"
     t.string   "isbn"
     t.string   "publisher"
-    t.decimal  "price",          :precision => 10, :scale => 0
-    t.decimal  "loan_price",     :precision => 10, :scale => 0
+    t.decimal  "purchase_price", :precision => 10, :scale => 0
     t.boolean  "available"
     t.date     "available_from"
     t.date     "returning_date"
-    t.datetime "created_at",                                    :null => false
-    t.datetime "updated_at",                                    :null => false
+    t.datetime "created_at",                                                       :null => false
+    t.datetime "updated_at",                                                       :null => false
+    t.boolean  "requested",                                     :default => false
+    t.decimal  "loan_daily",     :precision => 10, :scale => 0
+    t.decimal  "loan_weekly",    :precision => 10, :scale => 0
+    t.decimal  "loan_monthly",   :precision => 10, :scale => 0
+    t.decimal  "loan_semister",  :precision => 10, :scale => 0
+  end
+
+  create_table "dashboard_notifications", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "exchange_id"
+    t.string   "content"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "exchanges", :force => true do |t|
+    t.integer  "book_id"
+    t.integer  "user_id"
+    t.boolean  "accepted",   :default => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
   end
 
   create_table "school_images", :force => true do |t|
@@ -78,14 +98,14 @@ ActiveRecord::Schema.define(:version => 20130428193842) do
 
   create_table "users", :force => true do |t|
     t.integer  "school_id"
-    t.string   "email",                                          :null => false
+    t.string   "email",                                                  :null => false
     t.string   "name"
     t.string   "phone"
     t.string   "facebook"
     t.string   "crypted_password"
     t.string   "salt"
-    t.datetime "created_at",                                     :null => false
-    t.datetime "updated_at",                                     :null => false
+    t.datetime "created_at",                                             :null => false
+    t.datetime "updated_at",                                             :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_token_expires_at"
     t.datetime "reset_password_email_sent_at"
@@ -98,6 +118,8 @@ ActiveRecord::Schema.define(:version => 20130428193842) do
     t.string   "activation_state"
     t.string   "activation_token"
     t.datetime "activation_token_expires_at"
+    t.string   "phone_verification"
+    t.string   "phone_verified",                  :default => "pending"
   end
 
   add_index "users", ["activation_token"], :name => "index_users_on_activation_token"

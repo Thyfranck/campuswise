@@ -1,0 +1,23 @@
+<% if @notifications.any? %>
+  <table class="table table-hover table-bordered">
+    <tbody>
+      <% @notifications.each do |notification| %>
+        <tr>
+          <td>
+            <%= notification.content.html_safe %>
+          </td>
+          <td>
+            <% if notification.exchange.present? and notification.exchange.user_id != current_user.id  %>
+              <%= link_to "Approve", exchange_path(notification.exchange_id), :method => :put, :class => "btn btn-small btn-primary" %>
+              <%= link_to "Deny", exchange_path(notification.exchange_id), :method => :delete, :class => "btn btn-small btn-primary" %>
+            <% else %>
+              <%= link_to "Remove", remove_notification_path(:id => notification.id), :method => :delete, :class => "btn btn-mini" %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <h4>No new Notifications.</h4>
+<% end %>

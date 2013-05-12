@@ -21,6 +21,13 @@
     <%= f.hidden_field :school_id, :value => @school.id %>
 
     <div class="control-group">
+      <%= f.label :name, :class => 'control-label' %>
+      <div class="controls">
+        <%= f.text_field :name,:class => 'text_field',:required => true %>
+      </div>
+    </div>
+
+    <div class="control-group">
       <%= f.label :email, :class => 'control-label' %>
       <div class="controls">
         <%= f.text_field :email,:class => 'text_field', :required => true %>&nbsp;&nbsp;@
@@ -29,20 +36,20 @@
     </div>
 
     <div class="control-group">
-      <%= f.label :name, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.text_field :name,:class => 'text_field',:required => true %>
-      </div>
-    </div>
-
-    <div class="control-group">
       <%= f.label :phone, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :phone, :class => 'text_field' %>
+        <%= f.text_field :phone, :class => 'text_field', :required => true %><div class="number_error" style="color:red"></div>
       </div>
     </div>
 
-    <% if @user.new_record? %>
+    <% unless @user.new_record? %>
+      <div class="control-group">
+        <%= f.label :facebook, "Facebook ID", :class => 'control-label' %>
+        <div class="controls">
+          <%= f.text_field :facebook, :class => 'text_field' %>
+        </div>
+      </div>
+    <% else %>
       <div class="control-group">
         <%= f.label :password, :class => 'control-label' %>
         <div class="controls">
@@ -56,16 +63,6 @@
           <%= f.password_field :password_confirmation, :class => 'text_field', :required => true %>
         </div>
       </div>
-
-    <% else %>
-
-      <div class="control-group">
-        <%= f.label :facebook, :class => 'control-label' %>
-        <div class="controls">
-          <%= f.text_field :facebook, :class => 'text_field' %>
-        </div>
-      </div>
-
     <% end %>
 
     <div class="form-actions <%= "no_background_color" if @user.new_record? %>">
@@ -74,7 +71,6 @@
         <%= link_to "Already Have a account", login_path(:school => @school), :class => "have_a_account btn btn-info" %>
       <% end %>
     </div>
-  </fieldset>
-
-<% end %>
+  <% end %>
+</fieldset>
 

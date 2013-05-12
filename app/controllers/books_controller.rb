@@ -1,16 +1,19 @@
 class BooksController < ApplicationController
-  before_filter :require_login
+  before_filter :require_login, :except => [:show, :available]
 
   layout "dashboard"
 
   def index
-    @books = current_user.books.paginate(:page => params[:page], :per_page => 6)
+    @books = current_user.books.where(:requested => false).paginate(:page => params[:page], :per_page => 6)
   end
 
   def new
     @book = current_user.books.new
     if params[:google_book_id]
       @book.set_google(params[:google_book_id])
+    end
+    if params[:request]
+      @requested_book = true
     end
   end
 
@@ -38,16 +41,25 @@ class BooksController < ApplicationController
 
   def show
     @book = Book.find(params[:id])
+    render :layout => "application", :template => "books/public_view" if current_user.blank?
   end
 
   def edit
     @book = Book.find(params[:id])
+    respond_to do |format|
+      if @book.lended
+        format.html {redirect_to book_path(@book)}
+      else
+        format.html
+      end
+    end  
   end
 
   def update
     @book= Book.find(params[:id])
     respond_to do |format|
-      if @book.update_attributes(params[:book])
+      unless @book.lended == true
+        @book.update_attributes(params[:book])
         format.html {redirect_to books_path}
         flash[:notice] = "Request Completed"
       else
@@ -92,6 +104,23 @@ class BooksController < ApplicationController
 
   def show_search
     @book = GoogleBooks.search(params[:id]).first
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  def available
+    @books = current_school.books.available_now
+    @books = @books.not_my_book(current_user.id) if current_user
+    @books = @books.search_for(params[:search]) if params[:search].present?
+    @books = @books.paginate(:page => params[:page], :per_page => 6)
+    render :layout => "application", :template => "books/public_search" if current_user.blank?
+  end
+
+  def requested
+    @books = current_school.books
+    @my_requested_books = current_user.books.where(:requested => true).order("created_at DESC")
+    @requested_books = @books.where(:requested => true).order("created_at DESC")
     respond_to do |format|
       format.html
     end

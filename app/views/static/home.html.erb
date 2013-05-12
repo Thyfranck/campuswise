@@ -2,7 +2,9 @@
   <div class="span12">
     <div id="slider">
       <% @school_images.each_with_index do |school_image, index| %>
-        <%= image_tag(school_image.image.to_s, :class => "#{index == 0 ? 'show' : 'hide'}") %>
+        <%#*<div class="image-wrapper" style="display: block; border: 1px solid red;max-width: 100%;">%>
+          <%= image_tag(school_image.image.to_s, :class => "center-styled-image #{index == 0 ? 'show' : 'hide'}") %>
+        <%#*</div>%>
       <% end %>
     </div>
 
@@ -10,7 +12,7 @@
       <%= image_tag 'renting_txt.png' %>
       <br />
       <div class="search_box">
-        <%= form_tag find_path, :class => "form-horizontal" do %>
+        <%= form_tag school_home_path, :class => "form-horizontal" do %>
           <%= select_tag :school_id, options_for_select(School.all.collect{|s| [s.name, s.id]}), :class => "uniform" %>
           <%= submit_tag "Continue", :class => "btn btn-primary search_button" %>
         <% end %>

@@ -8,11 +8,11 @@
           <span class="icon-bar"></span>
         </a>
 
-        <%= link_to image_tag("logo.png"), current_user ? find_path : root_path, :class => "brand" %>
+        <%= link_to image_tag("logo.png"), current_user ? school_home_path : root_path, :class => "brand" %>
 
         <ul class="nav">
           <% if current_school.present? %>
-            <li class="school-name"><%= current_school.name %></li>
+            <li class="school-name"><%= link_to current_school.name, school_home_path %></li>
           <% end %>
         </ul>
 
@@ -21,7 +21,7 @@
             <% if current_school.present? %>
               <% if current_user %>
                 <li class="nav_user_action <%= "active" if current_page?(current_user) %>">
-                  <%= link_to "Profile", current_user %></li>
+                  <%= link_to "Dashboard", dashboard_path %></li>
                 <li class="nav_user_action ">
                   <%= link_to "Logout", logout_path %></li>
               <% else %>

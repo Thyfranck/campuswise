@@ -24,4 +24,33 @@ class Notification < ActionMailer::Base
     mail(:to => user.email,
       :subject => "Your password reset instructions - CampusWise")
   end
+
+  def notify_book_owner(owner, borrower, book)
+    @user = owner
+    @borrower  = borrower
+    @book = book
+    @url = dashboard_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
+    mail(:to => @user.email,
+      :subject => "You have received a book borrow request - CampusWise")
+  end
+
+  def notify_book_borrower_accept(owner, borrower, book)
+    @user = borrower
+    @owner  = owner
+    @book = book
+    @url = borrow_requests_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
+    mail(:to => @user.email,
+      :subject => "Congratulation Your Borrow request has been accepted - CampusWise")
+  end
+
+  def notify_book_borrower_reject(owner, borrower, book)
+    @user = borrower
+    @owner  = owner
+    @book = book
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
+    mail(:to => @user.email,
+      :subject => "Your book borrow request was rejected - CampusWise")
+  end
 end

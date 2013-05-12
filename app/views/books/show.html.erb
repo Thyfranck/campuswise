@@ -22,46 +22,46 @@
     <b> ISBN:</b>
     <%= @book.isbn %>
   </p>
+  <% unless @book.requested == true %>
+    <p>
+      <b> Loan Rates</b>
+      <ul>
+        <li>Daily : <%= @book.loan_daily %></li>
+        <li>Weekly : <%= @book.loan_weekly %></li>
+        <li>Monthly : <%= @book.loan_monthly %></li>
+        <li>Full Semester : <%= @book.loan_semister %></li>
+      </ul>
+    </p>
 
-  <p>
-    <b> Price:</b>
-    <%= @book.price %>
-  </p>
+    <p>
+      <b> Available:</b>
+      <%= @book.available == true ? "Yes" : "No" %>
+    </p>
 
-  <p>
-    <b> Loan Price:</b>
-    <%= @book.loan_price %>
-  </p>
+    <p>
+      <b> Available from:</b>
+      <%= @book.available_from %>
+    </p>
 
-  <p>
-    <b> Available:</b>
-    <%= @book.available == true ? "Yes" : "No" %>
-  </p>
-
-  <p>
-    <b> Available from:</b>
-    <%= @book.available_from %>
-  </p>
-
-  <p>
-    <b> Returning Date:</b>
-    <%= @book.returning_date %>
-  </p>
-  <% if current_user %>
+    <p>
+      <b> Available Till:</b>
+      <%= @book.returning_date %>
+    </p>
+  <% end %>
+  <% if current_user and @book.user_id == current_user.id %>
     <div class="form-actions">
-      <%= link_to t('.back', :default => t("helpers.links.back")),
-        books_path, :class => 'btn'  %>
-      <%= link_to t('.edit', :default => t("helpers.links.edit")),
-        edit_book_path(@book), :class => 'btn' %>
-      <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
-        book_path(@book),
-        :method => 'delete',
-        :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
-        :class => 'btn btn-danger' %>
+      <% if @book.lended == false %>
+        <%= link_to t('.edit', :default => t("helpers.links.edit")),
+          edit_book_path(@book), :class => 'btn' %>
+        <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+          book_path(@book),
+          :method => 'delete',
+          :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+          :class => 'btn btn-danger' %>
+      <% end %>
     </div>
   <% end %>
 </div>
-
 <div class="span3 offset1">
   <p>
     <%  if @book.image.present?  %>
@@ -70,6 +70,25 @@
       <%= image_tag 'no_book_image.jpeg', :class => "no_book_image"  %>
     <% end %>
   </p>
+
+  <% if current_user and @book.user_id == current_user.id and @book.lended == true %>
+    <h5 style="color: red">This book is already borrowed or in a borrow process. You can't edit this book now.</h5>
+  <% end %>
+
+  <% if current_user and @book.user != current_user %>
+    <% if current_user.already_borrowed_this_book(@book.id) %>
+      <h5 style="color: red">You borrowed this book</h5>
+    <% elsif current_user.already_sent_request(@book.id) %>
+      <h5 style="color: red">Your borrow request for this book is pending for approval</h5>
+    <% elsif @book.available == false %>
+      <p style="color: red">This book is not available</p>
+    <% elsif @book.available == true %>
+      <%= link_to "Borrow This Book", exchanges_path(:id => @book.id), :method => :post ,:confirm => "Are you sure want to borrow this book?",:class => 'btn btn-primary'  %>
+    <% end %>
+  <% elsif !current_user %>
+    <h5 style="color: red" >Rent this book now and save your money!</h5>
+    <%= link_to 'Sign Up!', new_user_path, :class => 'btn btn-primary' %>
+  <% end %>
 </div>
 
 
