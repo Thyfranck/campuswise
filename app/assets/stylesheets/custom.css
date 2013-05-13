@@ -395,4 +395,9 @@ a:hover{
     font-family: sans-serif;
 }
 
+.carousel .carousel-inner div.item {
+    height: 100px;
+    overflow-y: hidden;
+}
+
 

@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  card_holder_name: MyString
+  card_expiry_date: MyString
+  card_last_four_digits: MyString
+  card_type: MyString
+  stripe_id: MyString
+  user_id: MyString
+  stripe_token: MyString
+
+two:
+  card_holder_name: MyString
+  card_expiry_date: MyString
+  card_last_four_digits: MyString
+  card_type: MyString
+  stripe_id: MyString
+  user_id: MyString
+  stripe_token: MyString

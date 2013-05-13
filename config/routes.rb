@@ -15,6 +15,7 @@ Campuswise::Application.routes.draw do
   match '/dashboard' => 'users#dashboard'
   match '/remove_notification' => 'users#remove_notification'
   match '/borrow_requests' => 'users#borrow_requests'
+  match '/smsresponse' => 'exchanges#process_sms'
 
   match 'school-home' => 'static#school_home', :as => :school_home
 

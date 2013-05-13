@@ -1,4 +1,4 @@
-<%= form_for @book, :html => { :class => 'form-horizontal', :multipart => true } do |f| %>
+<%= form_for @book, :html => { :class => "form-horizontal #{"edit_book" unless @book.new_record?}", :multipart => true } do |f| %>
   <fieldset>
     <legend>
       <%= controller.action_name.capitalize %>

@@ -37,10 +37,6 @@ class UsersController < ApplicationController
 
   def create  
     @school = School.find(params[:user][:school_id])
-    #    @email_postfix = @school.present? ? "#{@school.email_postfix }" : nil
-    #    unless params[:user][:email].blank?
-    #      params[:user][:email] =  "#{params[:user][:email]}"+"@"+"#{@email_postfix}"
-    #    end
     @user = User.new(params[:user])
     @user.make_email_format
     @user.set_phone_verification

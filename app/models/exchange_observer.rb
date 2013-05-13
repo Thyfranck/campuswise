@@ -26,7 +26,7 @@ class ExchangeObserver < ActiveRecord::Observer
       if @dashboard_notification.save
         Notification.notify_book_owner(@request_receiver, @request_sender, @requested_book).deliver
         @to = @request_receiver.phone
-        @body = "#{@request_sender.name} wants to borrow your book \"#{@requested_book.title.truncate(50)}\"-Campuswise"
+        @body = "#{@request_sender.name} wants to borrow \"#{@requested_book.title.truncate(50)}\"to accept reply yes#{record.id},to ignore reply no#{record.id}-Campuswise"
         TwilioRequest.send_sms(@body, @to)
       end
     end

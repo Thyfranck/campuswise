@@ -19,4 +19,5 @@
 //= require jquery.ui.autocomplete
 //= require search
 //= require book
+//= require stripe
 //= require custom
