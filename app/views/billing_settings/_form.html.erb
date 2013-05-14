@@ -1,0 +1,58 @@
+<h3>Credit Card Information</h3>
+<div class="credit_card_logo">
+  <%= image_tag "payment-cards.png"%>
+</div>
+<br/>
+<div class="alert alert-error alert-block" style="display:none">
+</div>
+<%= form_tag billing_settings_path, :method =>  :post ,:id => "billing_settings" do %>
+
+  <%= hidden_field_tag :charge_card %>
+  <%= hidden_field_tag :stripe_token %>
+
+  <div class="control-group">
+    <%= label_tag :credit_card_type, "Credit Card Type" %>
+    <div class="controls">
+      <%= select_tag :credit_card_type, options_for_select(Constant::CREDIT_CARD_TYPE) %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= label_tag :card_holder_name, "Card Holder Name." %>
+    <div class="controls">
+      <%= text_field_tag :card_holder_name, nil, :name => nil %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= label_tag :credit_card_number, "Card Number." %>
+    <div class="controls">
+      <%= text_field_tag :credit_card_number, nil, :name => nil %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= label_tag :cvv, "Card Security Code." %>
+    <div class="controls">
+      <%= text_field_tag :cvv, nil, :name => nil %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= label_tag :expiry_date, "Expiration Date" %>
+    <div class="controls">
+      <%= date_select "", :expiry_date, {:discard_day => true, :order => [:month, :year], :use_month_numbers => true, :start_year => Date.today.year, :end_year => Date.today.year + 25} %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= submit_tag "Submit", :class => 'btn btn-primary' %>
+  </div>
+
+<% end %>
+
+<% if current_user.billing_setting.present? %>
+  <br/><br/>
+  <%= link_to "Cancel update Card", "javascript:;", :id => "cancel_update_card", :class => "blue" %>
+  <br/>
+<% end %>

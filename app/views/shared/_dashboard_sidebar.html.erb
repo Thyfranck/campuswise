@@ -18,7 +18,11 @@
       <%= link_to "Request For a Book", new_book_path(:request => true) %>
     </li>
     <li class="nav-header">Payment Information</li>
-    <li><%= link_to "Payment Settings", '#' %></li>
+    <% if current_user.billing_setting.present? %>
+    <li><%= link_to "Payment Settings", billing_setting_path(current_user.billing_setting) %></li>
+    <% else %>
+    <li><%= link_to "Payment Settings", new_billing_setting_path %></li>
+    <% end %>
     <li><%= link_to "Total Balance", '#' %></li>
     <li><%= link_to "Withdraw balance", '#' %></li>
   </div>

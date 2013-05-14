@@ -6,6 +6,9 @@ Campuswise::Application.routes.draw do
       get :available
       get :requested
     end
+    member do
+      get :borrow_duration
+    end
   end
 
   resources :exchanges
@@ -19,6 +22,7 @@ Campuswise::Application.routes.draw do
 
   match 'school-home' => 'static#school_home', :as => :school_home
 
+  resources :billing_settings, :except => [:index]
   
   resources :users, :except => [:index] do
     member do
@@ -27,6 +31,7 @@ Campuswise::Application.routes.draw do
       get :sms_verification
       post :verify_code
       get :send_verification_sms
+      get :payment
     end
   end
 

@@ -7,14 +7,16 @@ class Book < ActiveRecord::Base
   validates :author, :presence => true
   validates :isbn, :presence => true 
   validates :title, :presence => true
-#  validates :purchase_price, :presence => false ,:numericality => {:greater_than_or_equal => 5}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_daily, :presence => true ,:numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_weekly, :presence => true, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_monthly, :presence => true, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_semister, :presence => true, :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  #  validates :purchase_price, :presence => false ,:numericality => {:greater_than_or_equal => 5}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_daily, :allow_nil => true ,:numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_weekly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_monthly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_semister, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   
   belongs_to :user
   has_many :exchanges
+
+  before_save :atleast_one_loan_rate_exsists
 
   mount_uploader :image, ImageUploader
 
@@ -43,6 +45,15 @@ class Book < ActiveRecord::Base
       return true
     else
       return false
+    end
+  end
+
+  def atleast_one_loan_rate_exsists
+    if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semister == nil
+      errors[:base] << "You must specify atleast one loan rate."
+      return false
+    else
+      return true
     end
   end
 end

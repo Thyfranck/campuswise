@@ -125,4 +125,15 @@ class BooksController < ApplicationController
       format.html
     end
   end
+
+  def borrow_duration
+    @book = Book.find(params[:id])
+    respond_to do |format|
+      if current_user.eligiable_to_borrow(@book)
+        format.html
+      else
+        format.html { redirect_to current_user, :notice => "You are not allowed to borrow this book."}
+      end
+    end
+  end
 end

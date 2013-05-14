@@ -155,4 +155,10 @@ class UsersController < ApplicationController
       format.html {render :layout => "dashboard"}
     end
   end
+
+  def payment
+    respond_to do |format|
+      format.html {render layout: "dashboard"}
+    end
+  end
 end

@@ -6,8 +6,7 @@ class CreateBillingSettings < ActiveRecord::Migration
       t.string :card_last_four_digits
       t.string :card_type
       t.string :stripe_id
-      t.string :user_id
-      t.string :stripe_token
+      t.integer :user_id
 
       t.timestamps
     end

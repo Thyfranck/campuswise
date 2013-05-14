@@ -17,6 +17,8 @@ class User < ActiveRecord::Base
   has_many :accepted_reverse_exchanges, :through => :books, :conditions => "accepted = true" ,:source => :exchanges #for request receiver(book owner)
 
   has_many :dashboard_notifications
+  has_one :billing_setting
+  has_many :billing_events
 
   attr_accessor :current_password
 
@@ -45,6 +47,14 @@ class User < ActiveRecord::Base
 
   def already_sent_request(book)
     self.exchanges.find_by_book_id_and_user_id_and_accepted(book, self.id, false)
+  end
+
+  def eligiable_to_borrow(book)
+    if self.already_borrowed_this_book(book) == true or self.already_sent_request(book) == true
+      return false
+    else
+      return true
+    end
   end
 
   def set_phone_verification
