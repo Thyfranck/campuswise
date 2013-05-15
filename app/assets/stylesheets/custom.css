@@ -400,4 +400,12 @@ a:hover{
     overflow-y: hidden;
 }
 
+.exchange_amount {
+    margin-top: 35px;
+}
+
+.exchange_submit_section {
+    margin-top: 20px;
+}
+
 

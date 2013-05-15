@@ -44,11 +44,16 @@ $(document).ready(function(){
         var var2 = $.trim($('#book_loan_weekly').val());
         var var3 = $.trim($('#book_loan_monthly').val());
         var var4 = $.trim($('#book_loan_semister').val());
-        if(var1.length < 1  && var2.length < 1 && var3.length < 1 && var4.length < 1 ){
+
+        if($('#book_requested').val() == 'true'){
+            return true;
+        }else if(var1.length < 1  && var2.length < 1 && var3.length < 1 && var4.length < 1 ){
             e.preventDefault();
             $('.loan_error').html('You must specify at least one loan type and rates.')
             return false;
         }
+
+        
     });
 
     $('.edit_book').submit(function(e){
@@ -56,10 +61,16 @@ $(document).ready(function(){
         var var2 = $.trim($('#book_loan_weekly').val());
         var var3 = $.trim($('#book_loan_monthly').val());
         var var4 = $.trim($('#book_loan_semister').val());
-        if(var1.length < 1  && var2.length < 1 && var3.length < 1 && var4.length < 1 ){
+
+        if($('#book_requested').val() == 'true'){
+            return true;
+        }
+        else if(var1.length < 1  && var2.length < 1 && var3.length < 1 && var4.length < 1 ){
             e.preventDefault();
             $('.loan_error').html('You must specify at least one loan rate')
             return false;
         }
+
+        
     });
 })

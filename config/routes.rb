@@ -1,17 +1,19 @@
 Campuswise::Application.routes.draw do
 
+  post 'stripe-webhook' => 'stripe_webhook#create'
 
   resources :books do
     collection do
       get :available
       get :requested
     end
-    member do
-      get :borrow_duration
-    end
   end
 
-  resources :exchanges
+  resources :exchanges, :except => [:show, :index] do
+    collection do
+      get :search
+    end
+  end
 
   match '/search' => 'books#search', :as => :search
   match '/show_search' => 'books#show_search'

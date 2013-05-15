@@ -12,7 +12,7 @@ class BooksController < ApplicationController
     if params[:google_book_id]
       @book.set_google(params[:google_book_id])
     end
-    if params[:request]
+    if params[:requested]
       @requested_book = true
     end
   end
@@ -123,17 +123,6 @@ class BooksController < ApplicationController
     @requested_books = @books.where(:requested => true).order("created_at DESC")
     respond_to do |format|
       format.html
-    end
-  end
-
-  def borrow_duration
-    @book = Book.find(params[:id])
-    respond_to do |format|
-      if current_user.eligiable_to_borrow(@book)
-        format.html
-      else
-        format.html { redirect_to current_user, :notice => "You are not allowed to borrow this book."}
-      end
     end
   end
 end

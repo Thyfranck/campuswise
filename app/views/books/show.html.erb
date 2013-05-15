@@ -91,7 +91,7 @@
     <% elsif @book.available == false %>
       <p style="color: red">This book is not available</p>
     <% elsif @book.available == true %>
-      <%= link_to "Borrow This Book", exchanges_path(:id => @book.id), :method => :post ,:confirm => "Are you sure want to borrow this book?",:class => 'btn btn-primary'  %>
+      <%= link_to "Borrow This Book", new_exchange_path(:id => @book.id),:confirm => "Are you sure want to borrow this book?",:class => 'btn btn-primary'  %>
     <% end %>
   <% elsif !current_user %>
     <h5 style="color: red" >Rent this book now and save your money!</h5>

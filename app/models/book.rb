@@ -49,11 +49,15 @@ class Book < ActiveRecord::Base
   end
 
   def atleast_one_loan_rate_exsists
-    if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semister == nil
-      errors[:base] << "You must specify atleast one loan rate."
-      return false
-    else
+    if self.requested == true
       return true
-    end
+    else
+      if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semister == nil
+        errors[:base] << "You must specify atleast one loan rate."
+        return false
+      else
+        return true
+      end
+    end  
   end
 end

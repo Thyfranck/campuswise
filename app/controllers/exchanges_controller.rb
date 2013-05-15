@@ -5,18 +5,30 @@ class ExchangesController < ApplicationController
   layout "dashboard"
 
   def new
+    @book = Book.find(params[:id])
+    if current_user.billing_setting.present?
     respond_to do |format|
-      format.html
+      if current_user.eligiable_to_borrow(@book)
+        @exchange = Exchange.new
+        format.html
+      else
+        format.html { redirect_to current_user, :notice => "You are not allowed to borrow this book."}
+      end
+    end
+    else
+      session[:wanted_to_exchange_book] = @book.id
+      redirect_to new_billing_setting_path, :notice => "Please setup your payment settings first"
     end
   end
 
   def create
-    @exchange = current_user.exchanges.new(:book_id => params[:id])
+    @book = Book.find(params[:exchange][:book_id])
+    @exchange = current_user.exchanges.new(params[:exchange])
     respond_to do |format|
       if @exchange.save
         format.html {redirect_to user_path(current_user), :notice => "Request sent to owner for approval."}
       else
-        format.html {redirect_to user_path(current_user), :alert => "Error Occured."}
+        format.html {render :action => 'new'}
       end
     end
   end
@@ -24,11 +36,8 @@ class ExchangesController < ApplicationController
   def update
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
-      if @exchange.update_attributes(:accepted => true)
-        format.html {redirect_to request.referrer, :notice => "You Accepted the request"}
-      else
-        format.html {redirect_to request.referrer, :alert => "Error Occured"}
-      end
+       @exchange.charge
+       format.html { redirect_to dashboard_path, :notice => "Request is in process."}
     end
   end
 
@@ -51,8 +60,8 @@ class ExchangesController < ApplicationController
         @id = @body.gsub("yes", "")
         @exchange = Exchange.find(@id)
         if @exchange and @exchange.book.user.id == @user.id
-          @exchange.update_attribute(:accepted, true)
-          render 'exchanges/sms/yes.xml.erb', :content_type => 'text/xml'
+          @exchange.charge
+          render 'exchanges/sms/before_charge_yes.xml.erb', :content_type => 'text/xml'
         else
           render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
         end
@@ -70,8 +79,13 @@ class ExchangesController < ApplicationController
       end
     else
       render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
+    end   
+  end
+
+  def search
+    respond_to do |format|
+      format.html
     end
-    
   end
 
 end
