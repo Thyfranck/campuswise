@@ -129,7 +129,7 @@ class UsersController < ApplicationController
   end
 
   def dashboard
-    @notifications = current_user.dashboard_notifications.order("created_at DESC")
+    @notifications = current_user.dashboard_notifications.order("created_at DESC").paginate(:page => params[:page], :per_page => 10)
     respond_to do |format|
       format.html {render :layout => "dashboard"}
     end

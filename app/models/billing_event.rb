@@ -5,7 +5,6 @@ class BillingEvent < ActiveRecord::Base
   belongs_to :payment
 
   after_create :update_payment
-#  after_create :send_notification_email
 
 
   private
@@ -17,14 +16,6 @@ class BillingEvent < ActiveRecord::Base
     else
       payment.status = Payment::STATUS[:failed]
       payment.save
-      payment.business.payment_complete = false
-      payment.business.step_in = 5
-      payment.business.save(:validate => false)
     end
   end
-
-#  def send_notification_email
-#    Notification.charge_succeeded(self.id).deliver if self.event_type == "charge.succeeded"
-#    Notification.charge_failed(self.id).deliver if self.event_type == "charge.failed"
-#  end
 end

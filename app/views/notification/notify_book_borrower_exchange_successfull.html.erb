@@ -1,0 +1,40 @@
+Hello <%= @user.name %>,<br/>
+<br/>
+Congratulation,<br/>
+You have successfully borrowed the book titled : " <%= @book.title %> " and payment amount of $<%= @amount  %> was deducted from your account.<br/>
+<br/>
+Here is your borrow details:
+<br/>
+<ul>
+  <li>Book title : <%= @book.title %></li>
+  <li>Book publisher : <%= @book.publisher %></li>
+  <li>Book authors : <%= @book.author %></li>
+  <li>Book ISBN : <%= @book.isbn %></li>
+  <li>Book rented in : <%= @exchange.package.capitalize %> basis.</li>
+  <li>Book rent starting date : <%= @exchange.starting_date.to_date %></li>
+  <% if @exchange.package == "semister" %>
+    <li>Book rent ending time : End of the Semester.</li>
+  <% else %>
+    <li>Book rent ending date : <%= @exchange.ending_date.to_date %></li>
+  <% end %>
+</ul>
+Here is the owners contact info. And that is also available in your borrowed book list too.
+<br/>
+<h5>Owners info:</h5>
+<ul>
+  <li>Name: <%= @owner.name %></li>
+  <li>Email : <%= @owner.email %></li>
+  <li>Phone : <%= @owner.phone %></li>
+  <li>Facebook profile : <%= @owner.facebook %></li>
+</ul>
+<br/>
+<br/>
+Please return the book to the owner after the renting period is over.
+<br/>
+<br/>
+You can see your borrowed books list by clicking this <%= link_to "link", @url %>
+<br/>
+Thank you for using Campuswise book rent service.<br/>
+<br/>
+Have a great day!
+<br/>

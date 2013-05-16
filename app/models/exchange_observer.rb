@@ -1,13 +1,21 @@
 class ExchangeObserver < ActiveRecord::Observer
   observe :exchange, :book, :payment
 
-  #  def after_save(record)
-  #    if record.class == Payment
-  #      if record.status == STATUS[:paid]
-  #        Notification.email_after_payment(record).deliver
-  #      end
-  #    end
-  #  end
+  def after_save(record)
+    if record.class == Payment
+      if record.status == Payment::STATUS[:paid]
+        Notification.email_after_payment(record).deliver
+        @dashboard_notification = DashboardNotification.new(
+          :user_id => record.exchange.user.id,
+          :exchange_id => record.exchange.id,
+          :content => "Payment for the book titled #{record.exchange.book.title} has been received with thankfully.")
+        @dashboard_notification.save
+        @to = record.exchange.user.phone
+        @body = "Payment for the book titled \"#{record.exchange.book.title.truncate(30)}\" has been received thakfully. It will be borrowed in a short time.-Campuswise"
+        TwilioRequest.send_sms(@body, @to)
+      end
+    end
+  end
 
   def before_create(record)
     if record.class == Exchange
@@ -19,17 +27,17 @@ class ExchangeObserver < ActiveRecord::Observer
   
   def after_create(record)
     if record.class == Exchange
-      @request_sender = User.find(record.user_id)
-      @request_receiver = User.find(record.book.user_id)
-      @requested_book = Book.find(record.book_id)
+      @request_sender = record.user
+      @request_receiver = record.book.user
+      @requested_book = record.book
       @dashboard_notification =  DashboardNotification.new(
         :user_id => @request_receiver.id,
         :exchange_id => record.id,
-        :content => "#{@request_sender.name} wants to borrow your book \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" ")
+        :content => "#{@request_sender.name} wants to borrow your book \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semister" ? "full semister" : record.ending_date.to_date}\" ")
       if @dashboard_notification.save
-        Notification.notify_book_owner(@request_receiver, @request_sender, @requested_book).deliver
+        Notification.notify_book_owner(record).deliver
         @to = @request_receiver.phone
-        @body = "#{@request_sender.name} wants to borrow \"#{@requested_book.title.truncate(50)}\"to accept reply yes#{record.id},to ignore reply no#{record.id}-Campuswise"
+        @body = "#{@request_sender.name} wants to borrow \"#{@requested_book.title.truncate(30)}\" from #{record.starting_date.to_date} to #{record.package == "semister" ? "full semister" : record.ending_date.to_date},to accept reply yes#{record.id},to ignore reply no#{record.id}-Campuswise"
         TwilioRequest.send_sms(@body, @to)
       end
     end
@@ -48,22 +56,22 @@ class ExchangeObserver < ActiveRecord::Observer
   def after_update(record)
     if record.class == Payment
       if record.status == Payment::STATUS[:paid]
-        @request_sender = User.find(record.exchange.user_id)
-        @request_receiver = User.find(record.exchange.book.user_id)
-        @requested_book = Book.find(record.exchange.book)
         @exchange = record.exchange
+        @request_sender = @exchange.user
+        @requested_book = @exchange.book
+        @request_receiver = @requested_book.user
         if @requested_book.available == true
           @exchange.update_attribute(:accepted, true)
           @requested_book.update_attribute(:available, false)
           @dashboard_notification = DashboardNotification.new(
             :user_id => @request_sender.id,
             :exchange_id => record.exchange.id,
-            :content => "Congratulation #{@request_receiver.name} has accepted your Borrow Proposal for the book titled \"<a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)} </a> \" "
+            :content => "Congratulation, you have successfully borrowed the book titled \"<a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)} </a> \" You can see this books owner's contact information in your borrowed book <a href='/borrow_requests' target='_blank'>list</a>"
           )
           @dashboard_notification.save
-          Notification.notify_book_borrower_accept(@request_receiver, @request_sender, @requested_book).deliver
+          Notification.notify_book_borrower_exchange_successfull(record).deliver
           @to = @request_sender.phone
-          @body = "Congratulation #{@request_receiver.name} has accepted your borrow request for the book \"#{@requested_book.title.truncate(50)}\"-Campuswise"
+          @body = "Congratulation, you have successfully borrowed the book titled: \"#{@requested_book.title.truncate(30)}\". -Campuswise"
           TwilioRequest.send_sms(@body, @to)
           record.exchange.destroy_other_pending_requests
         end
@@ -83,33 +91,33 @@ class ExchangeObserver < ActiveRecord::Observer
     end
 
     if record.class == Exchange
-      @request_sender = User.find(record.user_id)
-      @request_receiver = User.find(record.book.user_id)
-      @requested_book = Book.find(record.book)
-      if record.payment.status == Payment::STATUS[:pending]
-        if Book.find(record.book_id).available == true
+      @request_sender = record.user
+      @request_receiver = record.book.user
+      @requested_book = record.book
+      if record.payment.blank?
           @dashboard_notification = DashboardNotification.new(
             :user_id => @request_sender.id,
             :exchange_id => record.id,
-            :content => "Sorry request for the book titled \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" was rejected by the user. Please try other sometime."
+            :content => "Sorry borrow request for the book titled : \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" was rejected by the user. Please try other sometime."
           )
           @dashboard_notification.save
-          Notification.notify_book_borrower_reject(@request_receiver, @request_sender, @requested_book).deliver
+          Notification.notify_book_borrower_reject_by_user(record).deliver
           @to = @request_sender.phone
-          @body = "Sorry borrow request for the book \"#{@requested_book.title.truncate(50)}\" was rejected by the user -Campuswise"
+          @body = "Sorry request for the book titled:\"#{@requested_book.title.truncate(50)}\" was rejected by the user -Campuswise"
           TwilioRequest.send_sms(@body, @to)
-        end
+        
       elsif record.payment.status == Payment::STATUS[:failed]
         if Book.find(record.book_id).available == true
           @dashboard_notification = DashboardNotification.new(
             :user_id => @request_sender.id,
             :exchange_id => record.id,
-            :content => "Sorry request for the book titled \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" was rejected due to payment error."
+            :content => "Sorry request for the book titled : \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" was rejected due to your card problem."
           )
           @dashboard_notification.save
-          Notification.notify_book_borrower_reject(@request_receiver, @request_sender, @requested_book).deliver
+          Notification.notify_book_borrower_reject_for_payment(record).deliver
           @to = @request_sender.phone
-          @body = "Sorry borrow request for the book \"#{@requested_book.title.truncate(50)}\" was rejected due to payment error -Campuswise"
+          @body = "Sorry request for the book titled:\"#{@requested_book.title.truncate(50)}\" was rejected due to your card problem.-Campuswise"
+          TwilioRequest.send_sms(@body, @to)
         end
       end
     end

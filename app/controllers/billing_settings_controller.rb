@@ -25,7 +25,11 @@ class BillingSettingsController < ApplicationController
         BillingSetting.create(:user_id => current_user.id, :stripe_token => params[:stripe_token])
       end
       respond_to do |format|
-        format.html { redirect_to current_user, :notice => "Request completed"}
+        if session[:wanted_to_exchange_book]
+          format.html { redirect_to new_exchange_path(:id => session[:wanted_to_exchange_book])}
+        else
+          format.html { redirect_to current_user, :notice => "Request completed"}
+        end
       end
     end
   end

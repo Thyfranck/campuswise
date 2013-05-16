@@ -8,7 +8,7 @@ class Exchange < ActiveRecord::Base
   belongs_to :book
   belongs_to :user
   has_many :dashboard_notifications
-  has_one :payment, :dependent => :destroy
+  has_one :payment
 
   validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semister"}
   validates :package, :inclusion => {:in => ["daily", "weekly", "monthly", "semister"]}
@@ -71,11 +71,24 @@ class Exchange < ActiveRecord::Base
         payment = self.build_payment(:payment_amount => self.amount, :charge_id => response.id, :status => Payment::STATUS[:pending])
       end
       payment.save
+      notify_borrower
       return true
     rescue => e
       logger.error e.message
       errors.add(:base, e.message)
       return false
     end
+  end
+
+  def notify_borrower
+    Notification.notify_book_borrower_accept(self).deliver
+    @dashboard_notification = DashboardNotification.new(
+      :user_id => self.user.id,
+      :exchange_id => self.id,
+      :content => "Borrow request for the book titled : \"#{self.book.title}\" has been accepted by the owner. It will be borrowed to you as soon as the payment is received and we will notify you.")
+    @dashboard_notification.save
+    @to = self.user.phone
+    @body = "Request for the book titled:\"#{self.book.title.truncate(30)}\"has been accepted by the owner.It will be processed when payment is complete -Campuswise"
+    TwilioRequest.send_sms(@body, @to)
   end
 end

@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    
     if($('#exchange_package_daily').is(':checked')){
         $('.exchange_amount').show();
         $('.amount_text').html('days');
@@ -52,6 +53,40 @@ $(document).ready(function(){
             $('.exchange_submit_section').show();
         }
     })
+
+    $('#continue').click(function(){
+        var myRegEx = new RegExp('[0-9]+');       
+        var rate1 = ($('#day_rate').html());
+        var rate3 = ($('#month_rate').html());
+        var rate2 = ($('#week_rate').html());
+        var rate4 = ($('#semister_rate').html());
+        var amount = $.trim($('#exchange_duration').val());          
+        
+        if($('#exchange_package_daily').is(':checked')){
+            if(amount.length >= 1 && amount == myRegEx.exec(amount)){
+                $('.total_amount_to_pay').html('$'+rate1*amount);
+            }else{
+                $('.total_amount_to_pay').html('Invalid');
+            }              
+        }
+        if($('#exchange_package_weekly').is(':checked')){
+            if(amount.length >= 1 && amount == myRegEx.exec(amount)){
+                $('.total_amount_to_pay').html('$'+rate2*amount);
+            }else{
+                $('.total_amount_to_pay').html('Invalid');
+            }
+        }
+        if($('#exchange_package_monthly').is(':checked')){
+            if(amount.length >= 1 && amount == myRegEx.exec(amount)){
+                $('.total_amount_to_pay').html('$'+rate3*amount);
+            }else{
+                $('.total_amount_to_pay').html('Invalid');
+            }
+        }
+        if($('#exchange_package_semister').is(':checked')){
+            $('.total_amount_to_pay').html('$'+rate4);
+        }
+    });
 
     $('#new_exchange').submit(function(e){
         if($('.exchange_amount').is(":visible")){

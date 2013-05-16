@@ -6,15 +6,18 @@ class ExchangesController < ApplicationController
 
   def new
     @book = Book.find(params[:id])
-    if current_user.billing_setting.present?
-    respond_to do |format|
-      if current_user.eligiable_to_borrow(@book)
-        @exchange = Exchange.new
-        format.html
-      else
-        format.html { redirect_to current_user, :notice => "You are not allowed to borrow this book."}
-      end
+    if session[:wanted_to_exchange_book]
+      session[:wanted_to_exchange_book] = nil
     end
+    if current_user.billing_setting.present?
+      respond_to do |format|
+        if current_user.eligiable_to_borrow(@book)
+          @exchange = Exchange.new
+          format.html
+        else
+          format.html { redirect_to current_user, :notice => "You are not allowed to borrow this book."}
+        end
+      end
     else
       session[:wanted_to_exchange_book] = @book.id
       redirect_to new_billing_setting_path, :notice => "Please setup your payment settings first"
@@ -36,16 +39,22 @@ class ExchangesController < ApplicationController
   def update
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
-       @exchange.charge
-       format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+      if @exchange.book.available == true
+        @old_dashboard_notification = DashboardNotification.find_by_exchange_id(@exchange.id)
+        @old_dashboard_notification.destroy
+        @exchange.charge
+        format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+      end
     end
   end
 
   def destroy
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
+      @old_dashboard_notification = DashboardNotification.find_by_exchange_id(@exchange.id)
+      @old_dashboard_notification.destroy
       if @exchange.destroy
-        format.html {redirect_to request.referrer, :alert => "You Rejected the request"}
+        format.html {redirect_to request.referrer, :notice => "You Rejected the request"}
       end
     end
   end
@@ -59,7 +68,9 @@ class ExchangesController < ApplicationController
       if @body.include?("yes")
         @id = @body.gsub("yes", "")
         @exchange = Exchange.find(@id)
-        if @exchange and @exchange.book.user.id == @user.id
+        if @exchange and @exchange.book.user.id == @user.id and @exchange.book.available == true
+          @old_dashboard_notification = DashboardNotification.find_by_exchange_id(@exchange.id)
+          @old_dashboard_notification.destroy
           @exchange.charge
           render 'exchanges/sms/before_charge_yes.xml.erb', :content_type => 'text/xml'
         else
@@ -69,6 +80,8 @@ class ExchangesController < ApplicationController
         @id = @body.gsub("no", "")
         @exchange = Exchange.find(@id)
         if @exchange and @exchange.book.user.id == @user.id
+          @old_dashboard_notification = DashboardNotification.find_by_exchange_id(@exchange.id)
+          @old_dashboard_notification.destroy
           @exchange.destroy
           render 'exchanges/sms/no.xml.erb', :content_type => 'text/xml'
         else

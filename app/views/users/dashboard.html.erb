@@ -1,5 +1,6 @@
 <% if @notifications.any? %>
   <table class="table table-hover table-bordered">
+    <%= will_paginate @notifications %>
     <tbody>
       <% @notifications.each do |notification| %>
         <tr>
