@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
   end
 
   def eligiable_to_borrow(book)
-    if self.already_borrowed_this_book(book) == true or self.already_sent_request(book) == true
+    if self.already_borrowed_this_book(book) == true or self.already_sent_request(book) == true and book.available == false
       return false
     else
       return true

@@ -25,6 +25,15 @@ class Notification < ActionMailer::Base
       :subject => "Your password reset instructions - CampusWise")
   end
 
+  def notify_book_borrower_failed_to_charge(exchange)
+    @user = exchange.user
+    @book = exchange.book
+    @message = exchange.declined
+    headers['X-SMTPAPI'] = "{\"category\" : \"Card Error Alert\"}"
+    mail(:to => @user.email,
+      :subject => "Borrow request failed - CampusWise")
+  end
+
   def notify_book_owner(exchange)
     @user = exchange.book.user
     @borrower  = exchange.user
@@ -76,10 +85,20 @@ class Notification < ActionMailer::Base
     @owner = payment.exchange.book.user
     @book = payment.exchange.book
     @exchange = payment.exchange
-    @amount = payment.exchange.amount
     @url = dashboard_url
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
     mail(:to => @user.email,
       :subject => "Congratulation Your Borrow request is now complete - CampusWise")
+  end
+
+  def notify_book_owner_exchange_successfull(payment)
+    @user = payment.exchange.book.user
+    @borrower = payment.exchange.user
+    @book = payment.exchange.book
+    @exchange = payment.exchange
+    @url = dashboard_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
+    mail(:to => @user.email,
+      :subject => "Congratulation Your Book lending process is complete - CampusWise")
   end
 end

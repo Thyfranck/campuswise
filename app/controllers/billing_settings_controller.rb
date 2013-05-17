@@ -18,15 +18,21 @@ class BillingSettingsController < ApplicationController
 
   def create
     if params[:stripe_token].present?
-      if current_user.billing_setting.present?
-        current_user.billing_setting.stripe_token = params[:stripe_token]
-        current_user.billing_setting.save
-      else
-        BillingSetting.create(:user_id => current_user.id, :stripe_token => params[:stripe_token])
+      begin
+        if current_user.billing_setting.present?     
+          current_user.billing_setting.stripe_token = params[:stripe_token]
+          current_user.billing_setting.save
+        else
+          BillingSetting.create(:user_id => current_user.id, :stripe_token => params[:stripe_token])
+        end
+      rescue Stripe::CardError => e
+        @error = "#{e.message}"
       end
       respond_to do |format|
         if session[:wanted_to_exchange_book]
           format.html { redirect_to new_exchange_path(:id => session[:wanted_to_exchange_book])}
+        elsif @error
+          format.html { redirect_to request.referrer, :alert => @error }
         else
           format.html { redirect_to current_user, :notice => "Request completed"}
         end

@@ -5,6 +5,8 @@ class Exchange < ActiveRecord::Base
   attr_accessible :book_id, :user_id, :accepted, :package, :duration,
     :starting_date, :ending_date, :amount
 
+  attr_accessor :declined, :declined_reason
+  
   belongs_to :book
   belongs_to :user
   has_many :dashboard_notifications
@@ -70,12 +72,15 @@ class Exchange < ActiveRecord::Base
       else
         payment = self.build_payment(:payment_amount => self.amount, :charge_id => response.id, :status => Payment::STATUS[:pending])
       end
-      payment.save
-      notify_borrower
+      if payment.save
+        notify_borrower
+      end
       return true
     rescue => e
       logger.error e.message
-      errors.add(:base, e.message)
+      self.errors.add(:base, e.message)
+      self.declined = e.message
+      self.destroy
       return false
     end
   end

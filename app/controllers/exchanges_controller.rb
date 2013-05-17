@@ -40,10 +40,15 @@ class ExchangesController < ApplicationController
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
       if @exchange.book.available == true
-        @old_dashboard_notification = DashboardNotification.find_by_exchange_id(@exchange.id)
-        @old_dashboard_notification.destroy
-        @exchange.charge
-        format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+        if @exchange.delay.charge
+          @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, current_user.id)
+          @old_dashboard_notification.destroy
+          format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+        elsif @exchange.errors.any?
+          @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, current_user.id)
+          @old_dashboard_notification.destroy
+          format.html { redirect_to dashboard_path, :alert => @exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
+        end
       end
     end
   end
@@ -51,7 +56,7 @@ class ExchangesController < ApplicationController
   def destroy
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
-      @old_dashboard_notification = DashboardNotification.find_by_exchange_id(@exchange.id)
+      @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, current_user.id)
       @old_dashboard_notification.destroy
       if @exchange.destroy
         format.html {redirect_to request.referrer, :notice => "You Rejected the request"}
@@ -65,22 +70,20 @@ class ExchangesController < ApplicationController
     if @user
       @body = params[:Body]
       @body = @body.downcase
-      if @body.include?("yes")
-        @id = @body.gsub("yes", "")
-        @exchange = Exchange.find(@id)
-        if @exchange and @exchange.book.user.id == @user.id and @exchange.book.available == true
-          @old_dashboard_notification = DashboardNotification.find_by_exchange_id(@exchange.id)
+      if @body.match(/\yes\s*/).present?
+        @id = @body.gsub /\D/, ""   
+        if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
+          @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, @user.id)
           @old_dashboard_notification.destroy
-          @exchange.charge
+          @exchange.delay.charge
           render 'exchanges/sms/before_charge_yes.xml.erb', :content_type => 'text/xml'
         else
           render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
         end
-      elsif @body.include?("no")
-        @id = @body.gsub("no", "")
-        @exchange = Exchange.find(@id)
-        if @exchange and @exchange.book.user.id == @user.id
-          @old_dashboard_notification = DashboardNotification.find_by_exchange_id(@exchange.id)
+      elsif @body.match(/\no\s*/).present?
+        @id = @body.gsub /\D/, "" 
+        if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
+          @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, @user.id)
           @old_dashboard_notification.destroy
           @exchange.destroy
           render 'exchanges/sms/no.xml.erb', :content_type => 'text/xml'
