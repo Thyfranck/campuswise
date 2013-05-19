@@ -23,6 +23,8 @@ no_book_image.jpeg: no_book_image-29ab58f02f45522e0a18a18315888363.jpeg
 no_book_image/index.jpeg: no_book_image-29ab58f02f45522e0a18a18315888363.jpeg
 payment-cards.png: payment-cards-15467c8b43dbf7acf910b2a1d88a88ed.png
 payment-cards/index.png: payment-cards-15467c8b43dbf7acf910b2a1d88a88ed.png
+payment-cards_1.png: payment-cards_1-15467c8b43dbf7acf910b2a1d88a88ed.png
+payment-cards_1/index.png: payment-cards_1-15467c8b43dbf7acf910b2a1d88a88ed.png
 phn.jpg: phn-aac5a627cdfce53ea115bbca1fc90c23.jpg
 phn/index.jpg: phn-aac5a627cdfce53ea115bbca1fc90c23.jpg
 renting_txt.png: renting_txt-042e90058f96e590f23fe156fe3f0d3f.png
@@ -39,12 +41,12 @@ uniform/sprite-aristo.png: uniform/sprite-aristo-42715402efe1dd5e2e6298b6349db77
 uniform/sprite-aristo/index.png: uniform/sprite-aristo-42715402efe1dd5e2e6298b6349db771.png
 active_admin.js: active_admin-74c5a2a0ebd04577979929732488c14b.js
 active_admin/index.js: active_admin-74c5a2a0ebd04577979929732488c14b.js
-application.js: application-9f2ebb9f288470e51c3b245a9d7bffcb.js
-application/index.js: application-9f2ebb9f288470e51c3b245a9d7bffcb.js
+application.js: application-f9310a4faa43e1eb8cb7401e0c82a9b5.js
+application/index.js: application-f9310a4faa43e1eb8cb7401e0c82a9b5.js
 active_admin.css: active_admin-f6eab3903eabe26e294bb5e070593cb6.css
 active_admin/index.css: active_admin-f6eab3903eabe26e294bb5e070593cb6.css
-application.css: application-a875f90cd69c97b90792e00914e8341b.css
-application/index.css: application-a875f90cd69c97b90792e00914e8341b.css
+application.css: application-dd9c1afa5c275e4d9c1cceef74065e9f.css
+application/index.css: application-dd9c1afa5c275e4d9c1cceef74065e9f.css
 fontawesome-webfont.eot: fontawesome-webfont-635909f146e208b3509acdf3b154bf0d.eot
 fontawesome-webfont/index.eot: fontawesome-webfont-635909f146e208b3509acdf3b154bf0d.eot
 fontawesome-webfont.ttf: fontawesome-webfont-6a4e273908b7e43d9e479d38b8ae5957.ttf
