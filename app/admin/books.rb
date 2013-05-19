@@ -9,6 +9,12 @@ ActiveAdmin.register Book do
   filter :returning_date
   filter :created_at
 
+  controller do
+    def scoped_collection
+      Book.where("requested = ?", false)
+    end
+  end
+
   index do
     selectable_column
     column :id
@@ -26,5 +32,35 @@ ActiveAdmin.register Book do
     column :returning_date
     column :created_at
     default_actions
+  end
+
+  show do
+    attributes_table do
+      row :id
+      row :user
+      row :title
+      row :author
+      row :isbn
+      row :publisher
+      row :purchase_price
+      row :loan_daily
+      row :loan_weekly
+      row :loan_monthly
+      row :loan_semister
+      row :available do |book|
+        book.available == true ? "Yes" :
+          link_to("No - Change", make_available_admin_book_path(book) , :confirm => "Are you sure to update the availability of this book?")
+      end
+      row :image do |book|
+        image_tag(book.image, :height => 100)
+      end
+      
+    end
+  end
+
+  member_action :make_available do
+    @book = Book.find(params[:id])
+    @book.make_available
+    redirect_to :action => :index
   end
 end

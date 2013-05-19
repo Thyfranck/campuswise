@@ -1,5 +1,6 @@
 Campuswise::Application.routes.draw do
 
+  post 'stripe-webhook' => 'stripe_webhook#create'
 
   resources :books do
     collection do
@@ -8,16 +9,22 @@ Campuswise::Application.routes.draw do
     end
   end
 
-  resources :exchanges
+  resources :exchanges, :except => [:show, :index] do
+    collection do
+      get :search
+    end
+  end
 
   match '/search' => 'books#search', :as => :search
   match '/show_search' => 'books#show_search'
   match '/dashboard' => 'users#dashboard'
   match '/remove_notification' => 'users#remove_notification'
   match '/borrow_requests' => 'users#borrow_requests'
+  match '/smsresponse' => 'exchanges#process_sms'
 
   match 'school-home' => 'static#school_home', :as => :school_home
 
+  resources :billing_settings, :except => [:index]
   
   resources :users, :except => [:index] do
     member do
@@ -26,6 +33,7 @@ Campuswise::Application.routes.draw do
       get :sms_verification
       post :verify_code
       get :send_verification_sms
+      get :payment
     end
   end
 

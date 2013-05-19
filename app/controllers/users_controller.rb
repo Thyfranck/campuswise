@@ -37,10 +37,6 @@ class UsersController < ApplicationController
 
   def create  
     @school = School.find(params[:user][:school_id])
-    #    @email_postfix = @school.present? ? "#{@school.email_postfix }" : nil
-    #    unless params[:user][:email].blank?
-    #      params[:user][:email] =  "#{params[:user][:email]}"+"@"+"#{@email_postfix}"
-    #    end
     @user = User.new(params[:user])
     @user.make_email_format
     @user.set_phone_verification
@@ -133,7 +129,7 @@ class UsersController < ApplicationController
   end
 
   def dashboard
-    @notifications = current_user.dashboard_notifications.order("created_at DESC")
+    @notifications = current_user.dashboard_notifications.order("created_at DESC").paginate(:page => params[:page], :per_page => 10)
     respond_to do |format|
       format.html {render :layout => "dashboard"}
     end
@@ -157,6 +153,12 @@ class UsersController < ApplicationController
     @lended = current_user.accepted_reverse_exchanges.paginate(:page => params[:page], :per_page => 6)
     respond_to do |format|
       format.html {render :layout => "dashboard"}
+    end
+  end
+
+  def payment
+    respond_to do |format|
+      format.html {render layout: "dashboard"}
     end
   end
 end

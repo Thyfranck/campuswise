@@ -12,12 +12,17 @@
       <%= link_to "Book requests", requested_books_path %>
     </li>
     <li class="nav-header">Books Borrow Information</li>
-    <li><%= link_to "Borrow a book", new_exchange_path %></li>
+    <li><%= link_to "Borrow a book", search_exchanges_path %></li>
     <li><%= link_to "Manage Borrow Requests", borrow_requests_path %></li>
     <li>
-      <%= link_to "Request For a Book", new_book_path(:request => true) %>
+      <%= link_to "Request For a Book", new_book_path(:requested => true) %>
     </li>
     <li class="nav-header">Payment Information</li>
+    <% if current_user.billing_setting.present? %>
+    <li><%= link_to "Payment Settings", billing_setting_path(current_user.billing_setting) %></li>
+    <% else %>
+    <li><%= link_to "Payment Settings", new_billing_setting_path %></li>
+    <% end %>
     <li><%= link_to "Total Balance", '#' %></li>
     <li><%= link_to "Withdraw balance", '#' %></li>
   </div>

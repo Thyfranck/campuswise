@@ -1,17 +1,145 @@
-<br/>
-<br/>
-You can browse all the available books in your campus   
-<%= link_to "here", available_books_path, :class => "btn btn-small btn-info"  %>
-<br/>
-<br/>
-Or you can search for a Specific Book below
-<br/>
-<br/>
-<%= form_tag available_books_path, :class => "form-horizontal search_borrow", :method => :get do %>
-  <%= text_field_tag :search, nil ,:placeholder => "Enter Title, Author, Publisher or ISBN number", :class => "span6" %>
-  <%= submit_tag "Search", :class => "btn btn-primary search_button" %>
-<% end %>
-Or if you don't find your desired books in our site you can post it
-&nbsp;
-<%= link_to "Here", new_book_path(:requested => true) %>
-so that other users can see it.
+<fieldset>
+  <legend>
+    <h4>How you want to borrow this book?</h4>
+  </legend>
+
+  <%= form_for @exchange do |f| %>
+    <% if @exchange.errors.any? %>
+      <div id="error_explanation" class="alert alert-error">
+        <h4>
+          Please fill correctly following <%= pluralize(@exchange.errors.count, "field") %>.
+        </h4>
+        <ul>
+          <% @exchange.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= f.hidden_field :book_id, :value => @book.id %>
+
+    <div class="row span12">
+
+      <% if @book.loan_daily.present? %>
+        <div class="span3">
+          <div class="control-group">
+            <%= f.label :package, "Daily", :class => 'control-label' %>
+            <div class="controls">
+              <%= f.radio_button :package , 'daily', :class => 'radio'%>
+            </div>
+            <br/>
+            $ <span id="day_rate"><%= @book.loan_daily %></span> / day
+          </div>
+        </div>
+      <% end %>
+
+      <% if @book.loan_weekly.present? %>
+        <div class="span3">
+          <div class="control-group">
+            <%= f.label :package, "Weekly", :class => 'control-label' %>
+            <div class="controls">
+              <%= f.radio_button :package ,'weekly' ,:class => 'radio'%>
+            </div>
+            <br/>
+            $ <span id="week_rate"><%= @book.loan_weekly %></span> / week
+          </div>
+        </div>
+      <% end %>
+
+      <% if @book.loan_monthly.present? %>
+        <div class="span3">
+          <div class="control-group">
+            <%= f.label :package, "Monthly", :class => 'control-label' %>
+            <div class="controls">
+              <%= f.radio_button :package ,'monthly' ,:class => 'radio'%>
+            </div>
+            <br/>
+            $ <span id="month_rate"><%= @book.loan_monthly %></span> / month
+          </div>
+        </div>
+      <% end %>
+
+      <% if @book.loan_semister.present? %>
+        <div class="span3">
+          <div class="control-group">
+            <%= f.label :package, "Full semester", :class => 'control-label' %>
+            <div class="controls">
+              <%= f.radio_button :package ,'semister'%>
+            </div>
+            <br/>
+            $ <span id="semister_rate"><%= @book.loan_semister %></span> / semester
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <br/>
+    <br/>
+    <div class="row span12 exchange_amount" style="display:none">
+      <legend>
+        <h5>Please Specify the duration</h5>
+      </legend>
+      <h5 style="color:#fd492a">This book is available from <%= @book.available_from.to_date %> to <%= @book.returning_date.to_date %>.</h5>
+      <br/>
+      <br/>
+      <div class="span10 offest2" style="text-align:center">
+        <div class="control-group">
+          <%= f.label :duration, "I want to borrow this book from date", :class => 'control-label' %>
+          <div class="controls">
+            <%= f.date_select :starting_date, {}, :class => 'span3 selectpicker' %>
+          </div>
+          To
+          <div class="controls">
+            <%= f.number_field :duration,:class => 'input-small number_field'%><div class="amount_text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="exchange_submit_section" style="display:none">
+      <a href="#myModal" role="button" class="btn" data-toggle="modal" id="continue">Continue</a>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Take a review</h3>
+      </div>
+      <div class="modal-body span6">
+        <h4>Your credit card information</h4>
+        <p>
+          <b>Card Holder Name :</b>
+          <%= current_user.billing_setting.card_holder_name %>
+        </p>
+
+        <p>
+          <b>Card Number :</b>
+          <%= "*********#{current_user.billing_setting.card_last_four_digits}" %>
+        </p>
+
+        <p>
+          <b>Card Type :</b>
+          <%= current_user.billing_setting.card_type %>
+        </p>
+
+        <p>
+          <b>Card Expiry Date :</b>
+          <%= current_user.billing_setting.card_expiry_date.to_date %>
+        </p>
+      </div>
+      <div class="modal-body span5">
+        <h4>Total amount to pay</h4>
+        <h1 class="total_amount_to_pay" style="color:red"></h1>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <%= f.submit "Submit", :class => 'btn btn-primary' %>
+        <div class="amount_error" style="color:red"></div>
+      </div>
+    </div>
+
+  <% end %>
+</fieldset>
+
+
+
