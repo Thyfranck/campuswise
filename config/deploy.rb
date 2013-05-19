@@ -73,4 +73,31 @@ namespace :deploy do
   task :db_create, :roles => :app do
     run "cd #{current_path};RAILS_ENV=#{rails_env} bundle exec rake db:create"
   end
+
+  namespace :delayed_job do
+    desc "Stop the delayed_job process"
+    task :stop, :roles => :app do
+      run "cd #{current_path};RAILS_ENV=#{rails_env} #{ruby_path} script/delayed_job stop"
+    end
+
+    desc "Status of existing delayed_job process"
+    task :status, :roles => :app do
+      run "cd #{current_path};RAILS_ENV=#{rails_env} #{ruby_path} script/delayed_job status"
+    end
+
+    desc "Start the delayed_job process"
+    task :start, :roles => :app do
+      run "cd #{current_path};RAILS_ENV=#{rails_env} #{ruby_path} script/delayed_job -n 2 start"
+    end
+
+    desc "Restart the delayed_job process"
+    task :restart, :roles => :app do
+      run "cd #{current_path};RAILS_ENV=#{rails_env} #{ruby_path} script/delayed_job -n 2 restart"
+    end
+
+    desc "Start via rake task"
+    task :start_rake, :roles => :app do
+      run "cd #{current_path};RAILS_ENV=#{rails_env} bundle exec rake jobs:work"
+    end
+  end
 end

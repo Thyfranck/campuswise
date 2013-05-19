@@ -8,10 +8,10 @@ class Book < ActiveRecord::Base
   validates :isbn, :presence => true 
   validates :title, :presence => true
   #  validates :purchase_price, :presence => false ,:numericality => {:greater_than_or_equal => 5}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_daily, :allow_nil => true ,:numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_weekly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_monthly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_semister, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 5, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_daily, :allow_nil => true ,:numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_weekly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_monthly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_semister, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   
   belongs_to :user
   has_many :exchanges
@@ -59,5 +59,15 @@ class Book < ActiveRecord::Base
         return true
       end
     end  
+  end
+
+  def make_available
+    self.available = true
+    self.save
+  end
+
+  def make_unavailable
+    self.available = false
+    self.save
   end
 end
