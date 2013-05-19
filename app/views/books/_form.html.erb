@@ -1,4 +1,4 @@
-<%= form_for @book, :html => { :class => 'form-horizontal', :multipart => true } do |f| %>
+<%= form_for @book, :html => { :class => "form-horizontal #{"edit_book" unless @book.new_record?}", :multipart => true } do |f| %>
   <fieldset>
     <legend>
       <%= controller.action_name.capitalize %>
@@ -75,29 +75,30 @@
 
 
     <% unless @book.requested == true or @requested_book == true %>
-      <legend>Loan Rates</legend>
+      <legend>Loan Rates (in USD)</legend>
+      <div class="loan_error" style="color:red"></div>
       <div class="control-group">
         <h5><%= f.label :loan_daily, "Daily", :class => 'control-label' %></h5>
         <div class="controls">
-          <%= f.number_field :loan_daily, :class => 'number_field', :required => true %><div class="number_error" style="color:red"></div>
+          <%= f.number_field :loan_daily, :class => 'number_field' %><div class="number_error" style="color:red"></div>
         </div>
       </div>
       <div class="control-group">
         <%= f.label :loan_weekly, "Weekly", :class => 'control-label' %>
         <div class="controls">
-          <%= f.number_field :loan_weekly, :class => 'number_field', :required => true %><div class="number_error" style="color:red"></div>
+          <%= f.number_field :loan_weekly, :class => 'number_field'%><div class="number_error" style="color:red"></div>
         </div>
       </div>
       <div class="control-group">
         <%= f.label :loan_monthly, "Monthly", :class => 'control-label' %><div style="color:red"></div>
         <div class="controls">
-          <%= f.number_field :loan_monthly, :class => 'number_field', :required => true %><div class="number_error" style="color:red"></div>
+          <%= f.number_field :loan_monthly, :class => 'number_field' %><div class="number_error" style="color:red"></div>
         </div>
       </div>
       <div class="control-group">
         <%= f.label :loan_semister, "Full Semester", :class => 'control-label' %>
         <div class="controls">
-          <%= f.number_field :loan_semister, :class => 'number_field', :required => true %><div class="number_error" style="color:red"></div>
+          <%= f.number_field :loan_semister, :class => 'number_field' %><div class="number_error" style="color:red"></div>
         </div>
       </div>
 

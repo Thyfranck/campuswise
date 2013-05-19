@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  event_type: MyString
+  response: MyText
+  user_id: 1
+  payment_id: 1
+
+two:
+  event_type: MyString
+  response: MyText
+  user_id: 1
+  payment_id: 1

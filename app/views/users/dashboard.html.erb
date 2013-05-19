@@ -1,5 +1,6 @@
 <% if @notifications.any? %>
   <table class="table table-hover table-bordered">
+    <%= will_paginate @notifications %>
     <tbody>
       <% @notifications.each do |notification| %>
         <tr>
@@ -7,7 +8,7 @@
             <%= notification.content.html_safe %>
           </td>
           <td>
-            <% if notification.exchange.present? and notification.exchange.user_id != current_user.id  %>
+            <% if notification.exchange.present? and notification.exchange.user_id != current_user.id and notification.exchange.accepted == false %>
               <%= link_to "Approve", exchange_path(notification.exchange_id), :method => :put, :class => "btn btn-small btn-primary" %>
               <%= link_to "Deny", exchange_path(notification.exchange_id), :method => :delete, :class => "btn btn-small btn-primary" %>
             <% else %>

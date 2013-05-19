@@ -1,0 +1,31 @@
+<h3>Credit Card Information</h3>
+<div class="credit_card_logo">
+  <%= image_tag "payment-cards.png"%>
+</div>
+<br/>
+<% if current_user.billing_setting.present? %>
+  <div id="user-card-information">
+    <p>
+      <b>Card Holder Name :</b>
+      <%= @billing_setting.card_holder_name %>
+    </p>
+
+    <p>
+      <b>Card Number :</b>
+      <%= "*********#{@billing_setting.card_last_four_digits}" %>
+    </p>
+
+    <p>
+      <b>Card Type :</b>
+      <%= @billing_setting.card_type %>
+    </p>
+
+    <p>
+      <b>Card Expiry Date :</b>
+     <%= @billing_setting.card_expiry_date.to_date %>
+    </p>
+  </div>
+
+<%= link_to "Edit", edit_billing_setting_path(@billing_setting) %>
+
+<% end %>

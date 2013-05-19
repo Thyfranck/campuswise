@@ -12,7 +12,7 @@ class BooksController < ApplicationController
     if params[:google_book_id]
       @book.set_google(params[:google_book_id])
     end
-    if params[:request]
+    if params[:requested]
       @requested_book = true
     end
   end
