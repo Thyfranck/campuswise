@@ -40,6 +40,7 @@ class ExchangesController < ApplicationController
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
       if @exchange.book.available == true
+        unless @exchange.other_pending_payment_present?
         if @exchange.delay.charge
           @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, current_user.id)
           @old_dashboard_notification.destroy
@@ -48,6 +49,9 @@ class ExchangesController < ApplicationController
           @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, current_user.id)
           @old_dashboard_notification.destroy
           format.html { redirect_to dashboard_path, :alert => @exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
+        end
+        else
+          format.html { redirect_to dashboard_path, :notice => "Already a request for this book is under process."}
         end
       end
     end

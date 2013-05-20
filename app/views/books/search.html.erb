@@ -2,16 +2,24 @@
   <h3>&nbsp;&nbsp;&nbsp;Search results</h3>
 </legend>
 <% if @books.any? %>
-  <div>
-    <%= link_to "Previous" ,search_path(:value => params[:value], :book_page => @book_page, :previous => "previous"), :class => 'btn btn-primary' %>&nbsp;&nbsp;&nbsp;
-    <%= link_to "Next", search_path(:value => params[:value], :book_page => @book_page, :next => "next"), :class => 'btn btn-primary' %>
-  </div>
+  <% if @google_book_starts == true %>
+    <div>
+      <%= link_to "Previous" ,search_path(:value => params[:value], :book_page => @book_page, :previous => "previous", :google_book_starts => true ), :class => 'btn btn-primary' %>&nbsp;&nbsp;&nbsp;
+      <%= link_to "Next", search_path(:value => params[:value], :book_page => @book_page, :next => "next", :google_book_starts => true), :class => 'btn btn-primary' %>
+    </div>
+  <% else %>
+    <div>
+      <%= link_to "Previous" ,search_path(:value => params[:value], :book_page => @book_page, :previous => "previous"), :class => 'btn btn-primary' %>&nbsp;&nbsp;&nbsp;
+      <%= link_to "Next", search_path(:value => params[:value], :book_page => @book_page, :next => "next"), :class => 'btn btn-primary' %>
+    </div>
+  <% end %>
+
   <% @books.each do |book| %>
 
     <div class="searched_books span5">
       <div class="search_book_image span4">
-        <% unless book.image_link.blank? %>
-          <%= image_tag book.image_link %>
+        <% unless book.image_url.blank? %>
+          <%= image_tag book.image_url %>
         <% else %>
           <%= image_tag 'no_book_image.jpeg'%>
         <% end %>
@@ -21,12 +29,12 @@
         <div class="book_title span12">
           <b><%= book.title.truncate(50) %></b><br/>
         </div>
-        by <i><%= book.authors.truncate(50) %></i><br/>
+        by <i><%= book.author.truncate(50) %></i><br/>
         ISBN : <%= book.isbn %><br/>
         Publisher : <%= book.publisher %><br/>
-        Loan Price : <%= book.loan_price %><br/>
         <%= link_to "Show Details", show_search_path(:id => book.id), :class => 'btn btn-mini btn-info' %>
         <%= link_to "Add this Book", new_book_path(:google_book_id => book.id), :class => 'btn btn-mini btn-primary' %>
+
       </div>
     </div>
   <% end %>

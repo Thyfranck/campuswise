@@ -96,4 +96,15 @@ class Exchange < ActiveRecord::Base
     @body = "Request for the book titled:\"#{self.book.title.truncate(30)}\"has been accepted by the owner.It will be processed when payment is complete -Campuswise"
     TwilioRequest.send_sms(@body, @to)
   end
+
+  def other_pending_payment_present?
+    book = self.book_id
+    borrower = self.user_id
+    @other_pending_requests = Exchange.where("book_id = ? and user_id != ?", book, borrower)
+    if @other_pending_requests.present? and @other_pending_requests.each {|p| p.payment}.present?
+      return true if @other_pending_requests.each {|p| p.payment.status == "PENDING"}.present?
+    else
+      return false
+    end
+  end
 end

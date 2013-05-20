@@ -22,6 +22,7 @@ class Book < ActiveRecord::Base
 
   scoped_search :on => [:author, :isbn, :publisher, :title]
   scope :available_now, :conditions => {:available => true}
+  scope :date_not_expired, lambda { where(["returning_date > ?",Time.now.to_date])}
   scope :not_my_book, lambda { |current_user| where(["user_id != ?",current_user])}
 
   def set_google(book_id)
