@@ -1,45 +1,52 @@
 <legend>
   <h3>&nbsp;&nbsp;&nbsp;Search results</h3>
 </legend>
-<% if @books.any? %>
-  <% if @google_book_starts == true %>
-    <div>
-      <%= link_to "Previous" ,search_path(:value => params[:value], :book_page => @book_page, :previous => "previous", :google_book_starts => true ), :class => 'btn btn-primary' %>&nbsp;&nbsp;&nbsp;
-      <%= link_to "Next", search_path(:value => params[:value], :book_page => @book_page, :next => "next", :google_book_starts => true), :class => 'btn btn-primary' %>
-    </div>
-  <% else %>
-    <div>
-      <%= link_to "Previous" ,search_path(:value => params[:value], :book_page => @book_page, :previous => "previous"), :class => 'btn btn-primary' %>&nbsp;&nbsp;&nbsp;
-      <%= link_to "Next", search_path(:value => params[:value], :book_page => @book_page, :next => "next"), :class => 'btn btn-primary' %>
-    </div>
-  <% end %>
-
-  <% @books.each do |book| %>
-
-    <div class="searched_books span5">
-      <div class="search_book_image span4">
-        <% unless book.image_url.blank? %>
-          <%= image_tag book.image_url %>
-        <% else %>
-          <%= image_tag 'no_book_image.jpeg'%>
-        <% end %>
-      </div>
-
-      <div class="search_book_text span7">
-        <div class="book_title span12">
-          <b><%= book.title.truncate(50) %></b><br/>
+<div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">Available in your campus</a></li>
+    <li><a href="#tab2" data-toggle="tab">Available in Internet.</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+      <% if @books.any? %>
+        <div class="search">
+          <%= render @books %>
         </div>
-        by <i><%= book.author.truncate(50) %></i><br/>
-        ISBN : <%= book.isbn %><br/>
-        Publisher : <%= book.publisher %><br/>
-        <%= link_to "Show Details", show_search_path(:id => book.id), :class => 'btn btn-mini btn-info' %>
-        <%= link_to "Add this Book", new_book_path(:google_book_id => book.id), :class => 'btn btn-mini btn-primary' %>
-
+        <div class="span11 paging" style="display:none">
+          <%= will_paginate @books  %>
+        </div>
+      <% else %>
+        <b><h1 style="text-align: center;">No results found<br/><br/> OR <br/><br/>Empty Keyword</h1></b>
+      <% end %>
+      <div class="clearfix"></div>
+      <div class="loading span10 alert alert-info">
+        <h5 class=" offset4">Loading More Books</h5>
       </div>
     </div>
-  <% end %>
-<% else %>
+    <%#*<div class="tab-pane active" id="tab2">%>
+      <%# if @google_books.any? %>
+        <%#*<div class="search">%>
+          <%# @google_books.each do |google_book| %>
+            <%#= render 'book', :book => google_book %>
+          <%# end %>
+        <%#*</div>%>
+      <%# else %>
+        <%#*<b><h1 style="text-align: center;">No results found<br/><br/> OR <br/><br/>Empty Keyword</h1></b>%>
+      <%# end %>
+      <%#*<div class="clearfix"></div>%>
+      <%#*<div class="loading span10 alert alert-info">%>
+        <%#*<h5 class=" offset4">Loading More Books</h5>%>
+      <%#*</div>%>
+    <%#*</div>%>
+  </div>
+</div>
+<script type="text/javascript">
+  $(window).scroll(function(){
+    url = $('.pagination .next_page').attr('href');
+    if(url && ($(window).scrollTop() > $(document).height() - $(window).height() - 50)){
+      $('.loading').show().delay(4000).fadeOut(1500);
+      $.getScript(url);
+    }
+  })
+</script>
 
-  <b><h1 style="text-align: center;">No results found<br/><br/> OR <br/><br/>Empty Keyword</h1></b>
-
-<% end %>
