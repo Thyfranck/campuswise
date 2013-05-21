@@ -23,21 +23,21 @@
         <h5 class=" offset4">Loading More Books</h5>
       </div>
     </div>
-    <%#*<div class="tab-pane active" id="tab2">%>
-      <%# if @google_books.any? %>
-        <%#*<div class="search">%>
-          <%# @google_books.each do |google_book| %>
-            <%#= render 'book', :book => google_book %>
-          <%# end %>
-        <%#*</div>%>
-      <%# else %>
-        <%#*<b><h1 style="text-align: center;">No results found<br/><br/> OR <br/><br/>Empty Keyword</h1></b>%>
-      <%# end %>
-      <%#*<div class="clearfix"></div>%>
-      <%#*<div class="loading span10 alert alert-info">%>
-        <%#*<h5 class=" offset4">Loading More Books</h5>%>
-      <%#*</div>%>
-    <%#*</div>%>
+    <div class="tab-pane active" id="tab2">
+      <% if @google_books.any? %>
+        <div class="">
+          <% @google_books.each do |google_book| %>
+            <%= render 'google_book', :google_book => google_book %>
+          <% end %>
+        </div>
+      <% else %>
+        <b><h1 style="text-align: center;">No results found<br/><br/> OR <br/><br/>Empty Keyword</h1></b>
+      <% end %>
+      <div class="clearfix"></div>
+      <div class="loading span10 alert alert-info">
+        <h5 class=" offset4">Loading More Books</h5>
+      </div>
+    </div>
   </div>
 </div>
 <script type="text/javascript">

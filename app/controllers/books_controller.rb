@@ -129,18 +129,18 @@ class BooksController < ApplicationController
   def search
     @books = Book.search_for(params[:value]).paginate(:page => params[:page], :per_page => 4)
 
-#    @google_books = GoogleBooks.search(params[:value], {:count => 6, :page => params[:page] })
-#    @google_books = @google_books.map {|book| { :image_url => book.image_link(:zoom => 1),
-#        :publisher => book.publisher,
-#        :title => book.title,
-#        :author => book.authors,
-#        :isbn => book.isbn,
-#        :id => book.id
-#      }}
-#    @google_books = @google_books.map {|item| Hashit.new(item)}
-#    respond_to do |format|
-#      format.json { render :json => @google_books }
-#      format.html
-#    end
+    @google_books = GoogleBooks.search(params[:value], {:count => 6, :page => params[:page] })
+    @google_books = @google_books.map {|book| { :image_url => book.image_link(:zoom => 1),
+        :publisher => book.publisher,
+        :title => book.title,
+        :author => book.authors,
+        :isbn => book.isbn,
+        :id => book.id
+      }}
+    @google_books = @google_books.map {|item| Hashit.new(item)}
+    respond_to do |format|
+      format.json { render :json => @google_books }
+      format.html
+    end
   end
 end
