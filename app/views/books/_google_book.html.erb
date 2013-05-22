@@ -1,20 +1,22 @@
-<div class="searched_books span5">
-  <div class="search_book_image span4">
-    <% unless google_book.image_url.blank? %>
-      <%= image_tag google_book.image_url %>
-    <% else %>
-      <%= image_tag 'no_book_image.jpeg'%>
-    <% end %>
-  </div>
-
-  <div class="search_book_text span7">
-    <div class="book_title span12">
-      <b><%= google_book.title.truncate(50) %></b><br/>
+<% @google_books.each_with_index do |google_book, index| %>
+  <div class="searched_books span5" <%= "style=margin-left:2.5641%" if(index == 0) %> >
+    <div class="search_book_image span4">
+      <% unless google_book.image_url.blank? %>
+        <%= image_tag google_book.image_url %>
+      <% else %>
+        <%= image_tag 'no_book_image.jpeg'%>
+      <% end %>
     </div>
-    by <i><%= google_book.author.truncate(50) %></i><br/>
-    ISBN : <%= google_book.isbn %><br/>
-    Publisher : <%= google_book.publisher %><br/>
-    <%= link_to "Show Details", show_search_path(:id => google_book.id), :class => 'btn btn-mini btn-info' %>
-    <%= link_to "Add this Book", new_book_path(:google_book_id => google_book.id), :class => 'btn btn-mini btn-primary' %>
+
+    <div class="search_book_text span7">
+      <div class="book_title span12">
+        <b><%= google_book.title.truncate(50) %></b><br/>
+      </div>
+      by <i><%= google_book.author.truncate(50) %></i><br/>
+      ISBN : <%= google_book.isbn %><br/>
+      Publisher : <%= google_book.publisher %><br/>
+      <%= link_to "Show Details", show_search_path(:google_book_id => google_book.id), :class => 'btn btn-mini btn-info' %>
+      <%= link_to "Add this Book", new_book_path(:google_book_id => google_book.id), :class => 'btn btn-mini btn-primary' %>
+    </div>
   </div>
-</div>
+<% end %>

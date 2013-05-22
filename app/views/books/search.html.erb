@@ -3,50 +3,63 @@
 </legend>
 <div class="tabbable"> <!-- Only required for left/right tabs -->
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#tab1" data-toggle="tab">Available in your campus</a></li>
-    <li><a href="#tab2" data-toggle="tab">Available in Internet.</a></li>
+    <li class="active"><a href="#tab1" data-toggle="tab">Available in Internet </a></li>
+    <li><a href="#tab2" data-toggle="tab">Available in Campus</a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="tab1">
+      <% if @google_books.any? %>
+        <div style="display:none">
+          <%= link_to "Next", search_path(:value => params[:value], :next => "next"), :class => 'next' %>
+        </div>
+        <div class="google_search">
+          <%= render :partial => 'google_book'%>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="tab-pane" id="tab2">
       <% if @books.any? %>
         <div class="search">
-          <%= render @books %>
+          <%= render :partial => 'book' %>
         </div>
-        <div class="span11 paging" style="display:none">
-          <%= will_paginate @books  %>
-        </div>
-      <% else %>
-        <b><h1 style="text-align: center;">No results found<br/><br/> OR <br/><br/>Empty Keyword</h1></b>
-      <% end %>
-      <div class="clearfix"></div>
-      <div class="loading span10 alert alert-info">
-        <h5 class=" offset4">Loading More Books</h5>
+      <div style="display: none">
+        <%= will_paginate @books %>
       </div>
-    </div>
-    <div class="tab-pane active" id="tab2">
-      <% if @google_books.any? %>
-        <div class="">
-          <% @google_books.each do |google_book| %>
-            <%= render 'google_book', :google_book => google_book %>
-          <% end %>
-        </div>
-      <% else %>
-        <b><h1 style="text-align: center;">No results found<br/><br/> OR <br/><br/>Empty Keyword</h1></b>
       <% end %>
-      <div class="clearfix"></div>
-      <div class="loading span10 alert alert-info">
-        <h5 class=" offset4">Loading More Books</h5>
-      </div>
     </div>
   </div>
 </div>
+
 <script type="text/javascript">
-  $(window).scroll(function(){
-    url = $('.pagination .next_page').attr('href');
-    if(url && ($(window).scrollTop() > $(document).height() - $(window).height() - 50)){
-      $('.loading').show().delay(4000).fadeOut(1500);
-      $.getScript(url);
-    }
-  })
+  $(window).scroll(function(){      
+
+    if ($('#tab1').hasClass('active')){
+      if(window.pagination_loading){
+        return
+      }
+      google_url = $('.next').attr('href');
+      if(google_url && ($(window).scrollTop() > $(document).height() - $(window).height() - 50)){
+        window.pagination_loading = true
+        $.getScript(google_url).always(function(){
+          window.pagination_loading = false
+        });
+      };
+    };
+
+    if ($('#tab2').hasClass('active')){
+      if(window.pagination_loading){
+        return
+      };
+      db_url = $('.pagination .next_page').attr('href');
+      if(db_url && ($(window).scrollTop() > $(document).height() - $(window).height() - 50)){
+        window.pagination_loading = true
+        $.getScript(db_url).always(function(){
+          window.pagination_loading = false
+        });
+      };
+    };
+    
+  });
 </script>
 

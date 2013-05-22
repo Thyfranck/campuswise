@@ -15,12 +15,16 @@ class BooksController < ApplicationController
     if params[:requested]
       @requested_book = true
     end
+    if params[:book_id]
+      @from_database = true
+      @book.set_db(params[:book_id])
+    end
   end
 
   def create
     unless params[:search] == "Search"
       @book = current_user.books.new(params[:book])
-      unless params[:remote_url].blank?
+      if params[:remote_url].present?
         @book.set_google_image(params[:remote_url], current_user)
       end
       respond_to do |format|
@@ -81,29 +85,12 @@ class BooksController < ApplicationController
     end
   end
 
-  #  def search
-  #    if params[:book_page] and params[:next]
-  #      @book_page = params[:book_page].to_i + 1
-  #    elsif params[:book_page] and params[:previous] and params[:book_page].to_i > 1
-  #      @book_page = params[:book_page].to_i - 1
-  #    else
-  #      @book_page = 1
-  #    end
-  #    @books = GoogleBooks.search(params[:value], {:count => 10, :page => (@book_page or 1) })
-  #    @search_result = @books.map {|book| { :image => book.image_link(:zoom => 1),
-  #        :publisher => book.publisher,
-  #        :title => book.title,
-  #        :authors => book.authors,
-  #        :isbn => book.isbn
-  #      }}
-  #    respond_to do |format|
-  #      format.json { render :json => @search_result }
-  #      format.html
-  #    end
-  #  end
-
   def show_search
-    @book = GoogleBooks.search(params[:id]).first
+    if params[:google_book_id]
+      @book = GoogleBooks.search(params[:google_book_id]).first
+    elsif params[:db_book_id]
+      @book = Book.find(params[:db_book_id])
+    end
     respond_to do |format|
       format.html
     end
@@ -127,10 +114,26 @@ class BooksController < ApplicationController
   end
 
   def search
-    @books = Book.search_for(params[:value]).paginate(:page => params[:page], :per_page => 4)
+    @books = Book.search_for(params[:value]).paginate(:page => params[:page], :per_page => 8)
+    if params[:next]
+      session[:book_page] = session[:book_page] + 1
+    else
+      session[:book_page] = 1
+    end    
+    @google_books  = GoogleBooks.search(params[:value], {:count => 15, :page => session[:book_page] })
+    @google_books = prepare(@google_books)   
+    respond_to do |format|
+      if params[:next] or params[:page]
+        format.js
+      else
+        format.json { render :json => @google }
+      end
+      format.html
+    end
+  end
 
-    @google_books = GoogleBooks.search(params[:value], {:count => 6, :page => params[:page] })
-    @google_books = @google_books.map {|book| { :image_url => book.image_link(:zoom => 1),
+  def prepare(google_books)
+    @google_books  = google_books.map {|book| { :image_url => book.image_link(:zoom => 1),
         :publisher => book.publisher,
         :title => book.title,
         :author => book.authors,
@@ -138,9 +141,6 @@ class BooksController < ApplicationController
         :id => book.id
       }}
     @google_books = @google_books.map {|item| Hashit.new(item)}
-    respond_to do |format|
-      format.json { render :json => @google_books }
-      format.html
-    end
+    return @google_books
   end
 end

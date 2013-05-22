@@ -1,2 +1,7 @@
-$('.search').append('<%= j render(@books) %>');
+if ($('#tab1').hasClass('active')){
+$('.google_search').append('<%= escape_javascript(render :partial => 'google_book')%>');
+}
+if ($('#tab2').hasClass('active')){
+$('.search').append('<%= escape_javascript(render :partial => 'book')%>');
 $('.pagination').replaceWith('<%= j will_paginate(@books) %>');
+}

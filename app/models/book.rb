@@ -34,6 +34,15 @@ class Book < ActiveRecord::Base
     self.remote_image = google_book.image_link(:zoom => 1)
   end
 
+  def set_db(id)
+    @db_book = Book.find(id)
+    self.title = @db_book.title
+    self.author = @db_book.author
+    self.image = @db_book.image
+    self.publisher = @db_book.publisher
+    self.isbn = @db_book.isbn
+  end
+
   def set_google_image(remote_url, current_user)
     agent = Mechanize.new
     agent.pluggable_parser.default = Mechanize::Download
