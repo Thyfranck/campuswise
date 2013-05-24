@@ -1,7 +1,7 @@
 class Book < ActiveRecord::Base
   attr_accessible :author, :available_from, :available, :image,:isbn,
     :loan_price, :purchase_price, :publisher, :returning_date,
-    :title, :user_id, :requested, :loan_daily, :loan_weekly, :loan_monthly, :loan_semister
+    :title, :user_id, :requested, :loan_daily, :loan_weekly, :loan_monthly, :loan_semester
 
   attr_accessor :remote_image
   validates :author, :presence => true
@@ -11,7 +11,7 @@ class Book < ActiveRecord::Base
   validates :loan_daily, :allow_nil => true ,:numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_weekly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_monthly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_semister, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_semester, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   
   belongs_to :user
   has_many :exchanges
@@ -62,7 +62,7 @@ class Book < ActiveRecord::Base
     if self.requested == true
       return true
     else
-      if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semister == nil
+      if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semester == nil
         errors[:base] << "You must specify atleast one loan rate."
         return false
       else

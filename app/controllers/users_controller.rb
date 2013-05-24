@@ -53,6 +53,7 @@ class UsersController < ApplicationController
 
   def update
     @user = User.find(params[:id])
+    @school = @user.school
     params[:user][:email] = "#{params[:user][:email]}"+"@"+"#{@user.school.email_postfix}" if params[:user][:email].present?
     respond_to do |format|
       if @user.update_attributes(params[:user])
@@ -63,7 +64,7 @@ class UsersController < ApplicationController
           if params[:user][:current_password].present?
             render action: "change_password", layout: "dashboard"
           else
-            redirect_to edit_user_path(@user) 
+            render action: 'new'
           end
         }
         format.json { render json: @user.errors, status: :unprocessable_entity }

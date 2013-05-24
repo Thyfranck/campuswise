@@ -60,15 +60,15 @@
         </div>
       <% end %>
 
-      <% if @book.loan_semister.present? %>
+      <% if @book.loan_semester.present? %>
         <div class="span3">
           <div class="control-group">
             <%= f.label :package, "Full semester", :class => 'control-label' %>
             <div class="controls">
-              <%= f.radio_button :package ,'semister'%>
+              <%= f.radio_button :package ,'semester'%>
             </div>
             <br/>
-            $ <span id="semister_rate"><%= @book.loan_semister %></span> / semester
+            $ <span id="semester_rate"><%= @book.loan_semester %></span> / semester
           </div>
         </div>
       <% end %>

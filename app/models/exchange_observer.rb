@@ -33,11 +33,11 @@ class ExchangeObserver < ActiveRecord::Observer
       @dashboard_notification =  DashboardNotification.new(
         :user_id => @request_receiver.id,
         :exchange_id => record.id,
-        :content => "#{@request_sender.name} wants to borrow your book \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semister" ? "full semister" : record.ending_date.to_date}\" ")
+        :content => "#{@request_sender.name} wants to borrow your book \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date}\" ")
       if @dashboard_notification.save
         Notification.notify_book_owner(record).deliver
         @to = @request_receiver.phone
-        @body = "#{@request_sender.name} wants to borrow \"#{@requested_book.title.truncate(30)}\" from #{record.starting_date.to_date} to #{record.package == "semister" ? "full semister" : record.ending_date.to_date},to accept reply YES#{record.id},to ignore reply NO#{record.id} -Campuswise"
+        @body = "#{@request_sender.name} wants to borrow \"#{@requested_book.title.truncate(30)}\" from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},to accept reply YES#{record.id},to ignore reply NO#{record.id} -Campuswise"
         TwilioRequest.send_sms(@body, @to)
       end
     end
@@ -66,6 +66,8 @@ class ExchangeObserver < ActiveRecord::Observer
           notify_borrower_after_complete(record, @exchange,@request_sender,@requested_book)
           notify_owner_after_complete(record, @exchange,@request_receiver,@requested_book)
           record.exchange.destroy_other_pending_requests
+#          @returning_date_time_from_now = record.exchange.ending_date - Time.now
+#          Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , @returning_date_time_from_now.seconds.from_now, :queue => "book_return_reminder"
         end
       elsif record.status == Payment::STATUS[:failed]
         record.exchange.destroy

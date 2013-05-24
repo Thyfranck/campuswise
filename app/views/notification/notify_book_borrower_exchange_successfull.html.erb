@@ -12,7 +12,7 @@ Here is your borrow details:
   <li>Book ISBN : <%= @book.isbn %></li>
   <li>Book rented in : <%= @exchange.package.capitalize %> basis.</li>
   <li>Book rent starting date : <%= @exchange.starting_date.to_date %></li>
-  <% if @exchange.package == "semister" %>
+  <% if @exchange.package == "semester" %>
     <li>Book rent ending time : End of the Semester.</li>
   <% else %>
     <li>Book rent ending date : <%= @exchange.ending_date.to_date %></li>
