@@ -103,7 +103,7 @@ class Notification < ActionMailer::Base
   end
 
   def send_reminder_email_to_borrower(payment)
-    @owner = Book.find(payment.exchange.book_id).user
+    @owner = payment.exchange.book.user
     @user = payment.exchange.user
     @book = payment.exchange.book
     headers['X-SMTPAPI'] = "{\"category\" : \"Reminder Alert\"}"
@@ -112,7 +112,7 @@ class Notification < ActionMailer::Base
   end
 
   def send_reminder_email_to_lender(payment)
-    @user = Book.find(payment.exchange.book_id).user
+    @user = payment.exchange.book.user
     @borrower = payment.exchange.user
     @book = payment.exchange.book
     headers['X-SMTPAPI'] = "{\"category\" : \"Reminder Alert\"}"

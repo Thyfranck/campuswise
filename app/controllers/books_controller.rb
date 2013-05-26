@@ -126,7 +126,7 @@ class BooksController < ApplicationController
       if params[:next] or params[:page]
         format.js
       else
-        format.json { render :json => @google }
+        format.json { render :json => @google_books }
       end
       format.html
     end

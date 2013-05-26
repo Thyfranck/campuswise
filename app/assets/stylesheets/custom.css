@@ -408,4 +408,11 @@ a:hover{
     margin-top: 20px;
 }
 
+.upper_menu {
+    border-radius: 13px;
+    padding: 5px;
+    padding-left: 5%;
+    border: 2px solid;
+}
+
 

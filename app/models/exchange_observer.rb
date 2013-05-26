@@ -66,8 +66,8 @@ class ExchangeObserver < ActiveRecord::Observer
           notify_borrower_after_complete(record, @exchange,@request_sender,@requested_book)
           notify_owner_after_complete(record, @exchange,@request_receiver,@requested_book)
           record.exchange.destroy_other_pending_requests
-#          @returning_date_time_from_now = record.exchange.ending_date - Time.now
-#          Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , @returning_date_time_from_now.seconds.from_now, :queue => "book_return_reminder"
+          @returning_date_time_from_now = record.exchange.ending_date - Date.today
+          Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , @returning_date_time_from_now.seconds.from_now, :queue => "book_return_reminder"
         end
       elsif record.status == Payment::STATUS[:failed]
         record.exchange.destroy
@@ -79,7 +79,7 @@ class ExchangeObserver < ActiveRecord::Observer
     @dashboard_notification = DashboardNotification.new(
       :user_id => request_receiver.id,
       :exchange_id => exchange.id,
-      :content => "Congratulation,the book titled \"<a href='/books/#{requested_book.id}' target='_blank'> #{requested_book.title.truncate(25)} </a> \" exchanged successfully. Checkout your lended book <a href='/borrow_requests' target='_blank'>list</a>"
+      :content => "Congratulation,the book titled \"<a href='/books/#{requested_book.id}' target='_blank'> #{requested_book.title.truncate(25)} </a> \" exchanged successfully. Please inform us at admin@campuswise.com when the book is returned.Checkout your lended book <a href='/borrow_requests' target='_blank'>list</a>"
     )
     @dashboard_notification.save
     Notification.notify_book_owner_exchange_successfull(record).deliver

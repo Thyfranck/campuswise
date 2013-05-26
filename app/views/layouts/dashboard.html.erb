@@ -31,9 +31,9 @@
                   <%= msg %>
                 </div>
               <% end %>
-              <div class="row">
-                <%= render "shared/dashboard_sidebar" %>
-                <div class="span9 well <%= "no_padding" if current_page?(search_path) %>">
+              <div class="row offset1">
+                <%= render "shared/dashboard_sidebar", :style => "text-align:center" %>
+                <div class="span11 well <%= "no_padding" if current_page?(search_path) %>">
                   <%= yield %>
                 </div>
               </div>
