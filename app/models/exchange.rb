@@ -12,8 +12,8 @@ class Exchange < ActiveRecord::Base
   has_many :dashboard_notifications
   has_one :payment
 
-  validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semister"}
-  validates :package, :inclusion => {:in => ["daily", "weekly", "monthly", "semister"]}
+  validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semester"}
+  validates :package, :inclusion => {:in => ["daily", "weekly", "monthly", "semester"]}
 
   def destroy_other_pending_requests
     book = self.book_id
@@ -25,7 +25,7 @@ class Exchange < ActiveRecord::Base
   before_create :compute_amount, :avilable_in_date?
 
   def avilable_in_date?
-    if self.package == "semister"
+    if self.package == "semester"
       return true
     else
       if self.package == "daily"
@@ -51,10 +51,10 @@ class Exchange < ActiveRecord::Base
       rate = self.book.loan_weekly
     elsif self.package == "monthly"
       rate = self.book.loan_monthly
-    elsif self.package == "semister"
-      rate = self.book.loan_semister
+    elsif self.package == "semester"
+      rate = self.book.loan_semester
     end
-    if self.package == "semister"
+    if self.package == "semester"
       total_amount = rate
     else
       total_amount = rate * self.duration
@@ -95,5 +95,16 @@ class Exchange < ActiveRecord::Base
     @to = self.user.phone
     @body = "Request for the book titled:\"#{self.book.title.truncate(30)}\"has been accepted by the owner.It will be processed when payment is complete -Campuswise"
     TwilioRequest.send_sms(@body, @to)
+  end
+
+  def other_pending_payment_present?
+    book = self.book_id
+    borrower = self.user_id
+    @other_pending_requests = Exchange.where("book_id = ? and user_id != ?", book, borrower)
+    if @other_pending_requests.present? and @other_pending_requests.each {|p| p.payment}.present?
+      return true if @other_pending_requests.each {|p| p.payment.status == "PENDING"}.present?
+    else
+      return false
+    end
   end
 end

@@ -10,7 +10,11 @@
 
   <p>
     <b> Author:</b>
-    <%= @book.authors %>
+    <% if params[:google_book_id] %>
+      <%= @book.authors %>
+    <% else %>
+      <%= @book.author %>
+    <% end %>
   </p>
 
   <p>
@@ -22,16 +26,27 @@
     <b> ISBN:</b>
     <%= @book.isbn %>
   </p>
-
-  <%= link_to "Add this Book", new_book_path(:google_book_id => @book.id), :class => 'btn btn-primary' %>
+  <% if params[:google_book_id] %>
+    <%= link_to "Add this Book", new_book_path(:google_book_id => @book.id), :class => 'btn btn-primary' %>
+  <% elsif params[:db_book_id] %>
+    <%= link_to "Add this Book", new_book_path(:book_id => @book.id), :class => 'btn btn-primary' %>
+  <% end %>
 </div>
 
 <div class="span3 offset1">
   <p>
-    <% if @book.image_link.present?  %>
-      <%= image_tag @book.image_link %>
-    <% else %>
-      <%= image_tag 'no_book_image.jpeg', :class => "no_book_image"  %>
+    <% if params[:google_book_id]  %>
+      <% if @book.image_link.present? %>
+        <%= image_tag @book.image_link(:zoom => 1) %>
+      <% else %>
+        <%= image_tag 'no_book_image.jpeg', :class => "no_book_image"  %>
+      <% end %>
+    <% elsif params[:db_book_id] %>
+      <% if @book.image.present? %>
+        <%= image_tag @book.image_url %>
+      <% else %>
+        <%= image_tag 'no_book_image.jpeg', :class => "no_book_image"  %>
+      <% end %>
     <% end %>
   </p>
 </div>

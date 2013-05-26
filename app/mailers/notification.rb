@@ -101,4 +101,22 @@ class Notification < ActionMailer::Base
     mail(:to => @user.email,
       :subject => "Congratulation Your Book lending process is complete - CampusWise")
   end
+
+  def send_reminder_email_to_borrower(payment)
+    @owner = payment.exchange.book.user
+    @user = payment.exchange.user
+    @book = payment.exchange.book
+    headers['X-SMTPAPI'] = "{\"category\" : \"Reminder Alert\"}"
+    mail(:to => @user.email,
+      :subject => "Please return the book \"#{@book.title.truncate(20)}\" - CampusWise")
+  end
+
+  def send_reminder_email_to_lender(payment)
+    @user = payment.exchange.book.user
+    @borrower = payment.exchange.user
+    @book = payment.exchange.book
+    headers['X-SMTPAPI'] = "{\"category\" : \"Reminder Alert\"}"
+    mail(:to => @user.email,
+      :subject => "Please inform when the book \"#{@book.title.truncate(20)}\" is returned - CampusWise")
+  end
 end

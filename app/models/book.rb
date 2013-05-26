@@ -1,7 +1,7 @@
 class Book < ActiveRecord::Base
   attr_accessible :author, :available_from, :available, :image,:isbn,
     :loan_price, :purchase_price, :publisher, :returning_date,
-    :title, :user_id, :requested, :loan_daily, :loan_weekly, :loan_monthly, :loan_semister
+    :title, :user_id, :requested, :loan_daily, :loan_weekly, :loan_monthly, :loan_semester
 
   attr_accessor :remote_image
   validates :author, :presence => true
@@ -11,7 +11,7 @@ class Book < ActiveRecord::Base
   validates :loan_daily, :allow_nil => true ,:numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_weekly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_monthly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
-  validates :loan_semister, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
+  validates :loan_semester, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   
   belongs_to :user
   has_many :exchanges
@@ -22,6 +22,7 @@ class Book < ActiveRecord::Base
 
   scoped_search :on => [:author, :isbn, :publisher, :title]
   scope :available_now, :conditions => {:available => true}
+  scope :date_not_expired, lambda { where(["returning_date > ?",Time.now.to_date])}
   scope :not_my_book, lambda { |current_user| where(["user_id != ?",current_user])}
 
   def set_google(book_id)
@@ -31,6 +32,15 @@ class Book < ActiveRecord::Base
     self.publisher = google_book.publisher
     self.isbn = google_book.isbn
     self.remote_image = google_book.image_link(:zoom => 1)
+  end
+
+  def set_db(id)
+    @db_book = Book.find(id)
+    self.title = @db_book.title
+    self.author = @db_book.author
+    self.image = @db_book.image
+    self.publisher = @db_book.publisher
+    self.isbn = @db_book.isbn
   end
 
   def set_google_image(remote_url, current_user)
@@ -52,7 +62,7 @@ class Book < ActiveRecord::Base
     if self.requested == true
       return true
     else
-      if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semister == nil
+      if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semester == nil
         errors[:base] << "You must specify atleast one loan rate."
         return false
       else

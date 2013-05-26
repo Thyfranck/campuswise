@@ -36,6 +36,14 @@ class User < ActiveRecord::Base
   after_create :send_sms_verification
   #  before_update :check_if_phone_changed
   #  after_update :send_sms_verification
+  before_update :check_if_email_changed
+
+  def check_if_email_changed
+    if self.email_changed?
+      errors[:base] << "Not allowed to update email."
+      return false
+    end
+  end
 
   def make_email_format
     self.email = self.email + "@" +self.school.email_postfix 

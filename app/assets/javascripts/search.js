@@ -37,12 +37,12 @@ $(document).ready(function(){
                     searchData = data;
                     response( $.map( data, function(item) {
                         return {
-                            label: item.title + " by " + item.authors,
+                            label: item.title + " by " + item.author,
                             only_label : item.title,
                             isbn : item.isbn,
-                            author : item.authors,
+                            author : item.author,
                             publisher : item.publisher,
-                            image : item.image
+                            image : item.image_url
                         }
                     }));
                 }

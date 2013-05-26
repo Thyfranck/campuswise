@@ -28,8 +28,8 @@ $(document).ready(function(){
         }
     });
 
-    $('#book_loan_semister').change(function(){
-        var var4 = $.trim($('#book_loan_semister').val());
+    $('#book_loan_semester').change(function(){
+        var var4 = $.trim($('#book_loan_semester').val());
         if(var4 != myRegEx.exec(var4) || (var4 < 5)){
             $(this).next('.number_error').html('must be a number and equal or above 5').delay(500).fadeIn(500);
             $(this).next('.number_error').html('must be a number and equal or above 5').delay(4000).fadeOut(1500);
@@ -43,7 +43,7 @@ $(document).ready(function(){
         var var1 = $.trim($('#book_loan_daily').val());
         var var2 = $.trim($('#book_loan_weekly').val());
         var var3 = $.trim($('#book_loan_monthly').val());
-        var var4 = $.trim($('#book_loan_semister').val());
+        var var4 = $.trim($('#book_loan_semester').val());
 
         if($('#book_requested').val() == 'true'){
             return true;
@@ -60,7 +60,7 @@ $(document).ready(function(){
         var var1 = $.trim($('#book_loan_daily').val());
         var var2 = $.trim($('#book_loan_weekly').val());
         var var3 = $.trim($('#book_loan_monthly').val());
-        var var4 = $.trim($('#book_loan_semister').val());
+        var var4 = $.trim($('#book_loan_semester').val());
 
         if($('#book_requested').val() == 'true'){
             return true;

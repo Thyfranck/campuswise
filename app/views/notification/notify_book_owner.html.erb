@@ -2,7 +2,7 @@ Hello <%= @user.name %>,<br/>
 <br/>
 
 <%= "#{@borrower.name}"%> wants to borrow your book titled: "<%= @book.title %>".<br/>
-From <%= @exchange.starting_date.to_date %> to <%= @exchange.package == "semister" ? "full semister" : @exchange.ending_date.to_date %>
+From <%= @exchange.starting_date.to_date %> to <%= @exchange.package == "semester" ? "full semester" : @exchange.ending_date.to_date %>
 <br/>
 To approve or ignore this just follow this link: <%= link_to "Link", @url %>.<br/>
 <br/>

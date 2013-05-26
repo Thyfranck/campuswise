@@ -26,7 +26,7 @@ $(document).ready(function(){
         }
     })
 
-    if($('#exchange_package_semister').is(':checked')){
+    if($('#exchange_package_semester').is(':checked')){
         $('.exchange_amount').hide();
         $('.exchange_submit_section').show();
     }
@@ -47,8 +47,8 @@ $(document).ready(function(){
         }
     })
 
-    $('#exchange_package_semister').change(function(){
-        if($('#exchange_package_semister').is(':checked')){
+    $('#exchange_package_semester').change(function(){
+        if($('#exchange_package_semester').is(':checked')){
             $('.exchange_amount').hide();
             $('.exchange_submit_section').show();
         }
@@ -59,7 +59,7 @@ $(document).ready(function(){
         var rate1 = ($('#day_rate').html());
         var rate3 = ($('#month_rate').html());
         var rate2 = ($('#week_rate').html());
-        var rate4 = ($('#semister_rate').html());
+        var rate4 = ($('#semester_rate').html());
         var amount = $.trim($('#exchange_duration').val());          
         
         if($('#exchange_package_daily').is(':checked')){
@@ -83,7 +83,7 @@ $(document).ready(function(){
                 $('.total_amount_to_pay').html('Invalid');
             }
         }
-        if($('#exchange_package_semister').is(':checked')){
+        if($('#exchange_package_semester').is(':checked')){
             $('.total_amount_to_pay').html('$'+rate4);
         }
     });

@@ -1,0 +1,21 @@
+<% @books.each_with_index do |book, index| %>
+  <div class="searched_books span5" <%= "style=margin-left:2.5641%" if(index == 0) %> >
+    <div class="search_book_image span4">
+      <% unless book.image.blank? %>
+        <%= image_tag book.image_url %>
+      <% else %>
+        <%= image_tag 'no_book_image.jpeg' %>
+      <% end %>
+    </div>
+    <div class="search_book_text span7">
+      <div class="book_title span12">
+        <b><%= book.title.truncate(50) %></b><br/>
+      </div>
+      by <i><%= book.author.truncate(50) %></i><br/>
+      ISBN : <%= book.isbn %><br/>
+      Publisher : <%= book.publisher %><br/>
+      <%= link_to "Show Details", show_search_path(:db_book_id => book.id), :class => 'btn btn-mini btn-info' %>
+      <%= link_to "Add this Book", new_book_path(:book_id => book.id), :class => 'btn btn-mini btn-primary' %>
+    </div>
+  </div>
+<% end %>

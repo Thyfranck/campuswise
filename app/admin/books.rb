@@ -46,7 +46,7 @@ ActiveAdmin.register Book do
       row :loan_daily
       row :loan_weekly
       row :loan_monthly
-      row :loan_semister
+      row :loan_semester
       row :available do |book|
         book.available == true ? "Yes" :
           link_to("No - Change", make_available_admin_book_path(book) , :confirm => "Are you sure to update the availability of this book?")

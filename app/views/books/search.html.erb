@@ -1,37 +1,65 @@
 <legend>
   <h3>&nbsp;&nbsp;&nbsp;Search results</h3>
 </legend>
-<% if @books.any? %>
-  <div>
-    <%= link_to "Previous" ,search_path(:value => params[:value], :book_page => @book_page, :previous => "previous"), :class => 'btn btn-primary' %>&nbsp;&nbsp;&nbsp;
-    <%= link_to "Next", search_path(:value => params[:value], :book_page => @book_page, :next => "next"), :class => 'btn btn-primary' %>
-  </div>
-  <% @books.each do |book| %>
-
-    <div class="searched_books span5">
-      <div class="search_book_image span4">
-        <% unless book.image_link.blank? %>
-          <%= image_tag book.image_link %>
-        <% else %>
-          <%= image_tag 'no_book_image.jpeg'%>
-        <% end %>
-      </div>
-
-      <div class="search_book_text span7">
-        <div class="book_title span12">
-          <b><%= book.title.truncate(50) %></b><br/>
+<div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">Available in Internet </a></li>
+    <li><a href="#tab2" data-toggle="tab">Available in Campus</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+      <% if @google_books.any? %>
+        <div style="display:none">
+          <%= link_to "Next", search_path(:value => params[:value], :next => "next"), :class => 'next' %>
         </div>
-        by <i><%= book.authors.truncate(50) %></i><br/>
-        ISBN : <%= book.isbn %><br/>
-        Publisher : <%= book.publisher %><br/>
-        Loan Price : <%= book.loan_price %><br/>
-        <%= link_to "Show Details", show_search_path(:id => book.id), :class => 'btn btn-mini btn-info' %>
-        <%= link_to "Add this Book", new_book_path(:google_book_id => book.id), :class => 'btn btn-mini btn-primary' %>
-      </div>
+        <div class="google_search">
+          <%= render :partial => 'google_book'%>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-<% else %>
 
-  <b><h1 style="text-align: center;">No results found<br/><br/> OR <br/><br/>Empty Keyword</h1></b>
+    <div class="tab-pane" id="tab2">
+      <% if @books.any? %>
+        <div class="search">
+          <%= render :partial => 'book' %>
+        </div>
+      <div style="display: none">
+        <%= will_paginate @books %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>
 
-<% end %>
+<script type="text/javascript">
+  $(window).scroll(function(){      
+
+    if ($('#tab1').hasClass('active')){
+      if(window.pagination_loading){
+        return
+      }
+      google_url = $('.next').attr('href');
+      if(google_url && ($(window).scrollTop() > $(document).height() - $(window).height() - 200)){
+        window.pagination_loading = true
+        $.getScript(google_url).always(function(){
+          window.pagination_loading = false
+        });
+      };
+    };
+
+    if ($('#tab2').hasClass('active')){
+      if(window.pagination_loading){
+        return
+      };
+      db_url = $('.pagination .next_page').attr('href');
+      if(db_url && ($(window).scrollTop() > $(document).height() - $(window).height() - 200)){
+        window.pagination_loading = true
+        $.getScript(db_url).always(function(){
+          window.pagination_loading = false
+        });
+      };
+    };
+    
+  });
+</script>
+

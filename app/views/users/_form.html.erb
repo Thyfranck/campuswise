@@ -26,14 +26,15 @@
         <%= f.text_field :name,:class => 'text_field',:required => true %>
       </div>
     </div>
-
-    <div class="control-group">
-      <%= f.label :email, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.text_field :email,:class => 'text_field', :required => true %>&nbsp;&nbsp;@
-        <%= @school.email_postfix %>
+    <% if @user.new_record? %>
+      <div class="control-group">
+        <%= f.label :email, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.text_field :email,:class => 'text_field', :required => true %>&nbsp;&nbsp;@
+          <%= @school.email_postfix %>
+        </div>
       </div>
-    </div>
+    <% end %>
 
     <div class="control-group">
       <%= f.label :phone, :class => 'control-label' %>
