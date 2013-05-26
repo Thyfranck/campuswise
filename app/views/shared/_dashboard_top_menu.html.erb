@@ -1,0 +1,86 @@
+<ul class="nav nav-pills well">
+  <li class="<%= "active" if current_page?(dashboard_path) %>">
+    <%= link_to "Dashboard", dashboard_path %>
+  </li>
+  <li class="dropdown <%= "active" if current_page?(user_path(current_user)) || current_page?(edit_user_path(current_user)) || current_page?(change_password_user_path(current_user)) %>">
+    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+      Account Information
+      <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+      <li class="<%= "active" if current_page?(user_path(current_user)) %>">
+        <%= link_to "User Profile", user_path(current_user) %>
+      </li>
+      <li class="<%= "active" if current_page?(edit_user_path(current_user)) %>">
+        <%= link_to "Edit User Profile", edit_user_path(current_user)  %>
+      </li>
+      <li class="<%= "active" if current_page?(change_password_user_path(current_user)) %>">
+        <%= link_to "Change Password", change_password_user_path(current_user)  %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="dropdown <%= "active" if (current_page?(new_book_path) and params[:requested].blank?) || current_page?(books_path) || current_page?(requested_books_path) %>">
+    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+      Books Information
+      <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+      <li class="<%= "active" if current_page?(new_book_path) and params[:requested].blank? %>">
+        <%= link_to "Add a new book", new_book_path %>
+      </li>
+      <li class="<%= "active" if current_page?(books_path) %>">
+        <%= link_to "My books", books_path %>
+      </li>
+      <li class="<%= "active" if current_page?(requested_books_path) %>">
+        <%= link_to "Book requests", requested_books_path %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="dropdown <%= "active" if current_page?(search_exchanges_path) || current_page?(borrow_requests_path) || current_page?(new_book_path(:requested => true)) %>">
+    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+      Books Borrow Information
+      <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+      <li class="<%= "active" if current_page?(search_exchanges_path) %>">
+        <%= link_to "Borrow a book", search_exchanges_path %>
+      </li>
+      <li class="<%= "active" if current_page?(borrow_requests_path) %>">
+        <%= link_to "Manage Borrow Requests", borrow_requests_path %>
+      </li>
+      <li class="<%= "active" if current_page?(new_book_path) and params[:requested].present? %>">
+        <%= link_to "Request For a Book", new_book_path(:requested => true) %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="dropdown <%= "active" if controller.controller_name == "billing_settings" %>">
+    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+      Payment Information
+      <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+      <% if current_user.billing_setting.present? %>
+        <li class="<%= "active" if current_page?(billing_setting_path(current_user.billing_setting)) %>">
+          <%= link_to "Payment Settings", billing_setting_path(current_user.billing_setting) %>
+        </li>
+      <% else %>
+        <li class="<%= "active" if current_page?(new_billing_setting_path) %>">
+          <%= link_to "Payment Settings", new_billing_setting_path %>
+        </li>
+      <% end %>
+      <li>
+        <%= link_to "Total Balance", '#' %>
+      </li>
+      <li>
+        <%= link_to "Withdraw balance", '#' %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="">
+    <%= link_to "Help", 'javascript:;' %>
+  </li>
+</ul>

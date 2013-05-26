@@ -1,80 +1,29 @@
-<ul class="nav nav-pills upper_menu">
-  <li class="active">
-    <%= link_to "Dashboard", dashboard_path %>
-  </li>
-  <li class="dropdown">
-    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-      Account Information
-      <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
-      <li>
-        <%= link_to "User Profile", user_path(current_user)  %>
-      </li>
-      <li>
-        <%= link_to "Edit User Profile", edit_user_path(current_user)  %>
-      </li>
-      <li>
-        <%= link_to "Change Password", change_password_user_path(current_user)  %>
-      </li>
-    </ul>
-  </li>
-
-  <li class="dropdown">
-    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-      Books Information
-      <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
-      <li>
-        <%= link_to "Add a new book", new_book_path %>
-      </li>
-      <li>
-        <%= link_to "My books", books_path %>
-      </li>
-      <li>
-        <%= link_to "Book requests", requested_books_path %>
-      </li>
-    </ul>
-  </li>
-
-  <li class="dropdown">
-    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-      Books Borrow Information
-      <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
-      <li>
-        <%= link_to "Borrow a book", search_exchanges_path %>
-      </li>
-      <li>
-        <%= link_to "Manage Borrow Requests", borrow_requests_path %>
-      </li>
-      <li>
-        <%= link_to "Request For a Book", new_book_path(:requested => true) %>
-      </li>
-    </ul>
-  </li>
-
-  <li class="dropdown">
-    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-      Payment Information
-      <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
-      <li>
-        <% if current_user.billing_setting.present? %>
-        <li><%= link_to "Payment Settings", billing_setting_path(current_user.billing_setting) %></li>
-      <% else %>
-        <li><%= link_to "Payment Settings", new_billing_setting_path %></li>
-      <% end %>
-  </li>
-  <li>
-    <%= link_to "Total Balance", '#' %>
-  </li>
-  <li>
-    <%= link_to "Withdraw balance", '#' %>
-  </li>
-</ul>
-</li>
-</ul>
+<div class="span3 well">
+  <div class="nav nav-list">
+    <li><h5><%= link_to "Dashboard", dashboard_path %></h5></li>
+    <li class="nav-header">Account Information</li>
+    <li><%= link_to "User Profile", user_path(current_user) %></li>
+    <li><%= link_to "Edit User Profile", edit_user_path(current_user) %></li>
+    <li><%= link_to "Change Password", change_password_user_path(current_user) %></li>
+    <li class="nav-header">Books Information</li>
+    <li><%= link_to "Add a new book", new_book_path %></li>
+    <li><%= link_to "My books", books_path %></li>
+    <li>
+      <%= link_to "Book requests", requested_books_path %>
+    </li>
+    <li class="nav-header">Books Borrow Information</li>
+    <li><%= link_to "Borrow a book", search_exchanges_path %></li>
+    <li><%= link_to "Manage Borrow Requests", borrow_requests_path %></li>
+    <li>
+      <%= link_to "Request For a Book", new_book_path(:requested => true) %>
+    </li>
+    <li class="nav-header">Payment Information</li>
+    <% if current_user.billing_setting.present? %>
+    <li><%= link_to "Payment Settings", billing_setting_path(current_user.billing_setting) %></li>
+    <% else %>
+    <li><%= link_to "Payment Settings", new_billing_setting_path %></li>
+    <% end %>
+    <li><%= link_to "Total Balance", '#' %></li>
+    <li><%= link_to "Withdraw balance", '#' %></li>
+  </div>
+</div>

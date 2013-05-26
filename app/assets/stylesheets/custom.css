@@ -409,10 +409,16 @@ a:hover{
 }
 
 .upper_menu {
-    border-radius: 13px;
+    border-radius: 4px;
     padding: 5px;
     padding-left: 5%;
-    border: 2px solid;
+    border: 1px solid #333;
 }
 
+.nav.nav-pills.well{
+    padding: 8px;
+}
 
+.dashboard .span12.well{
+    margin-left: 0px;
+}

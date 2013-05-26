@@ -22,7 +22,7 @@
     <%= form_tag search_path, :class => "form-horizontal", :remote => true do %>
       <div class="control-group">
         <div class="controls">
-          <%= text_field_tag :value, nil ,:placeholder => "Enter Title, Author or ISBN number", :class => 'text_field search_field' %>
+          <%= text_field_tag :value, nil ,:placeholder => "Enter Title, Author or ISBN", :class => 'text_field search_field' %>
           <%= submit_tag "Search", :name => 'search',:class => "btn btn-primary search_button" %>
         </div>
       </div>
