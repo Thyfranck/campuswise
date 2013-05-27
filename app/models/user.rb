@@ -16,8 +16,8 @@ class User < ActiveRecord::Base
   has_many :pending_reverse_exchanges, :through => :books, :conditions => "accepted = false" ,:source => :exchanges #for request receiver(book owner)
   has_many :accepted_reverse_exchanges, :through => :books, :conditions => "accepted = true" ,:source => :exchanges #for request receiver(book owner)
 
-  has_many :dashboard_notifications
-  has_one :billing_setting
+  has_many :dashboard_notifications, :dependent => :destroy
+  has_one :billing_setting, :dependent => :destroy
   has_many :billing_events
 
   attr_accessor :current_password
