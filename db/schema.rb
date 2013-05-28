@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130527081644) do
+ActiveRecord::Schema.define(:version => 20130528065646) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -91,8 +91,9 @@ ActiveRecord::Schema.define(:version => 20130527081644) do
     t.integer  "user_id"
     t.integer  "exchange_id"
     t.string   "content"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.integer  "admin_user_id"
   end
 
   create_table "delayed_jobs", :force => true do |t|
@@ -114,9 +115,9 @@ ActiveRecord::Schema.define(:version => 20130527081644) do
   create_table "exchanges", :force => true do |t|
     t.integer  "book_id"
     t.integer  "user_id"
-    t.boolean  "accepted",                                     :default => false
-    t.datetime "created_at",                                                      :null => false
-    t.datetime "updated_at",                                                      :null => false
+    t.string   "status",                                       :default => "0"
+    t.datetime "created_at",                                                    :null => false
+    t.datetime "updated_at",                                                    :null => false
     t.decimal  "amount",        :precision => 10, :scale => 0
     t.string   "package"
     t.integer  "duration"

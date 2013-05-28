@@ -8,7 +8,7 @@
             <%= notification.content.html_safe %>
           </td>
           <td>
-            <% if notification.exchange.present? and notification.exchange.user_id != current_user.id and notification.exchange.accepted == false %>
+            <% if notification.exchange.present? and notification.exchange.user_id != current_user.id and notification.exchange.status == Exchange::STATUS[:pending] %>
               <%= link_to "Approve", exchange_path(notification.exchange_id), :method => :put, :class => "btn btn-small btn-primary" %>
               <%= link_to "Deny", exchange_path(notification.exchange_id), :method => :delete, :class => "btn btn-small btn-primary" %>
             <% else %>

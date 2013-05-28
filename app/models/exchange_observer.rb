@@ -61,16 +61,36 @@ class ExchangeObserver < ActiveRecord::Observer
         @requested_book = @exchange.book
         @request_receiver = @requested_book.user
         if @requested_book.available == true
-          @exchange.update_attribute(:accepted, true)
+          @exchange.update_attribute(:status, Exchange::STATUS[:accepted])
           @requested_book.update_attribute(:available, false)
           notify_borrower_after_complete(record, @exchange,@request_sender,@requested_book)
           notify_owner_after_complete(record, @exchange,@request_receiver,@requested_book)
           record.exchange.destroy_other_pending_requests
-          @returning_date_time_from_now = record.exchange.ending_date - Date.today
-          Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , @returning_date_time_from_now.seconds.from_now, :queue => "book_return_reminder"
+#          @returning_date_time_from_now = (record.exchange.ending_date - Date.today)*24*3600
+          Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , 2.seconds.from_now, :queue => "book_return_reminder"
         end
       elsif record.status == Payment::STATUS[:failed]
         record.exchange.destroy
+      end
+    end
+
+    if record.class == Exchange
+      if record.status == Exchange::STATUS[:returned]
+        @admin_notification = DashboardNotification.new(
+          :admin_user_id => AdminUser.first.id,
+          :exchange_id => @exchange.id,
+          :content => "User: #{@exchange.book.user.name}, email:#{@exchange.book.user.email} says that he has got return the book \"<a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title.truncate(50)}</a> \" "
+        )
+        @admin_notification.save
+      end
+
+      if record.status == Exchange::STATUS[:not_returned]
+        @admin_notification = DashboardNotification.new(
+          :admin_user_id => AdminUser.first.id.id,
+          :exchange_id => @exchange.id,
+          :content => "User: #{@exchange.book.user.name}, email:#{@exchange.book.user.email} says that he did got return the book \"<a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title.truncate(50)}</a> \" "
+        )
+        @admin_notification.save
       end
     end
   end

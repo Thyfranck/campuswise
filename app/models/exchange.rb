@@ -2,7 +2,7 @@
 #user_id => requester user id
 
 class Exchange < ActiveRecord::Base
-  attr_accessible :book_id, :user_id, :accepted, :package, :duration,
+  attr_accessible :book_id, :user_id, :status, :package, :duration,
     :starting_date, :ending_date, :amount
 
   attr_accessor :declined, :declined_reason
@@ -15,6 +15,16 @@ class Exchange < ActiveRecord::Base
   validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semester"}
   validates :package, :inclusion => {:in => ["daily", "weekly", "monthly", "semester"]}
 
+  STATUS = {
+    :accepted => "ACCEPTED",
+    :returned => "RETURNED",
+    :pending => "PENDING",
+    :not_returned => "NOT-RETURNED"
+  }
+
+  before_create :compute_amount, :avilable_in_date?, :set_status
+
+
   def destroy_other_pending_requests
     book = self.book_id
     borrower = self.user_id
@@ -22,7 +32,9 @@ class Exchange < ActiveRecord::Base
     @other_pending_requests.each {|e| e.destroy} if @other_pending_requests.any?
   end
 
-  before_create :compute_amount, :avilable_in_date?
+  def set_status
+    self.status = Exchange::STATUS[:pending]
+  end
 
   def avilable_in_date?
     if self.package == "semester"
@@ -102,7 +114,7 @@ class Exchange < ActiveRecord::Base
     borrower = self.user_id
     @other_pending_requests = Exchange.where("book_id = ? and user_id != ?", book, borrower)
     if @other_pending_requests.present? and @other_pending_requests.each {|p| p.payment}.present?
-      return true if @other_pending_requests.each {|p| p.payment.status == "PENDING"}.present?
+      return true if @other_pending_requests.each {|p| p.payment.status == Payment::STATUS[:pending]}.present?
     else
       return false
     end

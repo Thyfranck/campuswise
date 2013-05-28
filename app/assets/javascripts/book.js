@@ -37,7 +37,7 @@ $(document).ready(function(){
         }
     })
 
-    
+
 
     $('#new_book').submit(function(e){
         var var1 = $.trim($('#book_loan_daily').val());
@@ -53,7 +53,7 @@ $(document).ready(function(){
             return false;
         }
 
-        
+
     });
 
     $('.edit_book').submit(function(e){
@@ -71,6 +71,6 @@ $(document).ready(function(){
             return false;
         }
 
-        
+
     });
 })

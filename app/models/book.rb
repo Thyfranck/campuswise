@@ -8,7 +8,7 @@ class Book < ActiveRecord::Base
   validates :author, :presence => true
   validates :isbn, :presence => true 
   validates :title, :presence => true
-  validates :price, :presence => true
+  validates :price, :presence => true, :numericality => {:greater_than_or_equal_to => 0}, :unless => Proc.new{|b| b.requested == true}
   #  validates :purchase_price, :presence => false ,:numericality => {:greater_than_or_equal => 5}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_daily, :allow_nil => true ,:numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_weekly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
@@ -18,7 +18,7 @@ class Book < ActiveRecord::Base
   belongs_to :user
   has_many :exchanges
 
-  before_save :atleast_one_loan_rate_exsists, :get_price_from_amazon
+  before_save :atleast_one_loan_rate_exsists
 
   mount_uploader :image, ImageUploader
 
@@ -26,15 +26,6 @@ class Book < ActiveRecord::Base
   scope :available_now, :conditions => {:available => true}
   scope :date_not_expired, lambda { where(["returning_date > ?",Time.now.to_date])}
   scope :not_my_book, lambda { |current_user| where(["user_id != ?",current_user])}
-
-  def get_price_from_amazon
-    res = Amazon::Ecs.item_search(self.isbn, {:response_group => "Medium", :search_index => 'Books'})
-    unless res.has_error?
-      book = res.items.first
-      book_price = book.get_element('ItemAttributes').get_element('ListPrice').get('Amount').to_f
-      self.price = book_price/100
-    end
-  end
 
   def set_google(book_id)
     google_book = GoogleBooks.search(book_id).first
@@ -62,7 +53,7 @@ class Book < ActiveRecord::Base
   end
 
   def lended
-    if self.exchanges.where(:accepted => true).any?
+    if self.exchanges.where(:status => Exchange::STATUS[:accepted]).any?
       return true
     else
       return false

@@ -17,6 +17,13 @@ function author(message){
 
 function isbn(message){
     $('#book_isbn').val(message);
+    $.ajax({
+        url: "/search",
+        dataType: "script",
+        data: {
+            book_isbn_for_price : $('#book_isbn').val()
+        }
+    });
 }
 
 function publisher(message){
@@ -70,7 +77,7 @@ $(document).ready(function(){
             $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
         },
         open: function(){
-                $('.ui-autocomplete').css('width', '290px');
+            $('.ui-autocomplete').css('width', '290px');
         },
         close: function() {
             $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );

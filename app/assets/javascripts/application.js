@@ -20,4 +20,5 @@
 //= require search
 //= require stripe
 //= require exchange
+//= require book_price
 //= require custom

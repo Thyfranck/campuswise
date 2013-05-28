@@ -80,25 +80,34 @@
       <div class="control-group">
         <h5><%= f.label :loan_daily, "Daily", :class => 'control-label' %></h5>
         <div class="controls">
-          <%= f.number_field :loan_daily, :class => 'number_field' %><div class="number_error" style="color:red"></div>
+          <%= f.number_field :loan_daily, :class => 'number_field' %>
         </div>
       </div>
       <div class="control-group">
         <%= f.label :loan_weekly, "Weekly", :class => 'control-label' %>
         <div class="controls">
-          <%= f.number_field :loan_weekly, :class => 'number_field'%><div class="number_error" style="color:red"></div>
+          <%= f.number_field :loan_weekly, :class => 'number_field'%>
         </div>
       </div>
       <div class="control-group">
-        <%= f.label :loan_monthly, "Monthly", :class => 'control-label' %><div style="color:red"></div>
+        <%= f.label :loan_monthly, "Monthly", :class => 'control-label' %>
         <div class="controls">
-          <%= f.number_field :loan_monthly, :class => 'number_field' %><div class="number_error" style="color:red"></div>
+          <%= f.number_field :loan_monthly, :class => 'number_field' %>
         </div>
       </div>
       <div class="control-group">
         <%= f.label :loan_semester, "Full Semester", :class => 'control-label' %>
         <div class="controls">
-          <%= f.number_field :loan_semester, :class => 'number_field' %><div class="number_error" style="color:red"></div>
+          <%= f.number_field :loan_semester, :class => 'number_field' %>
+        </div>
+      </div>
+
+      <legend>Book Purchase Price (in USD)</legend>
+      This amount will be charged to the book borrower along with your loan amount if the book is not returned to you.
+      <div class="control-group">
+        <%= f.label :price, "Book Purchase Price", :class => 'control-label' %>
+        <div class="controls">
+          <%= f.text_field :price, :class => 'text_field' %>
         </div>
       </div>
 
