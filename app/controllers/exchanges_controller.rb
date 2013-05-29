@@ -68,6 +68,26 @@ class ExchangesController < ApplicationController
     end
   end
 
+  def returned
+    @exchange = Exchange.find(params[:id])
+    if params[:returned] == true
+      @exchange.update_attribute(:status, Exchange::STATUS[:returned])
+      @dashboard_notification = DashboardNotification.new(
+        :admin_user_id => AdminUser.first.id,
+        :exchange_id => @exchange.id,
+        :content => "#{@exchange.book.user.name} received the book <a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title}</a>")
+      @dashboard_notification.save
+    elsif params[:returned] == false
+      @exchange.update_attribute(:status, Exchange::STATUS[:not_returned])
+      @dashboard_notification = DashboardNotification.new(
+        :admin_user_id => AdminUser.first.id,
+        :exchange_id => @exchange.id,
+        :content => "#{@exchange.book.user.name} didn't received the book <a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title}</a>")
+      @dashboard_notification.save
+    end
+    redirect_to request.referrer
+  end
+
   def process_sms
     @from = params[:From]
     @user = User.find_by_phone(@from)
@@ -109,7 +129,7 @@ class ExchangesController < ApplicationController
         else
           render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
         end
-      elsif @body.match(/not-received\s*/).present?
+      elsif @body.match(/n-received\s*/).present?
         @id = @body.gsub /\D/, ""
         if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id
           if @exchange.status == Exchange::STATUS[:accepted]

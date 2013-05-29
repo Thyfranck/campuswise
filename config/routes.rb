@@ -10,6 +10,9 @@ Campuswise::Application.routes.draw do
   end
 
   resources :exchanges, :except => [:show, :index] do
+    member do
+      get :returned
+    end
     collection do
       get :search
     end
