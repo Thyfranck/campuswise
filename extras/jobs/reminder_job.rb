@@ -27,14 +27,16 @@ class Jobs::ReminderJob < Struct.new(:payment)
   def send_sms_to_borrower
     @book_borrower = payment.exchange.user
     @to = @book_borrower.phone
-    @body = "Lending time for the book titled \"#{payment.exchange.book.title.truncate(30)}\" is over. Please return the book to the owner. Ignore if already returned.-Campuswise"
-    TwilioRequest.send_sms(@body, @to)
+    @body1 = "Lending time for the book titled \"#{payment.exchange.book.title.truncate(30)}\" is over. Please return the book to the owner. Ignore if already returned.-Campuswise"
+    TwilioRequest.send_sms(@body1, @to)
   end
 
   def send_sms_to_lender
     @book_lender = payment.exchange.book.user
     @to = @book_lender.phone
-    @body = "Lending time for the book titled \"#{payment.exchange.book.title.truncate(30)}\" is over. Please inform us while the book is returned or not. When you receive the book sms us \"RECEIVED #{payment.exchange.id}\" and if you not then sms \"NOT-RECEIVED #{payment.exchange.id}\"-Campuswise"
-    TwilioRequest.send_sms(@body, @to)
+    @body1 = "Lending time for the book titled \"#{payment.exchange.book.title.truncate(30)}\" is over. Please inform us while the book is returned or not.-Campuswise"
+    @body2 = "When you received the book please text us \"RECEIVED #{payment.exchange.id}\", if you doesn't receive the book text us \"NOT-RECEIVED #{payment.exchange.id}\""
+    TwilioRequest.send_sms(@body1, @to)
+    TwilioRequest.send_sms(@body2, @to)
   end
 end

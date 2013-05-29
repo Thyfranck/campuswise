@@ -74,17 +74,17 @@ class ExchangesController < ApplicationController
     if @user
       @body = params[:Body]
       @body = @body.downcase
-      if @body.match(/\yes\s*/).present?
+      if @body.match(/yes\s*/).present?
         @id = @body.gsub /\D/, ""   
         if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
           @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, @user.id)
           @old_dashboard_notification.destroy
           @exchange.delay.charge
-          render 'exchanges/sms/in_process.xml.erb', :content_type => 'text/xml'
+          render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
         else
           render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
         end
-      elsif @body.match(/\no\s*/).present?
+      elsif @body.match(/no\s*/).present?
         @id = @body.gsub /\D/, "" 
         if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
           @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, @user.id)
@@ -94,26 +94,32 @@ class ExchangesController < ApplicationController
         else
           render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
         end
-      elsif @body.match(/\received\s*/).present?
+      elsif @body.match(/received\s*/).present?
         @id = @body.gsub /\D/, ""
         if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id
-          @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@id, @user.id)
-          @old_dashboard_notification.destroy
           if @exchange.status == Exchange::STATUS[:accepted]
             @exchange.update_attribute(:status, Exchange::STATUS[:returned])
-            render 'exchanges/sms/in_process.xml.erb', :content_type => 'text/xml'
+            @dashboard_notification = DashboardNotification.new(
+              :admin_user_id => AdminUser.first.id,
+              :exchange_id => @exchange.id,
+              :content => "#{@exchange.book.user.name} received the book <a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title}</a>")
+            @dashboard_notification.save
+            render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
           end
         else
           render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
         end
-      elsif @body.match(/\not-received\s*/).present?
+      elsif @body.match(/not-received\s*/).present?
         @id = @body.gsub /\D/, ""
         if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id
-          @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@id, @user.id)
-          @old_dashboard_notification.destroy
           if @exchange.status == Exchange::STATUS[:accepted]
             @exchange.update_attribute(:status, Exchange::STATUS[:not_returned])
-            render 'exchanges/sms/in_process.xml.erb', :content_type => 'text/xml'
+            @dashboard_notification = DashboardNotification.new(
+              :admin_user_id => AdminUser.first.id,
+              :exchange_id => @exchange.id,
+              :content => "#{@exchange.book.user.name} didn't received the book <a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title}</a>")
+            @dashboard_notification.save
+            render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
           end
         else
           render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
@@ -123,7 +129,7 @@ class ExchangesController < ApplicationController
       end
     else
       render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
-    end   
+    end
   end
 
   def search

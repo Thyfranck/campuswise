@@ -66,31 +66,32 @@ class ExchangeObserver < ActiveRecord::Observer
           notify_borrower_after_complete(record, @exchange,@request_sender,@requested_book)
           notify_owner_after_complete(record, @exchange,@request_receiver,@requested_book)
           record.exchange.destroy_other_pending_requests
-#          @returning_date_time_from_now = (record.exchange.ending_date - Date.today)*24*3600
-          Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , 2.seconds.from_now, :queue => "book_return_reminder"
+          @returning_date = (record.exchange.ending_date.to_date - Date.today)
+          @sending_date = @returning_date.days.from_now
+          Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , @sending_date, :queue => "book_return_reminder"
         end
       elsif record.status == Payment::STATUS[:failed]
         record.exchange.destroy
       end
-    end
 
-    if record.class == Exchange
-      if record.status == Exchange::STATUS[:returned]
-        @admin_notification = DashboardNotification.new(
-          :admin_user_id => AdminUser.first.id,
-          :exchange_id => @exchange.id,
-          :content => "User: #{@exchange.book.user.name}, email:#{@exchange.book.user.email} says that he has got return the book \"<a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title.truncate(50)}</a> \" "
-        )
-        @admin_notification.save
-      end
+      if record.class == Exchange
+        if record.status == Exchange::STATUS[:returned]
+          @admin_notification = DashboardNotification.new(
+            :admin_user_id => AdminUser.first.id,
+            :exchange_id => @exchange.id,
+            :content => "User: #{@exchange.book.user.name}, email:#{@exchange.book.user.email} says that he has got return the book \"<a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title.truncate(50)}</a> \" "
+          )
+          @admin_notification.save
+        end
 
-      if record.status == Exchange::STATUS[:not_returned]
-        @admin_notification = DashboardNotification.new(
-          :admin_user_id => AdminUser.first.id.id,
-          :exchange_id => @exchange.id,
-          :content => "User: #{@exchange.book.user.name}, email:#{@exchange.book.user.email} says that he did got return the book \"<a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title.truncate(50)}</a> \" "
-        )
-        @admin_notification.save
+        if record.status == Exchange::STATUS[:not_returned]
+          @admin_notification = DashboardNotification.new(
+            :admin_user_id => AdminUser.first.id.id,
+            :exchange_id => @exchange.id,
+            :content => "User: #{@exchange.book.user.name}, email:#{@exchange.book.user.email} says that he did got return the book \"<a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title.truncate(50)}</a> \" "
+          )
+          @admin_notification.save
+        end
       end
     end
   end
@@ -121,7 +122,7 @@ class ExchangeObserver < ActiveRecord::Observer
     TwilioRequest.send_sms(@body, @to)
   end
 
-  def before_destroy(record)  
+  def before_destroy(record)
     if record.class == Book
       return false if record.lended == true
       @exchanges = Exchange.where(:book_id => record.id)

@@ -9,17 +9,24 @@ ActiveAdmin.register_page "Dashboard" do
         small I18n.t("active_admin.dashboard_welcome.call_to_action")
       end
     end
-  end
+
+    columns do
+      column do
+        panel "Notifications" do
+          if AdminUser.first.dashboard_notifications.any?
+            AdminUser.first.dashboard_notifications.order("created_at desc").each do |book|
+              ul do
+                li book.content.html_safe
+              end
+            end
+          end
+        end
+      end
+    end
+  end  
 end
 
-if AdminUser.first.dashboard_notifications.any?
-  para "Notifications"
-  AdminUser.first.dashboard_notifications.each do |notification|
-    ul do
-      li notification.content
-    end
-  end
-end
+
 
 #    columns do
 #
