@@ -8,7 +8,7 @@
     <% if @user.errors.any? %>
       <div id="error_explanation" class="alert alert-error">
         <h4>
-          <%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:
+          Please correct following <%= pluralize(@user.errors.count, "field") %>:
         </h4>
         <ul>
           <% @user.errors.full_messages.each do |msg| %>

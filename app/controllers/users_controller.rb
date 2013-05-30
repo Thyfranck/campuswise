@@ -41,12 +41,18 @@ class UsersController < ApplicationController
     @user.make_email_format
     @user.set_phone_verification
     respond_to do |format|
-      if @user.save
-        format.html { redirect_to login_path(:school => @school), notice: 'Please Check your email and your phone for verification code.' }
-      else
+      begin
+        if @user.save
+          format.html { redirect_to login_path(:school => @school), notice: 'Please Check your email and your phone for verification code.' }
+        else
+          @user.email = @user.email.gsub(/\@\S*/, "")
+          format.html { render action: "new" }
+          format.json { render json: @user.errors, status: :unprocessable_entity }
+        end
+      rescue Twilio::REST::RequestError
         @user.email = @user.email.gsub(/\@\S*/, "")
+        @user.errors.add(:phone, "number you entered #{@user.phone} is not a valid phone number")
         format.html { render action: "new" }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
   end

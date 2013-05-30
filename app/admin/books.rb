@@ -63,4 +63,10 @@ ActiveAdmin.register Book do
     @book.make_available
     redirect_to :action => :index
   end
+
+  member_action :remove_notification do
+    @notification = DashboardNotification.find(params[:id])
+    @notification.destroy
+    redirect_to request.referrer
+  end
 end

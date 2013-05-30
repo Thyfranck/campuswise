@@ -37,14 +37,14 @@ class ExchangeObserver < ActiveRecord::Observer
       if @dashboard_notification.save
         Notification.notify_book_owner(record).deliver
         @to = @request_receiver.phone
-        @body = "#{@request_sender.name} wants to borrow \"#{@requested_book.title.truncate(30)}\" from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},to accept reply YES#{record.id},to ignore reply NO#{record.id} -Campuswise"
+        @body = "#{@request_sender.name} wants to borrow \"#{@requested_book.title.truncate(30)}\" from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}' -Campuswise"
         TwilioRequest.send_sms(@body, @to)
       end
     end
   end
 
   def before_update(record)
-    if record.class == Exchange      
+    if record.class == Exchange
       if record.payment.status == Payment::STATUS[:paid]
         return true
       else
@@ -73,27 +73,28 @@ class ExchangeObserver < ActiveRecord::Observer
       elsif record.status == Payment::STATUS[:failed]
         record.exchange.destroy
       end
+    end
+    
+    if record.class == Exchange
+      if record.status == Exchange::STATUS[:returned]
+        @admin_notification = DashboardNotification.new(
+          :admin_user_id => AdminUser.first.id,
+          :exchange_id => record.id,
+          :content => "User: #{record.book.user.name} with email:#{record.book.user.email} says that he has got return the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \" "
+        )
+        @admin_notification.save
+      end
 
-      if record.class == Exchange
-        if record.status == Exchange::STATUS[:returned]
-          @admin_notification = DashboardNotification.new(
-            :admin_user_id => AdminUser.first.id,
-            :exchange_id => @exchange.id,
-            :content => "User: #{@exchange.book.user.name}, email:#{@exchange.book.user.email} says that he has got return the book \"<a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title.truncate(50)}</a> \" "
-          )
-          @admin_notification.save
-        end
-
-        if record.status == Exchange::STATUS[:not_returned]
-          @admin_notification = DashboardNotification.new(
-            :admin_user_id => AdminUser.first.id.id,
-            :exchange_id => @exchange.id,
-            :content => "User: #{@exchange.book.user.name}, email:#{@exchange.book.user.email} says that he did got return the book \"<a href='/admin/books/#{@exchange.book.id}'>#{@exchange.book.title.truncate(50)}</a> \" "
-          )
-          @admin_notification.save
-        end
+      if record.status == Exchange::STATUS[:not_returned]
+        @admin_notification = DashboardNotification.new(
+          :admin_user_id => AdminUser.first.id,
+          :exchange_id => record.id,
+          :content => "User: #{record.book.user.name}, email:#{record.book.user.email} says that didn't got back the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \" "
+        )
+        @admin_notification.save
       end
     end
+    
   end
 
   def notify_owner_after_complete(record, exchange,request_receiver,requested_book)

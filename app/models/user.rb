@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
   validates_length_of :password, :minimum => 6, :if => :password
   validates_confirmation_of :password, :if => :password
   validates :email, :format =>  { :with => /^[\w\.\+-]{1,}\@([\da-zA-Z-]{1,}\.){1,}[\da-zA-Z-]{2,6}$/ }
-  after_create :send_sms_verification
+  before_create :send_sms_verification
   #  before_update :check_if_phone_changed
   #  after_update :send_sms_verification
   before_update :check_if_email_changed
