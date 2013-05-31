@@ -23,6 +23,7 @@ class Exchange < ActiveRecord::Base
   }
 
   before_create :compute_amount, :avilable_in_date?, :set_status
+  before_create :set_ending_date, :if => Proc.new{|b| b.ending_date == nil}
 
 
   def destroy_other_pending_requests
@@ -34,6 +35,28 @@ class Exchange < ActiveRecord::Base
 
   def set_status
     self.status = Exchange::STATUS[:pending]
+  end
+
+  def set_ending_date
+    if self.package == "semester"
+      fall_semester = self.user.school.fall_semester
+      spring_semester = self.user.school.spring_semester
+      if fall_semester.month > spring_semester.month
+        if fall_semester.month >= Date.today.month and Date.today.month >= spring_semester.month
+          self.ending_date = fall_semester - 1.day
+        else
+          self.ending_date = spring_semester - 1.day
+        end
+      end
+      
+      if fall_semester.month < spring_semester.month
+        if fall_semester.month <= Date.today.month and Date.today.month <= spring_semester.month
+          self.ending_date = spring_semester - 1.day
+        else
+          self.ending_date = fall_semester - 1.day
+        end
+      end
+    end
   end
 
   def avilable_in_date?

@@ -60,11 +60,18 @@ class ExchangesController < ApplicationController
   def destroy
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
-      @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, current_user.id)
-      @old_dashboard_notification.destroy
-      if @exchange.destroy
-        format.html {redirect_to request.referrer, :notice => "You Rejected the request"}
+      DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, current_user.id).destroy
+      if @exchange.payment.blank? and @exchange.declined.present?
+        Notify.borrower_about_card_rejected(@exchange)
+      elsif @exchange.payment.blank?
+        Notify.borrower_about_rejected_by_owner(@exchange)
+      elsif @exchange.payment.status == Payment::STATUS[:failed]
+        if Book.find(@exchange.book_id).available == true
+          Notify.borrower_about_card_problem(@exchange)
+        end
       end
+      @exchange.destroy
+      format.html {redirect_to request.referrer, :notice => "You Rejected the request"}
     end
   end
 
