@@ -25,6 +25,8 @@ class Exchange < ActiveRecord::Base
   before_create :compute_amount, :avilable_in_date?, :set_status
   before_create :set_ending_date, :if => Proc.new{|b| b.ending_date == nil}
 
+  scope :accepted, where(:status => STATUS[:accepted])
+
 
   def destroy_other_pending_requests
     book = self.book_id
