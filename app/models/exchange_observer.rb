@@ -39,6 +39,15 @@ class ExchangeObserver < ActiveRecord::Observer
         if @requested_book.available == true
           @exchange.update_attribute(:status, Exchange::STATUS[:accepted])
           @requested_book.update_attribute(:available, false)
+          @payment_receiver = record.exchange.book.user
+          @amount = record.payment_amount
+          if @payment_receiver.balance.present?
+            @old_balance = record.exchange.book.user.balance
+            @new_balance = @old_balance + @amount
+            @payment_receiver.update_attribute(:balance, @new_balance)
+          else
+            @payment_receiver.update_attribute(:balance, @amount)
+          end
           Notify.delay.borrower_after_exchange_complete(record)
           Notify.delay.owner_after_exchange_complete(record)
           record.exchange.destroy_other_pending_requests

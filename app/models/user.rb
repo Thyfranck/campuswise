@@ -4,6 +4,11 @@ class User < ActiveRecord::Base
   belongs_to :school
   has_many :books, :dependent => :destroy
   has_many :exchanges
+  has_many :dashboard_notifications, :dependent => :destroy
+  has_one :billing_setting, :dependent => :destroy
+  has_many :billing_events
+  has_one :payment_method, :dependent => :destroy
+  has_many :withdraw_requests
   
   def accepted_exchanges
     self.exchanges.where(:status => Exchange::STATUS[:accepted])
@@ -16,15 +21,13 @@ class User < ActiveRecord::Base
   has_many :pending_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:pending]}'" ,:source => :exchanges #for request receiver(book owner)
   has_many :accepted_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:accepted]}'" ,:source => :exchanges #for request receiver(book owner)
 
-  has_many :dashboard_notifications, :dependent => :destroy
-  has_one :billing_setting, :dependent => :destroy
-  has_many :billing_events
+  
 
   attr_accessor :current_password
 
   attr_accessible :name, :email, :password, :password_confirmation, :current_password,
     :facebook, :phone_verification, :phone_verified,
-    :school_id, :phone
+    :school_id, :phone, :balance
   
   validates_uniqueness_of :email
   

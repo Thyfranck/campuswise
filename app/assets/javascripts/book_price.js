@@ -1,6 +1,6 @@
 $(document).ready(function(){
     var isbn_number = $('#book_isbn').val()
-    if(isbn_number.length > 0){
+    if(!(isbn_number === undefined)){
         $.ajax({
             url: "/search",
             dataType: "script",

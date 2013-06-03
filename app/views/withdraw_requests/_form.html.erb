@@ -1,0 +1,28 @@
+<h3>Withdraw Request</h3>
+<br/>
+<% if @withdraw_request.errors.any? %>
+  <div id="error_explanation" class="alert alert-error">
+    <h4>
+      Please fill correctly following <%= pluralize(@withdraw_request.errors.count, "field") %>.
+    </h4>
+    <ul>
+      <% @withdraw_request.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_for @withdraw_request do |f| %>
+
+  <div class="control-group">
+    <%= f.label :amount, "Please Specify the Amount" %>
+    <div class="controls">
+      <%= f.number_field :amount, :class => 'number_field' %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit "Submit", :class => 'btn btn-primary' %>
+  </div>
+<% end %>

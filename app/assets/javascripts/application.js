@@ -21,4 +21,5 @@
 //= require stripe
 //= require exchange
 //= require book_price
+//= require payment_method
 //= require custom

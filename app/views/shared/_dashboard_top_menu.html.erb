@@ -71,11 +71,20 @@
           <%= link_to "Payment Settings", new_billing_setting_path %>
         </li>
       <% end %>
+      <% if current_user.payment_method.present? %>
+        <li class="<%= "active" if current_page?(payment_method_path(current_user.payment_method)) %>">
+          <%= link_to "Payment Method", payment_method_path(current_user.payment_method) %>
+        </li>
+      <% else %>
+        <li class="<%= "active" if current_page?(new_payment_method_path) %>">
+          <%= link_to "Payment Method", new_payment_method_path %>
+        </li>
+      <% end %>
       <li>
         <%= link_to "Total Balance", '#' %>
       </li>
       <li>
-        <%= link_to "Withdraw balance", '#' %>
+        <%= link_to "Withdraw balance", withdraw_requests_path %>
       </li>
     </ul>
   </li>
