@@ -13,6 +13,6 @@ class PaymentMethod < ActiveRecord::Base
   validates :bank_name, :presence => true, :if => Proc.new{|b| b.payment_method_type == PaymentMethod::TYPE[:bank]}
 
   validates :credit_card_type, :presence => true, :if => Proc.new{|b| b.payment_method_type == PaymentMethod::TYPE[:card]}
-  validates :credit_card_number, :presence => true, :if => Proc.new{|b| b.payment_method_type == PaymentMethod::TYPE[:card]}
+  validates :card_number, :presence => true, :if => Proc.new{|b| b.payment_method_type == PaymentMethod::TYPE[:card]}
 
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130603105839) do
+ActiveRecord::Schema.define(:version => 20130604055920) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -89,11 +89,13 @@ ActiveRecord::Schema.define(:version => 20130603105839) do
 
   create_table "dashboard_notifications", :force => true do |t|
     t.integer  "user_id"
-    t.integer  "exchange_id"
     t.string   "content"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.integer  "admin_user_id"
+    t.integer  "withdraw_request_id"
+    t.integer  "dashboardable_id"
+    t.string   "dashboardable_type"
   end
 
   create_table "delayed_jobs", :force => true do |t|

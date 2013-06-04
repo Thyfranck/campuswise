@@ -1,10 +1,10 @@
-<legend>
-  <%= link_to "New Request", new_withdraw_request_path, :class => "btn btn-large btn-primary" %>
-</legend>
+
+<%= link_to "New Withdraw Request", new_withdraw_request_path, :class => "btn btn-large btn-primary" %>
+
 <% if @withdraw_requests.present? %>
   <table class="table table-striped">
     <thead>
-    <th>Date</th>
+    <th>Request Date</th>
     <th>Description</th>
     <th>Status</th>
   </thead>
@@ -18,7 +18,6 @@
     <% end %>
   </tbody>
   </table>
-<% else %>
-  <h3>Currently empty</h3>
+<%= will_paginate @withdraw_requests %>
 <% end %>
 

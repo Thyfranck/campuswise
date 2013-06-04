@@ -1,0 +1,11 @@
+<h3>Payment Form</h3>
+<br/>
+<%= form_tag(pay_admin_user_path(@user)) do %>
+
+  <%= label_tag :amount %>
+  <div style="width:200px;">
+    <%= number_field_tag :amount%>
+  </div>
+  <br/>
+  <%= submit_tag "Pay"  %>
+<% end %>

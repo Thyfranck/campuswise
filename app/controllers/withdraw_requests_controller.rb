@@ -4,11 +4,18 @@ class WithdrawRequestsController < ApplicationController
   layout "dashboard"
 
   def index
-    @withdraw_requests = current_user.withdraw_requests.order("created_at DESC")
+    @withdraw_requests = current_user.withdraw_requests.order("created_at DESC").paginate(:page => params[:page], :per_page => 10)
   end
 
   def new
-    @withdraw_request = WithdrawRequest.new
+    if current_user.payment_method.present?
+      session[:withdraw_request] = nil if session[:withdraw_request]
+      @withdraw_request = WithdrawRequest.new
+    else
+      session[:withdraw_request] = "yes"
+      redirect_to new_payment_method_path
+      flash[:notice] = "Please specify a payment method first."
+    end
   end
 
   def create

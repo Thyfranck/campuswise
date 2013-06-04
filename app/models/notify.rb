@@ -2,9 +2,9 @@ class Notify
   def self.borrower_about_payment_received(record) #payment
     if record.status == Payment::STATUS[:paid]
       Notification.email_after_payment(record).deliver
-      @dashboard_notification = DashboardNotification.new(
+      @exchange = record.exchange
+      @dashboard_notification = @exchange.dashboard_notifications.new(
         :user_id => record.exchange.user.id,
-        :exchange_id => record.exchange.id,
         :content => "Payment for the book titled #{record.exchange.book.title} has been received with thankfully.")
       @dashboard_notification.save
       @to = record.exchange.user.phone
@@ -17,9 +17,8 @@ class Notify
     @request_sender = record.user
     @request_receiver = record.book.user
     @requested_book = record.book
-    @dashboard_notification =  DashboardNotification.new(
+    @dashboard_notification = record.dashboard_notifications.new(
       :user_id => @request_receiver.id,
-      :exchange_id => record.id,
       :content => "#{@request_sender.name} wants to borrow your book \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date}\" ")
     @dashboard_notification.save
     Notification.notify_book_owner(record)
@@ -32,9 +31,8 @@ class Notify
     @exchange = record.exchange
     @requested_book = record.exchange.book
     @request_receiver = @requested_book.user
-    @dashboard_notification = DashboardNotification.new(
+    @dashboard_notification = @exchange.dashboard_notifications.new(
       :user_id => @request_receiver.id,
-      :exchange_id => @exchange.id,
       :content => "Congratulation,the book titled \"<a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)} </a> \" lended successfully. Please inform us at admin@campuswise.com when the book is returned."
     )
     @dashboard_notification.save
@@ -48,9 +46,8 @@ class Notify
     @exchange = record.exchange
     @requested_book = record.exchange.book
     @request_sender = @exchange.user
-    @dashboard_notification = DashboardNotification.new(
+    @dashboard_notification = @exchange.dashboard_notifications.new(
       :user_id => @request_sender.id,
-      :exchange_id => @exchange.id,
       :content => "Congratulation, you have successfully borrowed the book titled <a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)}</a>. You can see this books owner's contact information in your borrowed book <a href='/borrow_requests' target='_blank'>list</a>"
     )
     @dashboard_notification.save
@@ -62,9 +59,8 @@ class Notify
 
   def self.borrower_about_card_rejected(record) #exchange
     Notification.notify_book_borrower_failed_to_charge(record).deliver
-    @dashboard_notification = DashboardNotification.new(
+    @dashboard_notification = record.dashboard_notifications.new(
       :user_id => record.user.id,
-      :exchange_id => record.id,
       :content => "Borrow request for the book titled : \"#{record.book.title}\" failed due to \"#{record.declined}\"")
     @dashboard_notification.save
     @to = record.user.phone
@@ -76,10 +72,8 @@ class Notify
     @request_sender = record.user
     @requested_book = record.book
     @request_receiver = @requested_book.user
-
-    @dashboard_notification = DashboardNotification.new(
+    @dashboard_notification = record.dashboard_notifications.new(
       :user_id => @request_sender.id,
-      :exchange_id => record.id,
       :content => "Sorry borrow request for the book titled : \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" was rejected by the user. Please try other sometime."
     )
     @dashboard_notification.save
@@ -92,9 +86,8 @@ class Notify
   def self.borrower_about_card_problem(record) #exchange
     @request_sender = record.user
     @requested_book = record.book
-    @request_receiver = @requested_book.user
-    
-    @dashboard_notification = DashboardNotification.new(
+    @request_receiver = @requested_book.user  
+    @dashboard_notification = record.dashboard_notifications.new(
       :user_id => @request_sender.id,
       :exchange_id => record.id,
       :content => "Sorry request for the book titled : \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" was rejected due to your card problem."
@@ -104,5 +97,33 @@ class Notify
     @to = @request_sender.phone
     @body = "Sorry request for the book titled:\"#{@requested_book.title.truncate(50)}\" was rejected due to your card problem.-Campuswise"
     TwilioRequest.send_sms(@body, @to)
+  end
+
+  def self.user_for_withdraw(record) #withdraw_request
+    @dashboard_notification = record.dashboard_notifications.new(
+      :user_id => record.user.id,
+      :content => "Your withdraw request for amount $#{record.amount} is complete."
+    )
+    @dashboard_notification.save
+    Notification.notify_user_for_withdraw(record).deliver
+    @to = record.user.phone
+    @body = "Congratulation your withdraw request for amount $#{record.amount} is complete."
+    TwilioRequest.send_sms(@body, @to)
+  end
+
+  def self.admin_for_book_returned(record) #exchange
+    @admin_notification = record.dashboard_notifications.new(
+      :admin_user_id => AdminUser.first.id,
+      :content => "User: #{record.book.user.name} with email:#{record.book.user.email} says that he has got return the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \" "
+    )
+    @admin_notification.save
+  end
+
+  def self.admin_for_book_not_returned(record) #exchange
+    @admin_notification = record.dashboard_notifications.new(
+      :admin_user_id => AdminUser.first.id,
+      :content => "User: #{record.book.user.name}, email:#{record.book.user.email} says that didn't got back the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \" "
+    )
+    @admin_notification.save
   end
 end

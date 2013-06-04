@@ -22,7 +22,12 @@ class PaymentMethodsController < ApplicationController
       @payment_method.user_id = current_user.id
       respond_to do |format|
         if @payment_method.save
-          format.html {redirect_to dashboard_path, :notice => "Request completed" }
+          if session[:withdraw_request] == "yes"
+            format.html { redirect_to new_withdraw_request_path }
+          else
+            format.html {redirect_to dashboard_path, :notice => "Request completed" }
+          end
+          
         else
           format.html {render :action => 'new'}
         end
