@@ -40,10 +40,11 @@ class ExchangeObserver < ActiveRecord::Observer
           @exchange.update_attribute(:status, Exchange::STATUS[:accepted])
           @requested_book.update_attribute(:available, false)
           @payment_receiver = record.exchange.book.user
-          @amount = record.payment_amount
+          @amount = record.payment_amount.to_f
+          @will_be_paid_to_user = @amount - (@amount/Constant::COMPANY_COMMISION_RATE)
           if @payment_receiver.balance.present?
             @old_balance = record.exchange.book.user.balance
-            @new_balance = @old_balance + @amount
+            @new_balance = @old_balance + @will_be_paid_to_user
             @payment_receiver.update_attribute(:balance, @new_balance)
           else
             @payment_receiver.update_attribute(:balance, @amount)

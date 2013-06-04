@@ -12,6 +12,9 @@ class WithdrawRequest < ActiveRecord::Base
     :pending => "PENDING"
   }
 
+  scope :paid, where(:status => STATUS[:paid])
+  scope :pending, where(:status => STATUS[:pending])
+
   before_create :check_balance, :set_status,
     :check_if_has_pending_request,
     :check_if_has_payment_method

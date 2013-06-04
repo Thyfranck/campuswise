@@ -12,4 +12,6 @@ class Constant
     "Bank Account",
     "Credit Card"
   ]
+
+  COMPANY_COMMISION_RATE = 10 #percent
 end

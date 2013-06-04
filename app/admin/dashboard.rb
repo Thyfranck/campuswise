@@ -29,11 +29,23 @@ ActiveAdmin.register_page "Dashboard" do
             td "Total Accepted Requests"
             td ": #{Exchange.count}"
             tr
-            td "Total Accepted Requests"
+            td "Total Accepted and Paid Requests"
             td ": #{Exchange.accepted.count}"
             tr
             td "Total PAID Amount"
             td ": $#{Payment.sum(&:payment_amount)}"
+            tr
+            td "Total Compay Revenue"
+            td ": $#{Payment.sum(&:payment_amount)*(Constant::COMPANY_COMMISION_RATE)/100}"
+            tr
+            td "Total Withdraw Request"
+            td ": #{WithdrawRequest.count}"
+            tr
+            td "Total Withdraw Request (Paid)"
+            td ": #{WithdrawRequest.paid.count}"
+            tr
+            td "Total Withdraw Request (Pending)"
+            td ": #{WithdrawRequest.pending.count}"
           end
         end
       end
