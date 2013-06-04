@@ -38,25 +38,25 @@ class ExchangeObserver < ActiveRecord::Observer
         @requested_book = @exchange.book
         if @requested_book.available == true
           @exchange.update_attribute(:status, Exchange::STATUS[:accepted])
-#          @requested_book.update_attribute(:available, false)
-#          @payment_receiver = record.exchange.book.user
-#          @amount = record.payment_amount
-#          if @payment_receiver.balance.present?
-#            @old_balance = record.exchange.book.user.balance
-#            @new_balance = @old_balance + @amount
-#            @payment_receiver.update_attribute(:balance, @new_balance)
-#          else
-#            @payment_receiver.update_attribute(:balance, @amount)
-#          end
-#          Notify.delay.borrower_after_exchange_complete(record)
-#          Notify.delay.owner_after_exchange_complete(record)
-#          record.exchange.destroy_other_pending_requests
-#          @returning_date = (@exchange.ending_date.to_date - Date.today)
-#          @sending_date = @returning_date.days.from_now
-#          Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , @sending_date, :queue => "book_return_reminder"
+          @requested_book.update_attribute(:available, false)
+          @payment_receiver = record.exchange.book.user
+          @amount = record.payment_amount
+          if @payment_receiver.balance.present?
+            @old_balance = record.exchange.book.user.balance
+            @new_balance = @old_balance + @amount
+            @payment_receiver.update_attribute(:balance, @new_balance)
+          else
+            @payment_receiver.update_attribute(:balance, @amount)
+          end
+          Notify.delay.borrower_after_exchange_complete(record)
+          Notify.delay.owner_after_exchange_complete(record)
+          record.exchange.destroy_other_pending_requests
+          @returning_date = (@exchange.ending_date.to_date - Date.today)
+          @sending_date = @returning_date.days.from_now
+          Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , @sending_date, :queue => "book_return_reminder"
         end
-#      elsif record.status == Payment::STATUS[:failed]
-#        record.exchange.destroy
+      elsif record.status == Payment::STATUS[:failed]
+        record.exchange.destroy
       end
     end
     
@@ -72,13 +72,13 @@ class ExchangeObserver < ActiveRecord::Observer
   end
 
 
-#  def before_destroy(record)
-#    if record.class == Book
-#      return false if record.lended == true
+  def before_destroy(record)
+    if record.class == Book
+      return false if record.lended == true
 ##      @exchanges = Exchange.where(:book_id => record.id)
 ##      @notification = DashboardNotification.where(:dashboardable => @exchanges)
 ##      @notification.each {|d| d.destroy}
 ##      @exchanges.each {|d| d.destroy}
-#    end
-#  end
+    end
+  end
 end

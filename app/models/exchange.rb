@@ -109,25 +109,24 @@ class Exchange < ActiveRecord::Base
       else
         payment = self.build_payment(:payment_amount => self.amount, :charge_id => response.id, :status => Payment::STATUS[:pending])
       end
-      payment.save
-#      if payment.save
-#        notify_borrower
-#      end
-#      return true
+      
+      if payment.save
+        notify_borrower
+      end
+      return true
     rescue => e
       logger.error e.message
       self.errors.add(:base, e.message)
       self.declined = e.message
-#      self.destroy
+      self.destroy
       return false
     end
   end
 
   def notify_borrower
     Notification.notify_book_borrower_accept(self).deliver
-    @dashboard_notification = DashboardNotification.new(
+    @dashboard_notification = self.dashboard_notifications.new(
       :user_id => self.user.id,
-      :exchange_id => self.id,
       :content => "Borrow request for the book titled : \"#{self.book.title}\" has been accepted by the owner. It will be borrowed to you as soon as the payment is received and we will notify you.")
     @dashboard_notification.save
     @to = self.user.phone

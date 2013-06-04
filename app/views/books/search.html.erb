@@ -1,6 +1,16 @@
 <legend>
   <h3>&nbsp;&nbsp;&nbsp;Search results</h3>
 </legend>
+<div class="pull-right">
+  <%= form_tag search_path, :class => "form-horizontal" do %>
+    <div class="control-group">
+      <div class="controls">
+        <%= text_field_tag :value, nil ,:placeholder => "Enter Title, Author or ISBN", :class => 'text_field' %>
+        <%= submit_tag "Search", :name => 'search',:class => "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>
 <div class="tabbable"> <!-- Only required for left/right tabs -->
   <ul class="nav nav-tabs">
     <li class="active"><a href="#tab1" data-toggle="tab">Available in Internet </a></li>
@@ -23,9 +33,9 @@
         <div class="search">
           <%= render :partial => 'book' %>
         </div>
-      <div style="display: none">
-        <%= will_paginate @books %>
-      </div>
+        <div style="display: none">
+          <%= will_paginate @books %>
+        </div>
       <% end %>
     </div>
   </div>

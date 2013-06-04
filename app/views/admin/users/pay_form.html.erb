@@ -1,5 +1,7 @@
 <h3>Payment Form</h3>
 <br/>
+<h4>Requested amount $<%= @requested_amount %></h4>
+<br/>
 <%= form_tag(pay_admin_user_path(@user)) do %>
 
   <%= label_tag :amount %>

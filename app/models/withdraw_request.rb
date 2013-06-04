@@ -53,7 +53,7 @@ class WithdrawRequest < ActiveRecord::Base
   end
 
   def notify_admin
-    @notification = DashboardNotification.new(
+    @notification = self.dashboard_notifications.new(
       :admin_user_id => AdminUser.first.id,
       :content => "<a href='/admin/users/#{self.user.id}'>#{self.user.email}</a> wants to withdraw amount of : $#{self.amount}"
     )

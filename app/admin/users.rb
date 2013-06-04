@@ -50,6 +50,7 @@ ActiveAdmin.register User do
 
   member_action :pay_form do
     @user = User.find(params[:id])
+    @requested_amount = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).first.amount
   end
 
   member_action :pay, :method => :post do
@@ -60,6 +61,7 @@ ActiveAdmin.register User do
         if @user.update_attribute(:balance, @new_balance)
           @request = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).first
           @request.update_attribute(:status,WithdrawRequest::STATUS[:paid])
+          @request.dashboard_notifications.first.destroy
           Notify.delay.user_for_withdraw(@request)
           redirect_to admin_user_path(@user)
           flash[:notice] = "Request Completed"
