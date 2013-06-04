@@ -24,6 +24,6 @@ function slider() {
             next
             .removeClass('hide-it')
             .addClass('show-it');
-        }, 10);
+        }, 100);
     }, 1500);
 }

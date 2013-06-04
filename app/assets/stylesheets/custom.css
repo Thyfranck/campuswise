@@ -57,7 +57,16 @@
 }
 
 #slider img{
-    opacity: 0.5;
+    /* IE 8 */
+/*    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";*/
+    /* IE 5-7 */
+/*    filter: alpha(opacity=50);*/
+    /* Netscape */
+/*    -moz-opacity: 0.5;*/
+    /* Safari 1.x */
+/*    -khtml-opacity: 0.5;*/
+    /* Good browsers */
+/*    opacity: 0.5;*/
 }
 
 #slider img.show-it{
@@ -143,7 +152,19 @@
 
 @media (max-width: 767px){
     #books-slider{
-        margin-bottom: 200px;
+/*        margin-bottom: 200px;*/
+    }
+    ul.thumbnails {
+        padding-left: 20%;
+    }
+}
+
+@media (max-width: 418px){
+    a.carousel-control {
+        display: none;
+    }
+    ul.thumbnails {
+        padding-left: 5%;
     }
 }
 
@@ -267,7 +288,7 @@ a:hover{
 }
 
 .min_height_section {
-    min-height: 582px;
+/*    min-height: 582px;*/
 }
 
 .dashboard.min_height_section {
@@ -430,7 +451,7 @@ a:hover{
 
 .carousel .carousel-inner div.item {
     height: 100px;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 .exchange_amount {
