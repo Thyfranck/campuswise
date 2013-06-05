@@ -22,4 +22,5 @@
 //= require exchange
 //= require book_price
 //= require payment_method
+//= require notifications
 //= require custom

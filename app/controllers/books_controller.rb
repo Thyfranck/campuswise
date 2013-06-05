@@ -1,5 +1,5 @@
 class BooksController < ApplicationController
-  before_filter :require_login, :except => [:show, :available]
+  before_filter :require_login, :except => [:show, :available, :campus_bookshelf]
 
   layout "dashboard"
 
@@ -101,6 +101,7 @@ class BooksController < ApplicationController
     @books = @books.not_my_book(current_user.id) if current_user
     @books = @books.search_for(params[:search]) if params[:search].present?
     @books = @books.paginate(:page => params[:page], :per_page => 6)
+    @recent_books = current_school.books.available_now.date_not_expired.order("created_at desc").limit(10)
     render :layout => "application", :template => "books/public_search" if current_user.blank?
   end
 
@@ -159,5 +160,11 @@ class BooksController < ApplicationController
       }}
     @google_books = @google_books.map {|item| Hashit.new(item)}
     return @google_books
+  end
+
+  def campus_bookshelf
+    @books = current_school.books.paginate(:page => params[:page], :per_page => 6)
+    render :action => 'available' if current_user.present?
+    render :layout => "application", :template => "books/public_search" if current_user.blank?
   end
 end

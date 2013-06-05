@@ -10,6 +10,7 @@ Campuswise::Application.routes.draw do
     collection do
       get :available
       get :requested
+      get :campus_bookshelf
     end
   end
 
@@ -23,6 +24,7 @@ Campuswise::Application.routes.draw do
   end
 
   match '/search' => 'books#search', :as => :search
+  match '/notification' => 'users#notification_count'
   match '/show_search' => 'books#show_search'
   match '/dashboard' => 'users#dashboard'
   match '/remove_notification' => 'users#remove_notification'

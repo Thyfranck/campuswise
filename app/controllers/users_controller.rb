@@ -168,4 +168,11 @@ class UsersController < ApplicationController
       format.html {render layout: "dashboard"}
     end
   end
+
+  def notification_count
+    @notifications = current_user.dashboard_notifications.count
+    respond_to do |format|
+      format.json { render :json => @notifications }
+    end
+  end
 end

@@ -22,16 +22,16 @@
 
   <li class="dropdown <%= "active" if (current_page?(new_book_path) and params[:requested].blank?) || current_page?(books_path) || current_page?(requested_books_path) %>">
     <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-      Books Information
+      Lend
       <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
       <li class="<%= "active" if current_page?(new_book_path) and params[:requested].blank? %>">
         <%= link_to "Add a new book", new_book_path %>
       </li>
-      <li class="<%= "active" if current_page?(books_path) %>">
-        <%= link_to "My books", books_path %>
-      </li>
+      <%#*<li class="<%= "active" if current_page?(books_path) %>
+        <%#= link_to "My books", books_path %>
+      <%#*</li>%>
       <li class="<%= "active" if current_page?(requested_books_path) %>">
         <%= link_to "Book requests", requested_books_path %>
       </li>
@@ -40,7 +40,7 @@
 
   <li class="dropdown <%= "active" if current_page?(search_exchanges_path) || current_page?(borrow_requests_path) || current_page?(new_book_path(:requested => true)) %>">
     <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-      Books Borrow Information
+      Borrow
       <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
@@ -52,6 +52,21 @@
       </li>
       <li class="<%= "active" if current_page?(new_book_path) and params[:requested].present? %>">
         <%= link_to "Request For a Book", new_book_path(:requested => true) %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="dropdown <%= "active" if current_page?(books_path) || current_page?(campus_bookshelf_books_path) %>">
+    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+      Bookshelf
+      <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+      <li class="<%= "active" if current_page?(books_path) %>">
+        <%= link_to "My Bookshelf", books_path %>
+      </li>
+      <li class="<%= "active" if current_page?(campus_bookshelf_books_path) %>">
+        <%= link_to "Campus Bookshelf", campus_bookshelf_books_path %>
       </li>
     </ul>
   </li>
@@ -87,9 +102,5 @@
         <%= link_to "Withdraw balance", withdraw_requests_path %>
       </li>
     </ul>
-  </li>
-
-  <li class="">
-    <%= link_to "Help", 'javascript:;' %>
   </li>
 </ul>
