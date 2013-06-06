@@ -9,6 +9,11 @@
       </p>
 
       <p>
+        <b>Bank Branch :</b>
+        <%= @payment_method.bank_branch %>
+      </p>
+
+      <p>
         <b>Account Holder Name :</b>
         <%= @payment_method.account_holder_name %>
       </p>
@@ -30,8 +35,8 @@
     <% end %>
   </div>
 
-  <%= link_to "Edit", edit_payment_method_path(@payment_method) %>
+  <%= link_to "Edit", edit_payment_method_path(@payment_method), :class => 'btn btn-mini' %>
 
-  <%= link_to "Remove", payment_method_path, :method => :delete, :confirm => "Are you sure?" %>
+  <%= link_to "Remove", payment_method_path, :method => :delete, :confirm => "Are you sure?", :class => 'btn btn-mini' %>
 
 <% end %>

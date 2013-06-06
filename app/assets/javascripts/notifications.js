@@ -3,37 +3,21 @@ $(document).ready(function(){
 })
 
 function notification_count(){
-    if($('#notification_box_gray').is(':visible')){
-        var current =  $('#notification_box_gray').html();
+    if($('#notification_box').is(':visible')){
+        var current =  $('#notification_box').html();
         $.ajax({
             url: "/notification",
             dataType: "json",
             success: function(data) {
                 if(!(data == current)){
-                    $('#notification_box_gray').attr('id', 'notification_box_red');
+                    $('#notification_box').attr('style', 'background-color:red');
                     if(data < 10){
-                        $('#notification_box_red').html('0'+ data);
+                        $('#notification_box').html('0'+ data);
                     }
                     if (data > 10){
-                        $('#notification_box_red').html(data);
+                        $('#notification_box').html(data);
                     }
                 }   
-            }
-        })
-    }
-
-    if($('#notification_box_red').is(':visible')){
-        $.ajax({
-            url: "/notification",
-            dataType: "json",
-            success: function(data) {
-                if(data < 10){
-                    $('#notification_box_red').html('0'+ data);
-                }
-                if (data > 10){
-                    $('#notification_box_red').html(data);
-                }
-
             }
         })
     }

@@ -46,6 +46,14 @@ class PaymentMethodsController < ApplicationController
     end
   end
 
+  def update
+    @payment_method = current_user.payment_method
+    @payment_method.update_attributes(params[:payment_method])
+    respond_to do |format|
+      format.html {redirect_to dashboard_path, :notice => "Request Completed"}
+    end
+  end
+
   def destroy
     @payment_method = current_user.payment_method
     @payment_method.destroy

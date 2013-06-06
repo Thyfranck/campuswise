@@ -1,7 +1,7 @@
 Campuswise::Application.routes.draw do
 
   resources :withdraw_requests, :only => [:new, :create, :index]
-  resources :payment_methods, :except => [:update]
+  resources :payment_methods
 
 
   post 'stripe-webhook' => 'stripe_webhook#create'

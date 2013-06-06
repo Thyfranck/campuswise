@@ -423,20 +423,8 @@ a:hover{
     margin-left: 0px;
 }
 
-#notification_box_gray {
+#notification_box {
     background: none repeat scroll 0 0 gray;
-    display: inline;
-    height: 20px;
-    margin-left: 6px;
-    width: 6px;
-    border-radius: 6px 6px 6px 6px;
-    color: white;
-    font-weight: bolder;
-    padding: 4px 7px 3px 6px;
-}
-
-#notification_box_red {
-    background: none repeat scroll 0 0 red;
     display: inline;
     height: 20px;
     margin-left: 6px;

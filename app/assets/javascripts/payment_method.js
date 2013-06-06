@@ -3,6 +3,8 @@ function payment_type(){
     if(payment_method_type == "Bank Account"){
         $('#payment_method_bank_name').parent().parent().show();
         $('#payment_method_bank_name').parent('.field_with_errors').parent().parent().show();
+        $('#payment_method_bank_branch').parent().parent().show();
+        $('#payment_method_bank_branch').parent('.field_with_errors').parent().parent().show();
         $('#payment_method_account_holder_name').parent().parent().show();
         $('#payment_method_account_holder_name').parent('.field_with_errors').parent().parent().show();
         $('#payment_method_account_number').parent().parent().show();
@@ -18,6 +20,9 @@ function payment_type(){
         $('#payment_method_bank_name').val("");
         $('#payment_method_bank_name').parent().parent().hide();
         $('#payment_method_bank_name').parent('.field_with_errors').parent().parent().hide();
+        $('#payment_method_bank_branch').val("");
+        $('#payment_method_bank_branch').parent().parent().hide();
+        $('#payment_method_bank_branch').parent('.field_with_errors').parent().parent().hide();
         $('#payment_method_account_holder_name').val("");
         $('#payment_method_account_holder_name').parent().parent().hide();
         $('#payment_method_account_holder_name').parent('.field_with_errors').parent().parent().hide();
