@@ -3,7 +3,7 @@
     <div id="slider">
       <% @school_images.each_with_index do |school_image, index| %>
         <%#*<div class="image-wrapper" style="display: block; border: 1px solid red;max-width: 100%;">%>
-          <%= image_tag(school_image.image.to_s, :class => "center-styled-image #{index == 0 ? 'show' : 'hide'}") %>
+          <%= image_tag(school_image.image.to_s, :class => "center-styled-image #{index == 0 ? 'show-it show' : 'hide-it hide'}") %>
         <%#*</div>%>
       <% end %>
     </div>
