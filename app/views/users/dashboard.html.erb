@@ -7,10 +7,10 @@
           <td>
             <%= notification.content.html_safe %>
           </td>
-          <td>
-            <% if notification.exchange.present? and notification.exchange.user_id != current_user.id and notification.exchange.accepted == false %>
-              <%= link_to "Approve", exchange_path(notification.exchange_id), :method => :put, :class => "btn btn-small btn-primary" %>
-              <%= link_to "Deny", exchange_path(notification.exchange_id), :method => :delete, :class => "btn btn-small btn-primary" %>
+          <td id="notification_buttons">
+            <% if notification.dashboardable.present? and notification.dashboardable.user_id != current_user.id and notification.dashboardable.status == Exchange::STATUS[:pending] %>
+              <%= link_to "Approve", exchange_path(notification.dashboardable), :method => :put, :class => "btn btn-mini btn-primary" %>
+              <%= link_to "Deny", exchange_path(notification.dashboardable), :method => :delete, :class => "btn btn-mini btn-primary" %>
             <% else %>
               <%= link_to "Remove", remove_notification_path(:id => notification.id), :method => :delete, :class => "btn btn-mini" %>
             <% end %>

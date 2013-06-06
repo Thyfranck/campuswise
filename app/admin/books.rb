@@ -42,7 +42,7 @@ ActiveAdmin.register Book do
       row :author
       row :isbn
       row :publisher
-      row :purchase_price
+      row :price
       row :loan_daily
       row :loan_weekly
       row :loan_monthly
@@ -51,9 +51,9 @@ ActiveAdmin.register Book do
         book.available == true ? "Yes" :
           link_to("No - Change", make_available_admin_book_path(book) , :confirm => "Are you sure to update the availability of this book?")
       end
-      row :image do |book|
-        image_tag(book.image, :height => 100)
-      end
+#      row :image do |book|
+#        image_tag(book.image, :height => 100)
+#      end
       
     end
   end
@@ -62,5 +62,11 @@ ActiveAdmin.register Book do
     @book = Book.find(params[:id])
     @book.make_available
     redirect_to :action => :index
+  end
+
+  member_action :remove_notification do
+    @notification = DashboardNotification.find(params[:id])
+    @notification.destroy
+    redirect_to request.referrer
   end
 end

@@ -1,0 +1,42 @@
+<h3>Payment Method Information</h3>
+<br/>
+<% if @payment_method.present? %>
+  <div id="user-card-information">
+    <% if @payment_method.payment_method_type == PaymentMethod::TYPE[:bank] %>
+      <p>
+        <b>Bank Name :</b>
+        <%= @payment_method.bank_name %>
+      </p>
+
+      <p>
+        <b>Bank Branch :</b>
+        <%= @payment_method.bank_branch %>
+      </p>
+
+      <p>
+        <b>Account Holder Name :</b>
+        <%= @payment_method.account_holder_name %>
+      </p>
+
+      <p>
+        <b>Account Number :</b>
+        <%= @payment_method.account_number %>
+      </p>
+    <% else %>
+      <p>
+        <b>Credit Card Type :</b>
+        <%= @payment_method.credit_card_type %>
+      </p>
+
+      <p>
+        <b>Credit Card Number :</b>
+        <%= @payment_method.card_number %>
+      </p>
+    <% end %>
+  </div>
+
+  <%= link_to "Edit", edit_payment_method_path(@payment_method), :class => 'btn btn-mini' %>
+
+  <%= link_to "Remove", payment_method_path, :method => :delete, :confirm => "Are you sure?", :class => 'btn btn-mini' %>
+
+<% end %>

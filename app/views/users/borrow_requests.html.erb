@@ -107,7 +107,7 @@ You can manage your borrow requests Here.
           <th>Borrowed Date</th>
           <th>Returning Time</th>
           <th>Borrower info</th>
-          <th>Payment Info</th>
+          <th>Action</th>
           </thead>
           <% @lended.each do |exchange| %>
             <% @book = Book.find(exchange.book_id) %>
@@ -123,7 +123,10 @@ You can manage your borrow requests Here.
                     <li>Phone: <%= User.find(exchange.user_id).phone %></li>
                   </ul>
                 </td>
-                <td></td>
+                <td>
+                  <%= link_to "Returned", returned_exchange_path(exchange.id, :returned => true), :class => "btn btn-mini btn-primary"  %>
+                  <%= link_to "Not Returned", returned_exchange_path(exchange.id,:returned => false), :class => "btn btn-mini btn-primary"  %>
+                </td>
               </tr>
             </tbody>
           <% end %>

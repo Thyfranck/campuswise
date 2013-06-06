@@ -1,12 +1,14 @@
 class Book < ActiveRecord::Base
   attr_accessible :author, :available_from, :available, :image,:isbn,
     :loan_price, :purchase_price, :publisher, :returning_date,
-    :title, :user_id, :requested, :loan_daily, :loan_weekly, :loan_monthly, :loan_semester
+    :title, :user_id, :requested, :loan_daily, :loan_weekly,
+    :loan_monthly, :loan_semester, :price
 
   attr_accessor :remote_image
   validates :author, :presence => true
   validates :isbn, :presence => true 
   validates :title, :presence => true
+  validates :price, :presence => true, :numericality => {:greater_than_or_equal_to => 0}, :unless => Proc.new{|b| b.requested == true}
   #  validates :purchase_price, :presence => false ,:numericality => {:greater_than_or_equal => 5}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_daily, :allow_nil => true ,:numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_weekly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
@@ -51,7 +53,7 @@ class Book < ActiveRecord::Base
   end
 
   def lended
-    if self.exchanges.where(:accepted => true).any?
+    if self.exchanges.where(:status => Exchange::STATUS[:accepted]).any?
       return true
     else
       return false

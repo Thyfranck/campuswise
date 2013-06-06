@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130524054515) do
+ActiveRecord::Schema.define(:version => 20130606054324) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -84,14 +84,17 @@ ActiveRecord::Schema.define(:version => 20130524054515) do
     t.decimal  "loan_weekly",    :precision => 10, :scale => 0
     t.decimal  "loan_monthly",   :precision => 10, :scale => 0
     t.decimal  "loan_semester",  :precision => 10, :scale => 0
+    t.decimal  "price",          :precision => 10, :scale => 0
   end
 
   create_table "dashboard_notifications", :force => true do |t|
     t.integer  "user_id"
-    t.integer  "exchange_id"
     t.string   "content"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+    t.integer  "admin_user_id"
+    t.integer  "dashboardable_id"
+    t.string   "dashboardable_type"
   end
 
   create_table "delayed_jobs", :force => true do |t|
@@ -113,14 +116,27 @@ ActiveRecord::Schema.define(:version => 20130524054515) do
   create_table "exchanges", :force => true do |t|
     t.integer  "book_id"
     t.integer  "user_id"
-    t.boolean  "accepted",                                     :default => false
-    t.datetime "created_at",                                                      :null => false
-    t.datetime "updated_at",                                                      :null => false
+    t.string   "status",                                       :default => "0"
+    t.datetime "created_at",                                                    :null => false
+    t.datetime "updated_at",                                                    :null => false
     t.decimal  "amount",        :precision => 10, :scale => 0
     t.string   "package"
     t.integer  "duration"
     t.datetime "starting_date"
     t.datetime "ending_date"
+  end
+
+  create_table "payment_methods", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "payment_method_type"
+    t.string   "bank_name"
+    t.string   "account_holder_name"
+    t.string   "account_number"
+    t.string   "credit_card_type"
+    t.string   "card_number"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+    t.string   "bank_branch"
   end
 
   create_table "payments", :force => true do |t|
@@ -142,38 +158,49 @@ ActiveRecord::Schema.define(:version => 20130524054515) do
   create_table "schools", :force => true do |t|
     t.string   "name"
     t.string   "email_postfix"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.date     "spring_semester"
+    t.date     "fall_semester"
   end
 
   create_table "users", :force => true do |t|
     t.integer  "school_id"
-    t.string   "email",                                                  :null => false
+    t.string   "email",                                                                                 :null => false
     t.string   "name"
     t.string   "phone"
     t.string   "facebook"
     t.string   "crypted_password"
     t.string   "salt"
-    t.datetime "created_at",                                             :null => false
-    t.datetime "updated_at",                                             :null => false
+    t.datetime "created_at",                                                                            :null => false
+    t.datetime "updated_at",                                                                            :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_token_expires_at"
     t.datetime "reset_password_email_sent_at"
     t.datetime "last_login_at"
     t.datetime "last_logout_at"
     t.datetime "last_activity_at"
-    t.integer  "failed_logins_count",             :default => 0
+    t.integer  "failed_logins_count",                                            :default => 0
     t.datetime "lock_expires_at"
     t.string   "unlock_token"
     t.string   "activation_state"
     t.string   "activation_token"
     t.datetime "activation_token_expires_at"
     t.string   "phone_verification"
-    t.string   "phone_verified",                  :default => "pending"
+    t.string   "phone_verified",                                                 :default => "pending"
+    t.decimal  "balance",                         :precision => 10, :scale => 0
   end
 
   add_index "users", ["activation_token"], :name => "index_users_on_activation_token"
   add_index "users", ["last_logout_at", "last_activity_at"], :name => "index_users_on_last_logout_at_and_last_activity_at"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token"
+
+  create_table "withdraw_requests", :force => true do |t|
+    t.integer  "user_id"
+    t.decimal  "amount",     :precision => 10, :scale => 0
+    t.string   "status"
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+  end
 
 end

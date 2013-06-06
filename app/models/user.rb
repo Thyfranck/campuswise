@@ -4,27 +4,30 @@ class User < ActiveRecord::Base
   belongs_to :school
   has_many :books, :dependent => :destroy
   has_many :exchanges
+  has_many :dashboard_notifications, :dependent => :destroy
+  has_one :billing_setting, :dependent => :destroy
+  has_many :billing_events
+  has_one :payment_method, :dependent => :destroy
+  has_many :withdraw_requests
   
   def accepted_exchanges
-    self.exchanges.where(:accepted => true)
+    self.exchanges.where(:status => Exchange::STATUS[:accepted])
   end
 
   def pending_exchanges
-    self.exchanges.where(:accepted => false)
+    self.exchanges.where(:status => Exchange::STATUS[:pending])
   end
 
-  has_many :pending_reverse_exchanges, :through => :books, :conditions => "accepted = false" ,:source => :exchanges #for request receiver(book owner)
-  has_many :accepted_reverse_exchanges, :through => :books, :conditions => "accepted = true" ,:source => :exchanges #for request receiver(book owner)
+  has_many :pending_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:pending]}'" ,:source => :exchanges #for request receiver(book owner)
+  has_many :accepted_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:accepted]}'" ,:source => :exchanges #for request receiver(book owner)
 
-  has_many :dashboard_notifications
-  has_one :billing_setting
-  has_many :billing_events
+  
 
   attr_accessor :current_password
 
   attr_accessible :name, :email, :password, :password_confirmation, :current_password,
     :facebook, :phone_verification, :phone_verified,
-    :school_id, :phone
+    :school_id, :phone, :balance
   
   validates_uniqueness_of :email
   
@@ -33,7 +36,7 @@ class User < ActiveRecord::Base
   validates_length_of :password, :minimum => 6, :if => :password
   validates_confirmation_of :password, :if => :password
   validates :email, :format =>  { :with => /^[\w\.\+-]{1,}\@([\da-zA-Z-]{1,}\.){1,}[\da-zA-Z-]{2,6}$/ }
-  after_create :send_sms_verification
+  before_create :send_sms_verification
   #  before_update :check_if_phone_changed
   #  after_update :send_sms_verification
   before_update :check_if_email_changed
@@ -50,11 +53,11 @@ class User < ActiveRecord::Base
   end
 
   def already_borrowed_this_book(book)
-    self.exchanges.find_by_book_id_and_user_id_and_accepted(book, self.id, true)
+    self.exchanges.find_by_book_id_and_user_id_and_status(book, self.id, Exchange::STATUS[:accepted])
   end
 
   def already_sent_request(book)
-    self.exchanges.find_by_book_id_and_user_id_and_accepted(book, self.id, false)
+    self.exchanges.find_by_book_id_and_user_id_and_status(book, self.id,  Exchange::STATUS[:pending])
   end
 
   def eligiable_to_borrow(book)

@@ -41,15 +41,15 @@ class ExchangesController < ApplicationController
     respond_to do |format|
       if @exchange.book.available == true
         unless @exchange.other_pending_payment_present?
-        if @exchange.delay.charge
-          @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, current_user.id)
-          @old_dashboard_notification.destroy
-          format.html { redirect_to dashboard_path, :notice => "Request is in process."}
-        elsif @exchange.errors.any?
-          @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, current_user.id)
-          @old_dashboard_notification.destroy
-          format.html { redirect_to dashboard_path, :alert => @exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
-        end
+          if @exchange.delay.charge
+            @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
+            @old_dashboard_notification.destroy
+            format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+          elsif @exchange.errors.any?
+            @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
+            @old_dashboard_notification.destroy
+            format.html { redirect_to dashboard_path, :alert => @exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
+          end
         else
           format.html { redirect_to dashboard_path, :notice => "Already a request for this book is under process."}
         end
@@ -60,12 +60,29 @@ class ExchangesController < ApplicationController
   def destroy
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
-      @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, current_user.id)
-      @old_dashboard_notification.destroy
-      if @exchange.destroy
-        format.html {redirect_to request.referrer, :notice => "You Rejected the request"}
+      DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id).destroy
+      if @exchange.payment.blank? and @exchange.declined.present?
+        Notify.borrower_about_card_rejected(@exchange)
+      elsif @exchange.payment.blank?
+        Notify.borrower_about_rejected_by_owner(@exchange)
+      elsif @exchange.payment.status == Payment::STATUS[:failed]
+        if Book.find(@exchange.book_id).available == true
+          Notify.borrower_about_card_problem(@exchange)
+        end
       end
+      @exchange.destroy
+      format.html {redirect_to request.referrer, :notice => "You Rejected the request"}
     end
+  end
+
+  def returned
+    @exchange = Exchange.find(params[:id])
+    if params[:returned] == "true"
+      @exchange.update_attribute(:status, Exchange::STATUS[:returned])
+    elsif params[:returned] == "false"
+      @exchange.update_attribute(:status, Exchange::STATUS[:not_returned])
+    end
+    redirect_to request.referrer
   end
 
   def process_sms
@@ -74,23 +91,43 @@ class ExchangesController < ApplicationController
     if @user
       @body = params[:Body]
       @body = @body.downcase
-      if @body.match(/\yes\s*/).present?
+      if @body.match(/accept\s*/).present?
         @id = @body.gsub /\D/, ""   
         if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
-          @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, @user.id)
+          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, @user.id)
           @old_dashboard_notification.destroy
           @exchange.delay.charge
-          render 'exchanges/sms/before_charge_yes.xml.erb', :content_type => 'text/xml'
+          render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
         else
           render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
         end
-      elsif @body.match(/\no\s*/).present?
+      elsif @body.match(/reject\s*/).present?
         @id = @body.gsub /\D/, "" 
         if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
-          @old_dashboard_notification = DashboardNotification.find_by_exchange_id_and_user_id(@exchange.id, @user.id)
+          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, @user.id)
           @old_dashboard_notification.destroy
           @exchange.destroy
           render 'exchanges/sms/no.xml.erb', :content_type => 'text/xml'
+        else
+          render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
+        end
+      elsif @body.match(/yes\s*/).present?
+        @id = @body.gsub /\D/, ""
+        if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id
+          if @exchange.status == Exchange::STATUS[:accepted]
+            @exchange.update_attribute(:status, Exchange::STATUS[:returned])
+            render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
+          end
+        else
+          render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
+        end
+      elsif @body.match(/no\s*/).present?
+        @id = @body.gsub /\D/, ""
+        if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id
+          if @exchange.status == Exchange::STATUS[:accepted]
+            @exchange.update_attribute(:status, Exchange::STATUS[:not_returned])
+            render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
+          end
         else
           render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
         end
@@ -99,7 +136,7 @@ class ExchangesController < ApplicationController
       end
     else
       render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
-    end   
+    end
   end
 
   def search

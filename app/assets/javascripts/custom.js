@@ -9,31 +9,21 @@ $(document).ready(function(){
 
 
 function slideShow() {
-    $('#slider img').css({
-        opacity: 0.0
-    });
-    $('#slider img:first').css({
-        opacity: 1.0
-    });
     setInterval('slider()',6000);
 }
 
 function slider() {
-    var current = ($('#slider img.show')?  $('#slider img.show') : $('#slider img:first'));
+    var current = ($('#slider img.show-it')?  $('#slider img.show-it') : $('#slider img:first'));
     var next = ((current.next().length) ? current.next('img') : $('#slider img:first'));
 
-    next.css({
-        opacity: 0.0
-    })
-    .removeClass('hide')
-    .addClass('show')
-    .animate({
-        opacity: 1.0
-    }, 1000);
-
-    current.animate({
-        opacity: 0.0
-    }, 1000)
-    .addClass('hide')
-    .removeClass('show');
+    current.addClass('hide-it').removeClass('show-it');
+    setTimeout(function(){
+        current.addClass('hide').removeClass('show');
+        next.addClass('show').removeClass('hide');
+        setTimeout(function(){
+            next
+            .removeClass('hide-it')
+            .addClass('show-it');
+        }, 100);
+    }, 1500);
 }

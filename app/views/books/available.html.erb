@@ -1,8 +1,16 @@
 <div class="span12">
-  <legend>
-    <h3>Books Available In Your Campus</h3>
-  </legend>
+
   <% if @books.any? %>
+    <legend>
+      <div class="pull-right">
+        <%= form_tag available_books_path, :class => "form-horizontal", :method => :get do %>
+          <%= text_field_tag :search, nil ,:placeholder => "Enter Title, Author or ISBN" %>
+          <%= submit_tag "Search", :class => "btn btn-primary search_button" %>
+        <% end %>
+      </div>
+      <h3>Books In Your Campus</h3>
+    </legend>
+
     <%= will_paginate @books %>
     <% @books.each do |book| %>
       <div class="searched_books span5">
@@ -25,10 +33,42 @@
           Available : <%= book.available == true ? "Yes" : "No" %><br/>
           <%= link_to "Show Details", book, :class => 'btn btn-mini btn-info' %>
         </div>
-
       </div>
     <% end %>
   <% else %>
-    <b><h3>Currently not available or empty keyword.</h3></b>
+    <legend>
+      <div class="pull-right">
+        <%= form_tag available_books_path, :class => "form-horizontal", :method => :get do %>
+          <%= text_field_tag :search, nil ,:placeholder => "Enter Title, Author or ISBN" %>
+          <%= submit_tag "Search", :class => "btn btn-primary search_button" %>
+        <% end %>
+      </div>
+      <b><h3>Currently not available or empty keyword.</h3></b>
+    </legend>
+    <b><h5>Recently added books.</h5></b>
+    <% @recent_books.each do |book| %>
+      <div class="searched_books span5">
+
+        <div class="search_book_image span4">
+          <% if book.image.present?  %>
+            <td><%= image_tag book.image_url %></td>
+          <% else %>
+            <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
+          <% end %>
+        </div>
+
+        <div class="search_book_text span7">
+          <div class="book_title span12">
+            <b><%= book.title.truncate(50) %></b><br/>
+          </div>
+          by <i><%= book.author.truncate(50) %></i><br/>
+          ISBN : <%= book.isbn %><br/>
+          Publisher : <%= book.publisher %><br/>
+          Available : <%= book.available == true ? "Yes" : "No" %><br/>
+          <%= link_to "Show Details", book, :class => 'btn btn-mini btn-info' %>
+        </div>
+      </div>
+    <% end %>
+
   <% end %>
 </div>

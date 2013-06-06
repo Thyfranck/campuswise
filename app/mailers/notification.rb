@@ -119,4 +119,13 @@ class Notification < ActionMailer::Base
     mail(:to => @user.email,
       :subject => "Please inform when the book \"#{@book.title.truncate(20)}\" is returned - CampusWise")
   end
+
+  def notify_user_for_withdraw(withdraw_request)
+    @user = withdraw_request.user
+    @request = withdraw_request
+    @amount = @request.amount
+    headers['X-SMTPAPI'] = "{\"category\" : \"Withdraw Request\"}"
+    mail(:to => @user.email,
+      :subject => "Congratulation your withraw request is complete. -Campuswise")
+  end
 end

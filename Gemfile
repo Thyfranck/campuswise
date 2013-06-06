@@ -18,7 +18,7 @@ gem 'will_paginate', '~> 3.0'
 gem 'twilio-ruby'
 gem 'stripe'
 gem 'delayed_job_active_record'
-
+gem 'amazon-ecs'
 
 # Gems used only for assets and not required
 # in production environments by default.

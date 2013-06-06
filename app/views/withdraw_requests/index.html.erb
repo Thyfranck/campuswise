@@ -1,0 +1,23 @@
+
+<%= link_to "New Withdraw Request", new_withdraw_request_path, :class => "btn btn-large btn-primary" %>
+
+<% if @withdraw_requests.present? %>
+  <table class="table table-striped">
+    <thead>
+    <th>Request Date</th>
+    <th>Description</th>
+    <th>Status</th>
+  </thead>
+  <tbody>
+    <% @withdraw_requests.each do |request| %>
+      <tr>
+        <td><%= request.created_at.to_date %></td>
+        <td>Requested for amount: <%= request.amount %></td>
+        <td><%= request.status %></td>
+      </tr>
+    <% end %>
+  </tbody>
+  </table>
+<%= will_paginate @withdraw_requests %>
+<% end %>
+

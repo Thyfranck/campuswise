@@ -2,18 +2,31 @@
 #user_id => requester user id
 
 class Exchange < ActiveRecord::Base
-  attr_accessible :book_id, :user_id, :accepted, :package, :duration,
+  attr_accessible :book_id, :user_id, :status, :package, :duration,
     :starting_date, :ending_date, :amount
 
   attr_accessor :declined, :declined_reason
   
   belongs_to :book
   belongs_to :user
-  has_many :dashboard_notifications
+  has_many :dashboard_notifications, :as => :dashboardable
   has_one :payment
 
   validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semester"}
   validates :package, :inclusion => {:in => ["daily", "weekly", "monthly", "semester"]}
+
+  STATUS = {
+    :accepted => "ACCEPTED",
+    :returned => "RETURNED",
+    :pending => "PENDING",
+    :not_returned => "NOT-RETURNED"
+  }
+
+  before_create :compute_amount, :avilable_in_date?, :set_status
+  before_create :set_ending_date, :if => Proc.new{|b| b.ending_date == nil}
+
+  scope :accepted, where(:status => STATUS[:accepted])
+
 
   def destroy_other_pending_requests
     book = self.book_id
@@ -22,7 +35,31 @@ class Exchange < ActiveRecord::Base
     @other_pending_requests.each {|e| e.destroy} if @other_pending_requests.any?
   end
 
-  before_create :compute_amount, :avilable_in_date?
+  def set_status
+    self.status = Exchange::STATUS[:pending]
+  end
+
+  def set_ending_date
+    if self.package == "semester"
+      fall_semester = self.user.school.fall_semester
+      spring_semester = self.user.school.spring_semester
+      if fall_semester.month > spring_semester.month
+        if fall_semester.month >= Date.today.month and Date.today.month >= spring_semester.month
+          self.ending_date = fall_semester - 1.day
+        else
+          self.ending_date = spring_semester - 1.day
+        end
+      end
+      
+      if fall_semester.month < spring_semester.month
+        if fall_semester.month <= Date.today.month and Date.today.month <= spring_semester.month
+          self.ending_date = spring_semester - 1.day
+        else
+          self.ending_date = fall_semester - 1.day
+        end
+      end
+    end
+  end
 
   def avilable_in_date?
     if self.package == "semester"
@@ -72,6 +109,7 @@ class Exchange < ActiveRecord::Base
       else
         payment = self.build_payment(:payment_amount => self.amount, :charge_id => response.id, :status => Payment::STATUS[:pending])
       end
+      
       if payment.save
         notify_borrower
       end
@@ -87,9 +125,8 @@ class Exchange < ActiveRecord::Base
 
   def notify_borrower
     Notification.notify_book_borrower_accept(self).deliver
-    @dashboard_notification = DashboardNotification.new(
+    @dashboard_notification = self.dashboard_notifications.new(
       :user_id => self.user.id,
-      :exchange_id => self.id,
       :content => "Borrow request for the book titled : \"#{self.book.title}\" has been accepted by the owner. It will be borrowed to you as soon as the payment is received and we will notify you.")
     @dashboard_notification.save
     @to = self.user.phone
@@ -102,7 +139,7 @@ class Exchange < ActiveRecord::Base
     borrower = self.user_id
     @other_pending_requests = Exchange.where("book_id = ? and user_id != ?", book, borrower)
     if @other_pending_requests.present? and @other_pending_requests.each {|p| p.payment}.present?
-      return true if @other_pending_requests.each {|p| p.payment.status == "PENDING"}.present?
+      return true if @other_pending_requests.each {|p| p.payment.status == Payment::STATUS[:pending]}.present?
     else
       return false
     end

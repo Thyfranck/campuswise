@@ -57,15 +57,57 @@
 }
 
 #slider img{
-    display: none;
+    /* IE 8 */
+/*    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";*/
+    /* IE 5-7 */
+/*    filter: alpha(opacity=50);*/
+    /* Netscape */
+/*    -moz-opacity: 0.5;*/
+    /* Safari 1.x */
+/*    -khtml-opacity: 0.5;*/
+    /* Good browsers */
+/*    opacity: 0.5;*/
 }
 
-#slider img.show{
-    display: block;
+#slider img.show-it{
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    /* IE 5-7 */
+    filter: alpha(opacity=100);
+    /* Netscape */
+    -moz-opacity: 1.0;
+    /* Safari 1.x */
+    -khtml-opacity: 1.0;
+    /* Good browsers */
+    opacity: 1.0;
+
+
+    -webkit-transition: all 2000ms cubic-bezier(0.915, 0.530, 0.925, 0.740);
+    -moz-transition: all 2000ms cubic-bezier(0.915, 0.530, 0.925, 0.740);
+    -ms-transition: all 2000ms cubic-bezier(0.915, 0.530, 0.925, 0.740);
+    -o-transition: all 2000ms cubic-bezier(0.915, 0.530, 0.925, 0.740);
+    transition: all 2000ms cubic-bezier(0.915, 0.530, 0.925, 0.740); /* custom */
+
 }
 
-#slider img.hide{
-    display: none;
+#slider img.hide-it{
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    /* IE 5-7 */
+    filter: alpha(opacity=50);
+    /* Netscape */
+    -moz-opacity: 0.5;
+    /* Safari 1.x */
+    -khtml-opacity: 0.5;
+    /* Good browsers */
+    opacity: 0.5;
+
+    -webkit-transition: all 2000ms cubic-bezier(0.915, 0.530, 0.925, 0.740);
+    -moz-transition: all 2000ms cubic-bezier(0.915, 0.530, 0.925, 0.740);
+    -ms-transition: all 2000ms cubic-bezier(0.915, 0.530, 0.925, 0.740);
+    -o-transition: all 2000ms cubic-bezier(0.915, 0.530, 0.925, 0.740);
+    transition: all 2000ms cubic-bezier(0.915, 0.530, 0.925, 0.740); /* custom */
+
 }
 
 .container-fluid{
@@ -110,7 +152,19 @@
 
 @media (max-width: 767px){
     #books-slider{
-        margin-bottom: 200px;
+/*        margin-bottom: 200px;*/
+    }
+    ul.thumbnails {
+        padding-left: 20%;
+    }
+}
+
+@media (max-width: 418px){
+    a.carousel-control {
+        display: none;
+    }
+    ul.thumbnails {
+        padding-left: 5%;
     }
 }
 
@@ -234,7 +288,7 @@ a:hover{
 }
 
 .min_height_section {
-    min-height: 582px;
+/*    min-height: 582px;*/
 }
 
 .dashboard.min_height_section {
@@ -397,7 +451,7 @@ a:hover{
 
 .carousel .carousel-inner div.item {
     height: 100px;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 .exchange_amount {
@@ -421,4 +475,24 @@ a:hover{
 
 .dashboard .span12.well{
     margin-left: 0px;
+}
+
+#notification_box {
+    background: none repeat scroll 0 0 gray;
+    display: inline;
+    height: 20px;
+    margin-left: 6px;
+    width: 6px;
+    border-radius: 6px 6px 6px 6px;
+    color: white;
+    font-weight: bolder;
+    padding: 4px 7px 3px 6px;
+}
+
+.notification_box {
+    margin-left: 20%;
+}
+
+#notification_buttons {
+    min-width: 12%;
 }

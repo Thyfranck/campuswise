@@ -1,21 +1,30 @@
 Campuswise::Application.routes.draw do
 
+  resources :withdraw_requests, :only => [:new, :create, :index]
+  resources :payment_methods
+
+
   post 'stripe-webhook' => 'stripe_webhook#create'
 
   resources :books do
     collection do
       get :available
       get :requested
+      get :campus_bookshelf
     end
   end
 
   resources :exchanges, :except => [:show, :index] do
+    member do
+      get :returned
+    end
     collection do
       get :search
     end
   end
 
   match '/search' => 'books#search', :as => :search
+  match '/notification' => 'users#notification_count'
   match '/show_search' => 'books#show_search'
   match '/dashboard' => 'users#dashboard'
   match '/remove_notification' => 'users#remove_notification'

@@ -1,0 +1,5 @@
+<% if @book_price_from_amazon.present? %>
+$('#book_price').val(<%= @book_price_from_amazon %>);
+<% else %>
+$('#book_price').val("");
+<% end %>

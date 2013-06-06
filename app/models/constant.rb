@@ -7,4 +7,11 @@ class Constant
     "JCB",
     "Diners Club"
   ]
+
+  PAYMENT_METHOD_TYPE = [
+    "Bank Account",
+    "Credit Card"
+  ]
+
+  COMPANY_COMMISION_RATE = 10 #percent
 end
