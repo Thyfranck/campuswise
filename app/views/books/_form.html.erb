@@ -75,6 +75,54 @@
 
 
     <% unless @book.requested == true or @requested_book == true %>
+
+      <legend>Availability</legend>
+      <div class="control-group">
+        <%= f.label :available, "Available Now", :class => 'control-label' %>
+        <div class="controls">
+          <%= f.check_box :available, :class => 'check_box' %>
+        </div>
+      </div>
+
+      <div class="control-group available_for" style="display:none">
+        <%= f.label :available_for, :class => 'control-label' %>
+        <div class="controls">
+          <div class="span3">
+            <%= f.radio_button :available_for,Book::AVAILABLE_FOR[:rent], :class => 'radio available_type' %><span class="available_type_text">Rent Only</span><div class="clear"></div>
+          </div>
+          <div class="span3">
+            <%= f.radio_button :available_for,Book::AVAILABLE_FOR[:sell], :class => 'radio available_type' %><span class="available_type_text">Sell Only</span><div class="clear"></div>
+          </div>
+          <div class="span3">
+            <%= f.radio_button :available_for,Book::AVAILABLE_FOR[:both], :class => 'radio available_type' %><span class="available_type_text">Both</span><div class="clear"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="available_dates" style="display:none">
+        <div class="control-group">
+          <%= f.label :available_from, :class => 'control-label' %>
+          <div class="controls">
+            <%= f.date_select :available_from, {}, :class => 'span3 selectpicker' %>
+          </div>
+        </div>
+        <div class="control-group">
+          <%= f.label :returning_date, "Available Till", :class => 'control-label' %>
+          <div class="controls">
+            <%= f.date_select :returning_date, {}, :class => 'span3 selectpicker' %>
+          </div>
+        </div>
+      </div>
+      
+      <legend>Book Purchase Price (in USD)</legend>
+      This will be the selling rate and this amount will be charged to the book borrower along with your loan amount if the book is not returned to you.
+      <div class="control-group">
+        <%= f.label :price, "Book Purchase Price", :class => 'control-label' %>
+        <div class="controls">
+          <%= f.text_field :price, :class => 'text_field' %>
+        </div>
+      </div>
+
       <legend>Loan Rates (in USD)</legend>
       <div class="loan_error" style="color:red"></div>
       <div class="control-group">
@@ -99,35 +147,6 @@
         <%= f.label :loan_semester, "Full Semester", :class => 'control-label' %>
         <div class="controls">
           <%= f.number_field :loan_semester, :class => 'number_field' %>
-        </div>
-      </div>
-
-      <legend>Book Purchase Price (in USD)</legend>
-      This amount will be charged to the book borrower along with your loan amount if the book is not returned to you.
-      <div class="control-group">
-        <%= f.label :price, "Book Purchase Price", :class => 'control-label' %>
-        <div class="controls">
-          <%= f.text_field :price, :class => 'text_field' %>
-        </div>
-      </div>
-
-      <legend>Availability</legend>
-      <div class="control-group">
-        <%= f.label :available, :class => 'control-label' %>
-        <div class="controls">
-          <%= f.check_box :available, :class => 'check_box' %>
-        </div>
-      </div>
-      <div class="control-group">
-        <%= f.label :available_from, :class => 'control-label' %>
-        <div class="controls">
-          <%= f.date_select :available_from, {}, :class => 'span3 selectpicker' %>
-        </div>
-      </div>
-      <div class="control-group">
-        <%= f.label :returning_date, "Available Till", :class => 'control-label' %>
-        <div class="controls">
-          <%= f.date_select :returning_date, {}, :class => 'span3 selectpicker' %>
         </div>
       </div>
     <% else @requested_book == true %>

@@ -496,3 +496,14 @@ a:hover{
 #notification_buttons {
     min-width: 12%;
 }
+
+.available_type_text {
+    display: inline-block;
+    float: left;
+    margin-left: 9px;
+    margin-top: 1px;
+}
+
+.available_type {
+    float: left;
+}

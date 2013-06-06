@@ -13,18 +13,56 @@ class Notify
     end
   end
 
+  def self.borrower_proposal_accept(record) #exchange
+    Notification.notify_book_borrower_accept(record).deliver
+    @dashboard_notification = record.dashboard_notifications.new(
+      :user_id => record.user.id,
+      :content => "Borrow request for the book titled : \"#{record.book.title}\" has been accepted by the owner. It will be borrowed to you as soon as the payment is received and we will notify you.")
+    @dashboard_notification.save
+    @to = record.user.phone
+    @body = "Request for the book titled:\"#{record.book.title.truncate(30)}\"has been accepted by the owner.It will be processed when payment is complete -Campuswise"
+    TwilioRequest.send_sms(@body, @to)
+  end
+
   def self.owner_about_new_request(record) #exchange
     @request_sender = record.user
     @request_receiver = record.book.user
     @requested_book = record.book
-    @dashboard_notification = record.dashboard_notifications.new(
-      :user_id => @request_receiver.id,
-      :content => "#{@request_sender.name} wants to borrow your book \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date}\" ")
-    @dashboard_notification.save
-    Notification.notify_book_owner(record)
-    @to = @request_receiver.phone
-    @body = "#{@request_sender.name} wants to borrow \"#{@requested_book.title.truncate(25)}\"from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}'-Campuswise"
-    TwilioRequest.send_sms(@body, @to)
+    if record.counter_offer.present? and record.amount.to_f != record.counter_offer.to_f
+      if record.package == "buy"
+        @dashboard_notification = record.dashboard_notifications.new(
+          :user_id => @request_receiver.id,
+          :content => "#{@request_sender.name} wants to buy your book \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date}\" ")
+        @dashboard_notification.save
+      else
+        @dashboard_notification = record.dashboard_notifications.new(
+          :user_id => @request_receiver.id,
+          :content => "#{@request_sender.name} wants to borrow your book \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date}\" ")
+        @dashboard_notification.save
+        Notification.notify_book_owner(record)
+        @to = @request_receiver.phone
+        @body = "#{@request_sender.name} wants to borrow \"#{@requested_book.title.truncate(25)}\"from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}'-Campuswise"
+        TwilioRequest.send_sms(@body, @to)
+      end
+    else
+      if record.package == "buy"
+        @dashboard_notification = record.dashboard_notifications.new(
+          :user_id => @request_receiver.id,
+          :content => "#{@request_sender.name} wants to buy your book \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date}\" ")
+        @dashboard_notification.save
+      else
+        @dashboard_notification = record.dashboard_notifications.new(
+          :user_id => @request_receiver.id,
+          :content => "#{@request_sender.name} wants to borrow your book \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date}\" ")
+        @dashboard_notification.save
+        Notification.notify_book_owner(record)
+        @to = @request_receiver.phone
+        @body = "#{@request_sender.name} wants to borrow \"#{@requested_book.title.truncate(25)}\"from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}'-Campuswise"
+        TwilioRequest.send_sms(@body, @to)
+      end
+    end
+
+    
   end
 
   def self.owner_after_exchange_complete(record) #payment

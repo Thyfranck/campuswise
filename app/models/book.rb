@@ -2,14 +2,21 @@ class Book < ActiveRecord::Base
   attr_accessible :author, :available_from, :available, :image,:isbn,
     :loan_price, :purchase_price, :publisher, :returning_date,
     :title, :user_id, :requested, :loan_daily, :loan_weekly,
-    :loan_monthly, :loan_semester, :price
+    :loan_monthly, :loan_semester, :price, :available_for
+
+  AVAILABLE_FOR = {
+    :rent => "RENT",
+    :sell => "SELL",
+    :both => "BOTH"
+  }
+  
 
   attr_accessor :remote_image
   validates :author, :presence => true
   validates :isbn, :presence => true 
   validates :title, :presence => true
+  validates :available_for, :inclusion => {:in => ["RENT", "SELL", "BOTH"]}, :if => Proc.new{|b| b.available == true}
   validates :price, :presence => true, :numericality => {:greater_than_or_equal_to => 0}, :unless => Proc.new{|b| b.requested == true}
-  #  validates :purchase_price, :presence => false ,:numericality => {:greater_than_or_equal => 5}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_daily, :allow_nil => true ,:numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_weekly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_monthly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
@@ -62,6 +69,8 @@ class Book < ActiveRecord::Base
 
   def atleast_one_loan_rate_exsists
     if self.requested == true
+      return true
+    elsif self.available_for == Book::AVAILABLE_FOR[:sell]
       return true
     else
       if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semester == nil

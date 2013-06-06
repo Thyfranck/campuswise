@@ -1,6 +1,6 @@
 <fieldset>
   <legend>
-    <h4>How you want to borrow this book?</h4>
+    <h4>How you want to get this book?</h4>
   </legend>
 
   <%= form_for @exchange do |f| %>
@@ -22,7 +22,7 @@
     <div class="row span12">
 
       <% if @book.loan_daily.present? %>
-        <div class="span3">
+        <div class="span2">
           <div class="control-group">
             <%= f.label :package, "Daily", :class => 'control-label' %>
             <div class="controls">
@@ -35,7 +35,7 @@
       <% end %>
 
       <% if @book.loan_weekly.present? %>
-        <div class="span3">
+        <div class="span2">
           <div class="control-group">
             <%= f.label :package, "Weekly", :class => 'control-label' %>
             <div class="controls">
@@ -48,7 +48,7 @@
       <% end %>
 
       <% if @book.loan_monthly.present? %>
-        <div class="span3">
+        <div class="span2">
           <div class="control-group">
             <%= f.label :package, "Monthly", :class => 'control-label' %>
             <div class="controls">
@@ -61,7 +61,7 @@
       <% end %>
 
       <% if @book.loan_semester.present? %>
-        <div class="span3">
+        <div class="span2">
           <div class="control-group">
             <%= f.label :package, "Full semester", :class => 'control-label' %>
             <div class="controls">
@@ -69,6 +69,19 @@
             </div>
             <br/>
             $ <span id="semester_rate"><%= @book.loan_semester %></span> / semester
+          </div>
+        </div>
+      <% end %>
+
+      <% if @book.available_for == Book::AVAILABLE_FOR[:sell] or @book.available_for == Book::AVAILABLE_FOR[:both] %>
+        <div class="span2">
+          <div class="control-group">
+            <%= f.label :package, "Buy", :class => 'control-label' %>
+            <div class="controls">
+              <%= f.radio_button :package ,'buy'%>
+            </div>
+            <br/>
+            $ <span id="purchase_rate"><%= @book.price %></span>
           </div>
         </div>
       <% end %>
@@ -130,6 +143,14 @@
       <div class="modal-body span5">
         <h4>Total amount to pay</h4>
         <h1 class="total_amount_to_pay" style="color:red"></h1>
+      </div>
+      <div class="modal-body span5">
+        <div class="control-group">
+          <%= f.label :counter_offer, "Counter offer (if any?)", :class => 'control-label' %>
+          <div class="controls">
+            <%= f.number_field :counter_offer, :class => 'number_field input-medium' %>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>

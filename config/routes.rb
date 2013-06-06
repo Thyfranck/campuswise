@@ -1,7 +1,7 @@
 Campuswise::Application.routes.draw do
 
   resources :withdraw_requests, :only => [:new, :create, :index]
-  resources :payment_methods
+  resources :payment_methods, :except => [:index]
 
 
   post 'stripe-webhook' => 'stripe_webhook#create'
@@ -17,6 +17,7 @@ Campuswise::Application.routes.draw do
   resources :exchanges, :except => [:show, :index] do
     member do
       get :returned
+      get :before_exchange
     end
     collection do
       get :search

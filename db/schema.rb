@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130606054324) do
+ActiveRecord::Schema.define(:version => 20130606094620) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -85,14 +85,16 @@ ActiveRecord::Schema.define(:version => 20130606054324) do
     t.decimal  "loan_monthly",   :precision => 10, :scale => 0
     t.decimal  "loan_semester",  :precision => 10, :scale => 0
     t.decimal  "price",          :precision => 10, :scale => 0
+    t.string   "available_for"
   end
 
   create_table "dashboard_notifications", :force => true do |t|
     t.integer  "user_id"
     t.string   "content"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.integer  "admin_user_id"
+    t.integer  "withdraw_request_id"
     t.integer  "dashboardable_id"
     t.string   "dashboardable_type"
   end
@@ -116,14 +118,16 @@ ActiveRecord::Schema.define(:version => 20130606054324) do
   create_table "exchanges", :force => true do |t|
     t.integer  "book_id"
     t.integer  "user_id"
-    t.string   "status",                                       :default => "0"
-    t.datetime "created_at",                                                    :null => false
-    t.datetime "updated_at",                                                    :null => false
-    t.decimal  "amount",        :precision => 10, :scale => 0
+    t.string   "status",                                                    :default => "0"
+    t.datetime "created_at",                                                                 :null => false
+    t.datetime "updated_at",                                                                 :null => false
+    t.decimal  "amount",                     :precision => 10, :scale => 0
     t.string   "package"
     t.integer  "duration"
     t.datetime "starting_date"
     t.datetime "ending_date"
+    t.decimal  "counter_offer",              :precision => 10, :scale => 0
+    t.integer  "counter_offer_last_made_by"
   end
 
   create_table "payment_methods", :force => true do |t|
