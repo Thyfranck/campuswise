@@ -16,9 +16,16 @@ $(document).ready(function(){
     $('#book_available').change(function(){
         if($('#book_available').is(':checked')){
             $('.available_for').show();
+            if($('#book_available_for_rent').is(':checked')){
+                $('.available_dates').show();
+            }
+            if($('#book_available_for_both').is(':checked')){
+                $('.available_dates').show();
+            }
         }
         else{
             $('.available_for').hide();
+            $('.available_dates').hide();
         }
     })
 

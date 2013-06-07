@@ -28,6 +28,12 @@ class ExchangeObserver < ActiveRecord::Observer
       else
         return false
       end
+
+      if record.counter_offer.present? and record.counter_offer_last_made_by.present?
+        if record.counter_offer_last_made_by_was == record.counter_offer_last_made_by #making sure that one user doesn't the negotiation twice at a time.
+          return false
+        end
+      end
     end
   end
 
@@ -64,10 +70,14 @@ class ExchangeObserver < ActiveRecord::Observer
     if record.class == Exchange
       if record.status == Exchange::STATUS[:returned]
         Notify.admin_for_book_returned(record)
-      end
-
-      if record.status == Exchange::STATUS[:not_returned]
+      elsif record.status == Exchange::STATUS[:not_returned]
         Notify.admin_for_book_not_returned(record)
+      elsif record.counter_offer.present?
+        if record.counter_offer_last_made_by == record.book.user.id
+          Notify.borrower_about_owner_want_to_negotiate(record)
+        elsif record.counter_offer_last_made_by == record.user.id
+          Notify.owner_about_borrower_want_to_negotiate(record)
+        end
       end
     end    
   end
@@ -76,10 +86,26 @@ class ExchangeObserver < ActiveRecord::Observer
   def before_destroy(record)
     if record.class == Book
       return false if record.lended == true
-##      @exchanges = Exchange.where(:book_id => record.id)
-##      @notification = DashboardNotification.where(:dashboardable => @exchanges)
-##      @notification.each {|d| d.destroy}
-##      @exchanges.each {|d| d.destroy}
+      ##      @exchanges = Exchange.where(:book_id => record.id)
+      ##      @notification = DashboardNotification.where(:dashboardable => @exchanges)
+      ##      @notification.each {|d| d.destroy}
+      ##      @exchanges.each {|d| d.destroy}
+    end
+
+    if record.class == Exchange
+      if record.counter_offer.present?
+        Notify.owner_about_negotiation_failed(record)
+      else
+        if record.payment.blank? and record.declined.present?
+          Notify.borrower_about_card_rejected(record)
+        elsif record.payment.blank?
+          Notify.borrower_about_rejected_by_owner(record)
+        elsif record.payment.status == Payment::STATUS[:failed]
+          if record.book.available == true
+            Notify.borrower_about_card_problem(record)
+          end
+        end
+      end
     end
   end
 end

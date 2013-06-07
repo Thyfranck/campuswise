@@ -16,80 +16,80 @@
               <div class="item active">
                 <ul class="thumbnails offset1">
                   <% @recent_books.limit(3).each_with_index do |book, index| %>
-                      <li class="<%= "offsetplplpl" if index == 0 %>" style="width: 230px;">
-                        <div class="slide-content">
-                          <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px">
-                            <%= image_tag book.image_url(:book) %>
-                          </div>
-                          <div class="slider_book_text" style="float: left;width:146px">
-                            <p class="title">
-                              <%= book.title.truncate(50) %>
-                            </p>
-                            <p class="author">
-                              by <%= book.author.truncate(50) %>
-                            </p>
-
-                          </div>
+                    <li class="<%= "offsetplplpl" if index == 0 %>" style="width: 230px;">
+                      <div class="slide-content">
+                        <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px">
+                          <%= image_tag book.image_url(:book) %>
                         </div>
-                      </li>
-                    <% end %>
-                  </ul>
-                </div>
-              <% end %>
-              <% if @recent_books.limit(3).offset(3).any? %>
-                <div class="item">
-                  <ul class="thumbnails offset1">
-                    <% @recent_books.limit(3).offset(3).each_with_index do |book, index| %>
-                      <li class="<%= "offsetpllplplp" if index == 0 %>" style="width: 230px;">
-                        <div class="slide-content">
-                          <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px;">
-                            <%= image_tag book.image_url(:book) %>
-                          </div>
-                          <div class="slider_book_text" style="float: left;width:146px">
-                            <p class="title">
-                              <%= book.title.truncate(50) %>
-                            </p>
-                            <p class="author">
-                              by <%= book.author.truncate(50) %>
-                            </p>
+                        <div class="slider_book_text" style="float: left;width:146px">
+                          <p class="title">
+                            <%= book.title.truncate(50) %>
+                          </p>
+                          <p class="author">
+                            by <%= book.author.truncate(50) %>
+                          </p>
 
-                          </div>
                         </div>
-                      </li>
-
-                    <% end %>
-                  </ul>
-                </div>
-              <% end %>
-              <% if @recent_books.limit(3).offset(6).any? %>
-                <div class="item">
-                  <ul class="thumbnails offset1">
-                    <% @recent_books.limit(3).offset(6).each_with_index do |book, index| %>
-                      <li class="<%= "offset1fgdfdf" if index == 0 %>" style="width: 230px;">
-                        <div class="slide-content">
-                          <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px;">
-                            <%= image_tag book.image_url(:book) %>
-                          </div>
-                          <div class="slider_book_text" style="float: left;width:146px;">
-                            <p class="title">
-                              <%= book.title.truncate(50) %>
-                            </p>
-                            <p class="author">
-                              by <%= book.author.truncate(50) %>
-                            </p>
-
-                          </div>
+                      </div>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+            <% if @recent_books.limit(3).offset(3).any? %>
+              <div class="item">
+                <ul class="thumbnails offset1">
+                  <% @recent_books.limit(3).offset(3).each_with_index do |book, index| %>
+                    <li class="<%= "offsetpllplplp" if index == 0 %>" style="width: 230px;">
+                      <div class="slide-content">
+                        <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px;">
+                          <%= image_tag book.image_url(:book) %>
                         </div>
-                      </li>
-                    <% end %>
-                  </ul>
-                </div>
-              <% end %>
-            </div>
-            <a class="carousel-control left" href="#myCarousel" data-slide="prev">‹</a>
-            <a class="carousel-control right" href="#myCarousel" data-slide="next">›</a>
+                        <div class="slider_book_text" style="float: left;width:146px">
+                          <p class="title">
+                            <%= book.title.truncate(50) %>
+                          </p>
+                          <p class="author">
+                            by <%= book.author.truncate(50) %>
+                          </p>
+
+                        </div>
+                      </div>
+                    </li>
+
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+            <% if @recent_books.limit(3).offset(6).any? %>
+              <div class="item">
+                <ul class="thumbnails offset1">
+                  <% @recent_books.limit(3).offset(6).each_with_index do |book, index| %>
+                    <li class="<%= "offset1fgdfdf" if index == 0 %>" style="width: 230px;">
+                      <div class="slide-content">
+                        <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px;">
+                          <%= image_tag book.image_url(:book) %>
+                        </div>
+                        <div class="slider_book_text" style="float: left;width:146px;">
+                          <p class="title">
+                            <%= book.title.truncate(50) %>
+                          </p>
+                          <p class="author">
+                            by <%= book.author.truncate(50) %>
+                          </p>
+
+                        </div>
+                      </div>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
           </div>
+          <a class="carousel-control left" href="#myCarousel" data-slide="prev">‹</a>
+          <a class="carousel-control right" href="#myCarousel" data-slide="next">›</a>
         </div>
       </div>
     </div>
   </div>
+</div>

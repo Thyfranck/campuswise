@@ -1,0 +1,61 @@
+<div class="row">
+  <div class="span4">
+    <legend>
+      <% if @exchange.user == current_user %>
+        <h4>Owner of the book titled "<%= @exchange.book.title.truncate(30) %>" wants to <%= @exchange.package == "sell" ? "sell" : "lend" %> the book at price $<%= @exchange.counter_offer %>. What you want to do?</h4>
+      <% else %>
+        <h4><%= @exchange.user.email %> wants to <%= @exchange.package == "sell" ? "buy" : "borrow" %>  your book at the price of $<%= @exchange.counter_offer %>. What you want to do?</h4>
+      <% end %>
+    </legend>
+
+    <%= form_tag(exchange_path(@exchange),:method => :put, :class => 'form') do %>
+      <div class="control-group">
+        <div class="controls">
+          <div class="span12">
+            <%= radio_button_tag :agree, "agree" %><span class="available_type_text">I agree with this price</span><div class="clear"></div><br/>
+          </div>
+
+          <div class="span12">
+            <%= radio_button_tag :agree, "disagree" %><span class="available_type_text">I don't want to negotiate.</span><div class="clear"></div><br/>
+          </div>
+          <% if @exchange.counter_offer_last_made_by != current_user.id %>
+            <div class="span12">
+              <%= radio_button_tag :agree, "negotiate" %><span class="available_type_text">I want to negotiate.</span><div class="clear"></div><br/>
+            </div>
+            <div class="span12">
+              <%= number_field_tag :negotiate,  nil,:class => 'number_field' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <div class="form-actions">
+            <%= submit_tag "Submit", :class => 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+  $('#agree_negotiate').change(function(){
+    if($('#agree_negotiate').is(':checked')){
+      $('#negotiate').attr('required','required');
+    }
+  });
+
+  $('#agree_agree').change(function(){
+    if($('#agree_agree').is(':checked')){
+      $('#negotiate').removeAttr('required');
+    }
+  });
+
+  $('#agree_disagree').change(function(){
+    if($('#agree_disagree').is(':checked')){
+      $('#negotiate').removeAttr('required');
+    }
+  });
+</script>

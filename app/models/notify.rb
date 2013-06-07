@@ -149,6 +149,18 @@ class Notify
     TwilioRequest.send_sms(@body, @to)
   end
 
+  def self.borrower_about_owner_doesnt_want_to_negotiate(record) #exchange
+    @dashboard_notification = record.dashboard_notifications.new(
+      :user_id => record.user.id,
+      :content => "Owner of the book titled '#{record.book.title}' doesn't want to negotiate with your given price #{record.counter_offer}"
+    )
+    @dashboard_notification.save
+#    Notification.notify_user_for_withdraw(record).deliver
+#    @to = record.user.phone
+#    @body = "Congratulation your withdraw request for amount $#{record.amount} is complete."
+#    TwilioRequest.send_sms(@body, @to)
+  end
+
   def self.admin_for_book_returned(record) #exchange
     @admin_notification = record.dashboard_notifications.new(
       :admin_user_id => AdminUser.first.id,

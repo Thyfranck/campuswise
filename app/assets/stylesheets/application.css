@@ -14,6 +14,7 @@
  *= require jquery.jscrollpane
  *= require uniform.aristo
  *= require jquery.ui.all
+ *= require fancybox
  *= require ethon
  *= require custom
  */
