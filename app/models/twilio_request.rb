@@ -10,11 +10,12 @@ class TwilioRequest
   end
 
   def self.send_sms(body, to, from = @from)
-    @client = Twilio::REST::Client.new(@account_sid, @auth_token)
-    @client.account.sms.messages.create(
-      :from => from,
-      :to => to,
-      :body => body
-    )
+    return true
+#    @client = Twilio::REST::Client.new(@account_sid, @auth_token)
+#    @client.account.sms.messages.create(
+#      :from => from,
+#      :to => to,
+#      :body => body
+#    )
   end
 end

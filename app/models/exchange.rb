@@ -3,7 +3,7 @@
 
 class Exchange < ActiveRecord::Base
   attr_accessible :book_id, :user_id, :status, :package, :duration,
-    :starting_date, :ending_date, :amount
+    :starting_date, :ending_date, :amount, :counter_offer, :counter_offer_last_made_by
 
   attr_accessor :declined, :declined_reason
   
@@ -13,7 +13,7 @@ class Exchange < ActiveRecord::Base
   has_one :payment
 
   validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semester"}
-  validates :package, :inclusion => {:in => ["daily", "weekly", "monthly", "semester"]}
+  validates :package, :inclusion => {:in => ["daily", "weekly", "monthly", "semester", "buy"]}
 
   STATUS = {
     :accepted => "ACCEPTED",
@@ -22,11 +22,16 @@ class Exchange < ActiveRecord::Base
     :not_returned => "NOT-RETURNED"
   }
 
-  before_create :compute_amount, :avilable_in_date?, :set_status
+  before_create :compute_amount, :avilable_in_date?, :set_status, :set_counter_offer_maker
   before_create :set_ending_date, :if => Proc.new{|b| b.ending_date == nil}
 
   scope :accepted, where(:status => STATUS[:accepted])
 
+  def set_counter_offer_maker
+    if self.counter_offer.present?
+      self.counter_offer_last_made_by = self.user.id
+    end
+  end
 
   def destroy_other_pending_requests
     book = self.book_id
@@ -64,6 +69,8 @@ class Exchange < ActiveRecord::Base
   def avilable_in_date?
     if self.package == "semester"
       return true
+    elsif self.package == "buy"
+      return true
     else
       if self.package == "daily"
         self.ending_date = self.starting_date + self.duration.days
@@ -90,8 +97,10 @@ class Exchange < ActiveRecord::Base
       rate = self.book.loan_monthly
     elsif self.package == "semester"
       rate = self.book.loan_semester
+    elsif self.package == "buy"
+      rate = self.book.price
     end
-    if self.package == "semester"
+    if self.package == "semester" or self.package == "buy"
       total_amount = rate
     else
       total_amount = rate * self.duration
@@ -111,7 +120,7 @@ class Exchange < ActiveRecord::Base
       end
       
       if payment.save
-        notify_borrower
+        Notify.borrower_proposal_accept(self)
       end
       return true
     rescue => e
@@ -121,17 +130,6 @@ class Exchange < ActiveRecord::Base
       self.destroy
       return false
     end
-  end
-
-  def notify_borrower
-    Notification.notify_book_borrower_accept(self).deliver
-    @dashboard_notification = self.dashboard_notifications.new(
-      :user_id => self.user.id,
-      :content => "Borrow request for the book titled : \"#{self.book.title}\" has been accepted by the owner. It will be borrowed to you as soon as the payment is received and we will notify you.")
-    @dashboard_notification.save
-    @to = self.user.phone
-    @body = "Request for the book titled:\"#{self.book.title.truncate(30)}\"has been accepted by the owner.It will be processed when payment is complete -Campuswise"
-    TwilioRequest.send_sms(@body, @to)
   end
 
   def other_pending_payment_present?

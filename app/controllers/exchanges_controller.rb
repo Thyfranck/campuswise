@@ -39,20 +39,47 @@ class ExchangesController < ApplicationController
   def update
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
-      if @exchange.book.available == true
-        unless @exchange.other_pending_payment_present?
-          if @exchange.delay.charge
-            @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
-            @old_dashboard_notification.destroy
-            format.html { redirect_to dashboard_path, :notice => "Request is in process."}
-          elsif @exchange.errors.any?
-            @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
-            @old_dashboard_notification.destroy
-            format.html { redirect_to dashboard_path, :alert => @exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
+      if @exchange.counter_offer.present?
+        @status = params[:agree]
+        if @status == "agree"
+          start(@exchange, format)
+        elsif @status == "disagree"
+          if @exchange.book.user == current_user
+            Notify.borrower_about_owner_doesnt_want_to_negotiate(@exchange)
+          elsif @exchange.user == current_user
+            @exchange.destroy
           end
-        else
-          format.html { redirect_to dashboard_path, :notice => "Already a request for this book is under process."}
+          format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+        elsif @status == "negotiate"
+          @amount = params[:negotiate]
+          if @exchange.book.user == current_user
+            @exchange.update_attributes(:amount => @amount, :counter_offer => @amount, :counter_offer_last_made_by => current_user.id)
+          elsif @exchange.user == current_user
+            @exchange.update_attributes(:counter_offer => @amount, :counter_offer_last_made_by => current_user.id)
+          end
+          format.html { redirect_to dashboard_path, :notice => "Request is in process."}
         end
+      else
+        start(@exchange)
+      end
+    end
+  end
+
+  def start(exchange, format)
+    if exchange.book.available == true
+      unless exchange.other_pending_payment_present?
+        exchange.counter_offer = nil if exchange.counter_offer.present?
+        if exchange.delay.charge
+          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(exchange.id, current_user.id)
+          @old_dashboard_notification.destroy
+          format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+        elsif exchange.errors.any?
+          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(exchange.id, current_user.id)
+          @old_dashboard_notification.destroy
+          format.html { redirect_to dashboard_path, :alert => exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
+        end
+      else
+        format.html { redirect_to dashboard_path, :notice => "Already a request for this book is under process."}
       end
     end
   end
@@ -61,15 +88,6 @@ class ExchangesController < ApplicationController
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
       DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id).destroy
-      if @exchange.payment.blank? and @exchange.declined.present?
-        Notify.borrower_about_card_rejected(@exchange)
-      elsif @exchange.payment.blank?
-        Notify.borrower_about_rejected_by_owner(@exchange)
-      elsif @exchange.payment.status == Payment::STATUS[:failed]
-        if Book.find(@exchange.book_id).available == true
-          Notify.borrower_about_card_problem(@exchange)
-        end
-      end
       @exchange.destroy
       format.html {redirect_to request.referrer, :notice => "You Rejected the request"}
     end
@@ -142,6 +160,13 @@ class ExchangesController < ApplicationController
   def search
     respond_to do |format|
       format.html
+    end
+  end
+
+  def before
+    @exchange = Exchange.find(params[:id])
+    respond_to do |format|
+      format.html { render :layout => false}
     end
   end
 

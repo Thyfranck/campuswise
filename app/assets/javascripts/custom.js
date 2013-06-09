@@ -13,7 +13,7 @@ function slideShow() {
 }
 
 function slider() {
-    var current = ($('#slider img.show-it')?  $('#slider img.show-it') : $('#slider img:first'));
+    var current = ($('#slider img.show-it')? $('#slider img.show-it') : $('#slider img:first'));
     var next = ((current.next().length) ? current.next('img') : $('#slider img:first'));
 
     current.addClass('hide-it').removeClass('show-it');

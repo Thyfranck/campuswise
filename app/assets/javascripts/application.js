@@ -17,9 +17,12 @@
 //= require jquery.jcarousel
 //= require jquery.uniform
 //= require jquery.ui.autocomplete
+//= require fancybox
+//= require fancybox-config
 //= require search
 //= require stripe
 //= require exchange
+//= require book
 //= require book_price
 //= require payment_method
 //= require notifications
