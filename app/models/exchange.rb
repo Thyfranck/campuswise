@@ -13,7 +13,8 @@ class Exchange < ActiveRecord::Base
   has_one :payment
 
   validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semester"}
-  validates :package, :inclusion => {:in => ["daily", "weekly", "monthly", "semester", "buy"]}
+  validates :package, :inclusion => {:in => ["day", "week", "month", "semester", "buy"]}
+  validates :counter_offer, :allow_nil => true, :numericality => true
 
   STATUS = {
     :accepted => "ACCEPTED",
@@ -22,10 +23,27 @@ class Exchange < ActiveRecord::Base
     :not_returned => "NOT-RETURNED"
   }
 
-  before_create :compute_amount, :avilable_in_date?, :set_status, :set_counter_offer_maker
+  before_create :compute_amount, :avilable_in_date?, :set_status, :set_counter_offer_maker, :valid_duration?
   before_create :set_ending_date, :if => Proc.new{|b| b.ending_date == nil}
+  before_create :check_counter_offer
+
+  def check_counter_offer
+    if self.amount <= self.counter_offer
+      errors[:base] << "Counter offer must be less than actual amount"
+      return false 
+    end
+  end
 
   scope :accepted, where(:status => STATUS[:accepted])
+
+  def valid_duration?
+    if self.package != "semester"
+      if self.duration < 1
+        errors[:base] << "Invalid duration"
+        return false 
+      end
+    end
+  end
 
   def set_counter_offer_maker
     if self.counter_offer.present?
@@ -72,11 +90,11 @@ class Exchange < ActiveRecord::Base
     elsif self.package == "buy"
       return true
     else
-      if self.package == "daily"
+      if self.package == "day"
         self.ending_date = self.starting_date + self.duration.days
-      elsif self.package == "weekly"
+      elsif self.package == "week"
         self.ending_date = self.starting_date + self.duration.weeks
-      elsif self.package == "monthly"
+      elsif self.package == "month"
         self.ending_date = self.starting_date + self.duration.months
       end
       if self.starting_date >= self.book.available_from and self.ending_date <= self.book.returning_date
@@ -89,11 +107,11 @@ class Exchange < ActiveRecord::Base
   end
   
   def compute_amount
-    if self.package == "daily"
+    if self.package == "day"
       rate = self.book.loan_daily
-    elsif self.package == "weekly"
+    elsif self.package == "week"
       rate = self.book.loan_weekly
-    elsif self.package == "monthly"
+    elsif self.package == "month"
       rate = self.book.loan_monthly
     elsif self.package == "semester"
       rate = self.book.loan_semester
@@ -117,8 +135,7 @@ class Exchange < ActiveRecord::Base
         payment.status = Payment::STATUS[:pending]
       else
         payment = self.build_payment(:payment_amount => self.amount, :charge_id => response.id, :status => Payment::STATUS[:pending])
-      end
-      
+      end      
       if payment.save
         Notify.borrower_proposal_accept(self)
       end

@@ -1,12 +1,6 @@
 class ExchangeObserver < ActiveRecord::Observer
   observe :exchange, :book, :payment
 
-  def after_save(record)
-    if record.class == Payment
-      Notify.delay.borrower_about_payment_received(record)
-    end
-  end
-
   def before_create(record)
     if record.class == Exchange
       return false if Book.find(record.book_id).available == false
@@ -23,16 +17,33 @@ class ExchangeObserver < ActiveRecord::Observer
 
   def before_update(record)
     if record.class == Exchange
-      if record.payment.status == Payment::STATUS[:paid]
-        return true
-      else
-        return false
+      if record.payment.present?
+        if record.payment.status == Payment::STATUS[:paid]
+          return true
+        else
+          return false
+        end
       end
-
       if record.counter_offer.present? and record.counter_offer_last_made_by.present?
         if record.counter_offer_last_made_by_was == record.counter_offer_last_made_by #making sure that one user doesn't the negotiation twice at a time.
           return false
         end
+        if record.amount_was < record.amount
+          return false
+        end
+        if record.counter_offer_was > record.counter_offer
+          return false
+        end
+
+        if record.amount < record.counter_offer
+          return false
+        end
+      end
+    end
+
+    if record.class == Payment
+      if record.status == Payment::STATUS[:paid] and record.status_was == Payment::STATUS[:pending]
+        Notify.delay.borrower_about_payment_received(record)
       end
     end
   end
@@ -73,13 +84,20 @@ class ExchangeObserver < ActiveRecord::Observer
       elsif record.status == Exchange::STATUS[:not_returned]
         Notify.admin_for_book_not_returned(record)
       elsif record.counter_offer.present?
-        if record.counter_offer_last_made_by == record.book.user.id
+        if record.counter_offer_last_made_by == record.book.user.id and record.amount_was == record.amount
+          Notify.borrower_about_owner_doesnt_want_to_negotiate(record)
+        end
+        if record.counter_offer_last_made_by == record.book.user.id and record.amount_was > record.amount
           Notify.borrower_about_owner_want_to_negotiate(record)
-        elsif record.counter_offer_last_made_by == record.user.id
+          @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(record.id, record.book.user.id)
+          @dashboard.destroy
+        elsif record.counter_offer_last_made_by == record.user.id  and record.counter_offer_was < record.counter_offer
+          @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(record.id, record.user.id)
+          @dashboard.destroy
           Notify.owner_about_borrower_want_to_negotiate(record)
         end
       end
-    end    
+    end
   end
 
 

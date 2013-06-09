@@ -42,22 +42,34 @@ class ExchangesController < ApplicationController
       if @exchange.counter_offer.present?
         @status = params[:agree]
         if @status == "agree"
+          @exchange.update_attributes(:amount => @exchange.counter_offer, :counter_offer_last_made_by => current_user.id)
           start(@exchange, format)
         elsif @status == "disagree"
           if @exchange.book.user == current_user
-            Notify.borrower_about_owner_doesnt_want_to_negotiate(@exchange)
+            @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
+            @dashboard.destroy
+            @exchange.update_attributes(:counter_offer => @exchange.amount, :counter_offer_last_made_by => current_user.id)
           elsif @exchange.user == current_user
+            @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
+            @dashboard.destroy
             @exchange.destroy
           end
           format.html { redirect_to dashboard_path, :notice => "Request is in process."}
         elsif @status == "negotiate"
           @amount = params[:negotiate]
           if @exchange.book.user == current_user
-            @exchange.update_attributes(:amount => @amount, :counter_offer => @amount, :counter_offer_last_made_by => current_user.id)
+            if @exchange.update_attributes(:amount => @amount, :counter_offer_last_made_by => current_user.id)
+              format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+            else
+              format.html { redirect_to dashboard_path, :alert => "Invalid negotiation."}
+            end
           elsif @exchange.user == current_user
-            @exchange.update_attributes(:counter_offer => @amount, :counter_offer_last_made_by => current_user.id)
+            if @exchange.update_attributes(:counter_offer => @amount, :counter_offer_last_made_by => current_user.id)
+              format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+            else
+              format.html { redirect_to dashboard_path, :alert => "Invalid negotiation."}
+            end
           end
-          format.html { redirect_to dashboard_path, :notice => "Request is in process."}
         end
       else
         start(@exchange)
@@ -66,17 +78,18 @@ class ExchangesController < ApplicationController
   end
 
   def start(exchange, format)
-    if exchange.book.available == true
-      unless exchange.other_pending_payment_present?
-        exchange.counter_offer = nil if exchange.counter_offer.present?
-        if exchange.delay.charge
-          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(exchange.id, current_user.id)
+    @exchange = Exchange.find(exchange)
+    if @exchange.book.available == true
+      unless @exchange.other_pending_payment_present?
+        @exchange.update_attribute(:counter_offer, nil) if @exchange.counter_offer.present?
+        if @exchange.delay.charge
+          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
           @old_dashboard_notification.destroy
-          format.html { redirect_to dashboard_path, :notice => "Request is in process."}
-        elsif exchange.errors.any?
-          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(exchange.id, current_user.id)
+          format.html {redirect_to dashboard_path, :notice => "Request is in process."}
+        elsif @exchange.errors.any?
+          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
           @old_dashboard_notification.destroy
-          format.html { redirect_to dashboard_path, :alert => exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
+          format.html { redirect_to dashboard_path, :alert => @exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
         end
       else
         format.html { redirect_to dashboard_path, :notice => "Already a request for this book is under process."}

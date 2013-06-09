@@ -2,13 +2,13 @@
   <div class="span4">
     <legend>
       <% if @exchange.user == current_user %>
-        <h4>Owner of the book titled "<%= @exchange.book.title.truncate(30) %>" wants to <%= @exchange.package == "sell" ? "sell" : "lend" %> the book at price $<%= @exchange.counter_offer %>. What you want to do?</h4>
+        <h4>Owner of the book titled "<%= @exchange.book.title.truncate(30) %>" wants to <%= @exchange.package == "sell" ? "sell" : "lend" %> the book at price $<%= @exchange.amount %>. What you want to do?</h4>
       <% else %>
         <h4><%= @exchange.user.email %> wants to <%= @exchange.package == "sell" ? "buy" : "borrow" %>  your book at the price of $<%= @exchange.counter_offer %>. What you want to do?</h4>
       <% end %>
     </legend>
 
-    <%= form_tag(exchange_path(@exchange),:method => :put, :class => 'form') do %>
+    <%= form_tag(exchange_path(@exchange),:method => :put, :class => 'form', :id => 'before_exchange') do %>
       <div class="control-group">
         <div class="controls">
           <div class="span12">
@@ -16,9 +16,9 @@
           </div>
 
           <div class="span12">
-            <%= radio_button_tag :agree, "disagree" %><span class="available_type_text">I don't want to negotiate.</span><div class="clear"></div><br/>
+            <%= radio_button_tag :agree, "disagree" %><span class="available_type_text">I don't accept this price.</span><div class="clear"></div><br/>
           </div>
-          <% if @exchange.counter_offer_last_made_by != current_user.id %>
+          <% unless @exchange.amount == @exchange.counter_offer  %>
             <div class="span12">
               <%= radio_button_tag :agree, "negotiate" %><span class="available_type_text">I want to negotiate.</span><div class="clear"></div><br/>
             </div>
@@ -44,18 +44,30 @@
   $('#agree_negotiate').change(function(){
     if($('#agree_negotiate').is(':checked')){
       $('#negotiate').attr('required','required');
+      $('#negotiate').removeAttr('disabled');
     }
   });
 
   $('#agree_agree').change(function(){
     if($('#agree_agree').is(':checked')){
       $('#negotiate').removeAttr('required');
+      $('#negotiate').val("");
+      $('#negotiate').attr('disabled','disabled');
     }
   });
 
   $('#agree_disagree').change(function(){
     if($('#agree_disagree').is(':checked')){
       $('#negotiate').removeAttr('required');
+      $('#negotiate').val("");
+      $('#negotiate').attr('disabled','disabled');
+    }
+  });
+
+  $('#before_exchange').submit(function(e){
+    if (!($('#agree_negotiate').is(':checked')) && !($('#agree_agree').is(':checked')) && !($('#agree_disagree').is(':checked'))){
+      e.preventDefault();
+      return false;
     }
   });
 </script>

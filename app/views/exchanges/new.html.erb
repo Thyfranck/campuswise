@@ -26,7 +26,7 @@
           <div class="control-group">
             <%= f.label :package, "Daily", :class => 'control-label' %>
             <div class="controls">
-              <%= f.radio_button :package , 'daily', :class => 'radio'%>
+              <%= f.radio_button :package , 'day', :class => 'radio'%>
             </div>
             <br/>
             $ <span id="day_rate"><%= @book.loan_daily %></span> / day
@@ -39,7 +39,7 @@
           <div class="control-group">
             <%= f.label :package, "Weekly", :class => 'control-label' %>
             <div class="controls">
-              <%= f.radio_button :package ,'weekly' ,:class => 'radio'%>
+              <%= f.radio_button :package ,'week' ,:class => 'radio'%>
             </div>
             <br/>
             $ <span id="week_rate"><%= @book.loan_weekly %></span> / week
@@ -52,7 +52,7 @@
           <div class="control-group">
             <%= f.label :package, "Monthly", :class => 'control-label' %>
             <div class="controls">
-              <%= f.radio_button :package ,'monthly' ,:class => 'radio'%>
+              <%= f.radio_button :package ,'month' ,:class => 'radio'%>
             </div>
             <br/>
             $ <span id="month_rate"><%= @book.loan_monthly %></span> / month

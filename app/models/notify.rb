@@ -152,13 +152,37 @@ class Notify
   def self.borrower_about_owner_doesnt_want_to_negotiate(record) #exchange
     @dashboard_notification = record.dashboard_notifications.new(
       :user_id => record.user.id,
-      :content => "Owner of the book titled '#{record.book.title}' doesn't want to negotiate with your given price #{record.counter_offer}"
+      :content => "Owner of the book titled '#{record.book.title}' doesn't want to negotiate with your given price #{record.counter_offer_was}"
     )
     @dashboard_notification.save
-#    Notification.notify_user_for_withdraw(record).deliver
-#    @to = record.user.phone
-#    @body = "Congratulation your withdraw request for amount $#{record.amount} is complete."
-#    TwilioRequest.send_sms(@body, @to)
+    #    Notification.notify_user_for_withdraw(record).deliver
+    #    @to = record.user.phone
+    #    @body = "Congratulation your withdraw request for amount $#{record.amount} is complete."
+    #    TwilioRequest.send_sms(@body, @to)
+  end
+
+  def self.borrower_about_owner_want_to_negotiate(record) #exchange
+    @dashboard_notification = record.dashboard_notifications.new(
+      :user_id => record.user.id,
+      :content => "Owner of the book titled '#{record.book.title}' will #{record.package == 'buy' ? 'sell' : 'lend'} the book at price $#{record.amount}."
+    )
+    @dashboard_notification.save
+  end
+
+  def self.owner_about_negotiation_failed(record) #exchange
+    @dashboard_notification = record.dashboard_notifications.new(
+      :user_id => record.book.user.id,
+      :content => "Borrower of the book titled '#{record.book.title}' rejected your desired price $#{record.amount} and cancelled the borrow request."
+    )
+    @dashboard_notification.save
+  end
+
+  def self.owner_about_borrower_want_to_negotiate(record) #exchange
+    @dashboard_notification = record.dashboard_notifications.new(
+      :user_id => record.book.user.id,
+      :content => "#{record.user.email} wants to #{record.package == 'buy' ? 'buy' : 'borrow'} the book titled at the price $#{record.counter_offer}."
+    )
+    @dashboard_notification.save
   end
 
   def self.admin_for_book_returned(record) #exchange

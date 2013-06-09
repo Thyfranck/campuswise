@@ -8,12 +8,20 @@
             <%= notification.content.html_safe %>
           </td>
           <td id="notification_buttons">
-            <% if notification.dashboardable.present? and notification.dashboardable.user_id != current_user.id and notification.dashboardable.status == Exchange::STATUS[:pending] %>
-              <% if notification.dashboardable.counter_offer.present? and notification.dashboardable.counter_offer_last_made_by != current_user.id  %>
-                <%= link_to "View", before_exchange_path(notification.dashboardable), :class => "btn btn-mini btn-primary fancybox fancybox.ajax" %>
+            <% if notification.dashboardable.class == Exchange %>
+              <% if notification.dashboardable.counter_offer.present? %>
+                <% if notification.dashboardable.counter_offer_last_made_by == current_user.id %>
+                  <%= link_to "Hide", remove_notification_path(:id => notification.id), :method => :delete, :class => "btn btn-mini" %>
+                <% else %>
+                  <%= link_to "View", before_exchange_path(notification.dashboardable), :class => "btn btn-mini btn-primary fancybox fancybox.ajax" %>
+                <% end %>
               <% else %>
-                <%= link_to "Approve", exchange_path(notification.dashboardable), :method => :put, :class => "btn btn-mini btn-primary" %>
-                <%= link_to "Deny", exchange_path(notification.dashboardable), :method => :delete, :class => "btn btn-mini btn-primary" %>
+                <% if notification.dashboardable.book.user == current_user and notification.dashboardable.status == Exchange::STATUS[:pending]  %>
+                  <%= link_to "Approve", exchange_path(notification.dashboardable), :method => :put, :class => "btn btn-mini btn-primary" %>
+                  <%= link_to "Deny", exchange_path(notification.dashboardable), :method => :delete, :class => "btn btn-mini btn-primary" %>
+                <% else %>
+                  <%= link_to "Hide", remove_notification_path(:id => notification.id), :method => :delete, :class => "btn btn-mini" %>
+                <% end %>
               <% end %>
             <% else %>
               <%= link_to "Hide", remove_notification_path(:id => notification.id), :method => :delete, :class => "btn btn-mini" %>
