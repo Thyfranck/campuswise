@@ -1,0 +1,12 @@
+Dear <%= @user.name %>,
+<br/>
+<br/>
+You wanted to <%= @exchange.package == "buy" ? "sell" : "lend" %> the book titled
+'<%= @book.title %>' at the price $<%= @exchange.amount %>. But the borrower wants to <%= @exchange.package == "buy" ? "purchase" : "borrow" %>
+ at the price $<%= @exchange.counter_offer %>.
+<br/>
+<br/>
+To negotiate or accept or reject please login into our site <%= link_to "here", @url %>.
+<br/>
+<br/>
+Campuswise.

@@ -47,18 +47,18 @@ class ExchangesController < ApplicationController
         elsif @status == "disagree"
           if @exchange.book.user == current_user
             @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
-            @dashboard.destroy
+            @dashboard.destroy if @dashboard.present?
             @exchange.update_attributes(:counter_offer => @exchange.amount, :counter_offer_last_made_by => current_user.id)
           elsif @exchange.user == current_user
             @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
-            @dashboard.destroy
+            @dashboard.destroy if @dashboard.present?
             @exchange.destroy
           end
           format.html { redirect_to dashboard_path, :notice => "Request is in process."}
         elsif @status == "negotiate"
           @amount = params[:negotiate]
           if @exchange.book.user == current_user
-            if @exchange.update_attributes(:amount => @amount, :counter_offer_last_made_by => current_user.id)
+            if @exchange.update_attributes(:amount => @amount, :counter_offer_last_made_by => current_user.id, :counter_offer_count => @exchange.counter_offer_count + 1)
               format.html { redirect_to dashboard_path, :notice => "Request is in process."}
             else
               format.html { redirect_to dashboard_path, :alert => "Invalid negotiation."}
@@ -81,14 +81,13 @@ class ExchangesController < ApplicationController
     @exchange = Exchange.find(exchange)
     if @exchange.book.available == true
       unless @exchange.other_pending_payment_present?
-        @exchange.update_attribute(:counter_offer, nil) if @exchange.counter_offer.present?
         if @exchange.delay.charge
-          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
-          @old_dashboard_notification.destroy
+          @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
+          @dashboard.destroy if @dashboard.present?
           format.html {redirect_to dashboard_path, :notice => "Request is in process."}
         elsif @exchange.errors.any?
-          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
-          @old_dashboard_notification.destroy
+          @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
+          @dashboard.destroy if @dashboard.present?
           format.html { redirect_to dashboard_path, :alert => @exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
         end
       else

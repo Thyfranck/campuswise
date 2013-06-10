@@ -519,3 +519,8 @@ background: #808080; width: 5px;
 #agree_negotiate {
     float: left;
 }
+
+.nav_user_email {
+    color: white;
+    margin-top:18px;
+}

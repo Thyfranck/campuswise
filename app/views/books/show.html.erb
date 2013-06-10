@@ -24,23 +24,28 @@
   </p>
   <% unless @book.requested == true %>
     <p>
-      <b> Loan Rates</b>
-    <ul>
-      <% if @book.loan_daily.present? %>
-        <li>Daily : <%= @book.loan_daily %></li>
-      <% end %>
-      <% if @book.loan_weekly.present? %>
-        <li>Weekly : <%= @book.loan_weekly %></li>
-      <% end %>
-      <% if @book.loan_monthly.present? %>
-        <li>Monthly : <%= @book.loan_monthly %></li>
-      <% end %>
-      <% if @book.loan_semester.present? %>
-        <li>Full Semester : <%= @book.loan_semester %></li>
-      <% end %>
-    </ul>
-  </p>
-
+      <b>This book is available_for : </b>
+      <%= @book.available_for == Book::AVAILABLE_FOR[:both] ? "Sell and Rent" : @book.available_for.capitalize %>
+    </p>
+    <% unless @book.available_for == Book::AVAILABLE_FOR[:sell] %>
+      <p>
+        <b> Loan Rates</b>
+      <ul>
+        <% if @book.loan_daily.present? %>
+          <li>Daily : <%= @book.loan_daily %></li>
+        <% end %>
+        <% if @book.loan_weekly.present? %>
+          <li>Weekly : <%= @book.loan_weekly %></li>
+        <% end %>
+        <% if @book.loan_monthly.present? %>
+          <li>Monthly : <%= @book.loan_monthly %></li>
+        <% end %>
+        <% if @book.loan_semester.present? %>
+          <li>Full Semester : <%= @book.loan_semester %></li>
+        <% end %>
+      </ul>
+    </p>
+  <% end %>
   <p>
     <b>Book Purchase Price: $<%= @book.price %></b>
   </p>

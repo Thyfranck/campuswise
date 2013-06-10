@@ -18,7 +18,7 @@
 
         <ul class="nav">
           <% if current_user %>
-            <li class="school-name span3"><%= current_user.email %>
+            <li class="nav_user_email"><%= current_user.email %>
               <%= link_to dashboard_path, :id => "notification_box" do %>
                 <% if current_user.dashboard_notifications.count < 10 %>
                   <%= "0#{current_user.dashboard_notifications.count}" %>

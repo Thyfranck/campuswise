@@ -11,7 +11,7 @@ class ExchangeObserver < ActiveRecord::Observer
   
   def after_create(record)
     if record.class == Exchange
-      Notify.delay.owner_about_new_request(record)
+      Notify.owner_about_new_request(record)
     end
   end
 
@@ -43,7 +43,7 @@ class ExchangeObserver < ActiveRecord::Observer
 
     if record.class == Payment
       if record.status == Payment::STATUS[:paid] and record.status_was == Payment::STATUS[:pending]
-        Notify.delay.borrower_about_payment_received(record)
+        Notify.borrower_about_payment_received(record)
       end
     end
   end
@@ -66,12 +66,14 @@ class ExchangeObserver < ActiveRecord::Observer
           else
             @payment_receiver.update_attribute(:balance, @amount)
           end
-          Notify.delay.borrower_after_exchange_complete(record)
-          Notify.delay.owner_after_exchange_complete(record)
+          Notify.borrower_after_exchange_complete(record)
+          Notify.owner_after_exchange_complete(record)
           record.exchange.destroy_other_pending_requests
-          @returning_date = (@exchange.ending_date.to_date - Date.today)
-          @sending_date = @returning_date.days.from_now
-          Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , @sending_date, :queue => "book_return_reminder"
+          unless record.exchange.package == "buy"
+            @returning_date = (@exchange.ending_date.to_date - Date.today)
+            @sending_date = @returning_date.days.from_now
+            Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , @sending_date, :queue => "book_return_reminder"
+          end
         end
       elsif record.status == Payment::STATUS[:failed]
         record.exchange.destroy
@@ -80,20 +82,20 @@ class ExchangeObserver < ActiveRecord::Observer
     
     if record.class == Exchange
       if record.status == Exchange::STATUS[:returned]
-        Notify.admin_for_book_returned(record)
+        Notify.delay.admin_for_book_returned(record)
       elsif record.status == Exchange::STATUS[:not_returned]
-        Notify.admin_for_book_not_returned(record)
+        Notify.delay.admin_for_book_not_returned(record)
       elsif record.counter_offer.present?
         if record.counter_offer_last_made_by == record.book.user.id and record.amount_was == record.amount
-          Notify.borrower_about_owner_doesnt_want_to_negotiate(record)
+          Notify.borrower_about_owner_doesnt_want_to_negotiate(record, record.counter_offer_was)
         end
-        if record.counter_offer_last_made_by == record.book.user.id and record.amount_was > record.amount
+        if record.counter_offer_last_made_by == record.book.user.id and record.amount_was > record.amount and record.counter_offer_count > 0
           Notify.borrower_about_owner_want_to_negotiate(record)
           @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(record.id, record.book.user.id)
-          @dashboard.destroy
+          @dashboard.destroy if @dashboard.present?
         elsif record.counter_offer_last_made_by == record.user.id  and record.counter_offer_was < record.counter_offer
           @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(record.id, record.user.id)
-          @dashboard.destroy
+          @dashboard.destroy if @dashboard.present?
           Notify.owner_about_borrower_want_to_negotiate(record)
         end
       end
@@ -104,10 +106,6 @@ class ExchangeObserver < ActiveRecord::Observer
   def before_destroy(record)
     if record.class == Book
       return false if record.lended == true
-      ##      @exchanges = Exchange.where(:book_id => record.id)
-      ##      @notification = DashboardNotification.where(:dashboardable => @exchanges)
-      ##      @notification.each {|d| d.destroy}
-      ##      @exchanges.each {|d| d.destroy}
     end
 
     if record.class == Exchange

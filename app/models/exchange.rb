@@ -3,7 +3,7 @@
 
 class Exchange < ActiveRecord::Base
   attr_accessible :book_id, :user_id, :status, :package, :duration,
-    :starting_date, :ending_date, :amount, :counter_offer, :counter_offer_last_made_by
+    :starting_date, :ending_date, :amount, :counter_offer, :counter_offer_last_made_by, :counter_offer_count
 
   attr_accessor :declined, :declined_reason
   
@@ -12,7 +12,7 @@ class Exchange < ActiveRecord::Base
   has_many :dashboard_notifications, :as => :dashboardable
   has_one :payment
 
-  validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semester"}
+  validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semester" or "buy"}
   validates :package, :inclusion => {:in => ["day", "week", "month", "semester", "buy"]}
   validates :counter_offer, :allow_nil => true, :numericality => true
 
@@ -37,7 +37,7 @@ class Exchange < ActiveRecord::Base
   scope :accepted, where(:status => STATUS[:accepted])
 
   def valid_duration?
-    if self.package != "semester"
+    unless self.package == "semester" or self.package == "buy"
       if self.duration < 1
         errors[:base] << "Invalid duration"
         return false 

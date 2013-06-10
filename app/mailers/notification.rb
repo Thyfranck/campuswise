@@ -62,6 +62,51 @@ class Notification < ActionMailer::Base
       :subject => "Your book borrow request was rejected by the owner - CampusWise")
   end
 
+  def borrower_about_owner_doesnt_want_to_negotiate(exchange, requested_price)
+    @requested_price = requested_price
+    @exchange = exchange
+    @user = exchange.user
+    @owner  = exchange.book.user
+    @book = exchange.book
+    @url = login_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert - Negotiation\"}"
+    mail(:to => @user.email,
+      :subject => "Lender doesn't want to negotiate - CampusWise")
+  end
+
+  def borrower_about_owner_want_to_negotiate(exchange)
+    @exchange = exchange
+    @user = exchange.user
+    @owner  = exchange.book.user
+    @book = exchange.book
+    @url = login_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert - Negotiation\"}"
+    mail(:to => @user.email,
+      :subject => "Lender want to negotiate - CampusWise")
+  end
+
+  def owner_about_borrower_want_to_negotiate(exchange)
+    @exchange = exchange
+    @user = exchange.book.user
+    @borrower  = exchange.user
+    @book = exchange.book
+    @url = login_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert - Negotiation\"}"
+    mail(:to => @user.email,
+      :subject => "Borrower want to negotiate - CampusWise")
+  end
+
+  def owner_about_negotiation_failed(exchange)
+    @exchange = exchange
+    @user = exchange.book.user
+    @borrower  = exchange.user
+    @book = exchange.book
+    @url = login_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert - Negotiation\"}"
+    mail(:to => @user.email,
+      :subject => "Borrower cancelled the request - CampusWise")
+  end
+
   def notify_book_borrower_reject_for_payment(exchange)
     @user = exchange.user
     @owner  = exchange.book.user
