@@ -22,9 +22,14 @@
     <b> ISBN:</b>
     <%= @book.isbn %>
   </p>
-  <% unless @book.requested == true %>
+
+  <p>
+    <b> Available Now:</b>
+    <%= @book.available == false ? "No" : "Yes" %>
+  </p>
+  <% unless @book.requested == true or @book.available == false  %>
     <p>
-      <b>This book is available_for : </b>
+      <b>This book is available for : </b>
       <%= @book.available_for == Book::AVAILABLE_FOR[:both] ? "Sell and Rent" : @book.available_for.capitalize %>
     </p>
     <% unless @book.available_for == Book::AVAILABLE_FOR[:sell] %>
@@ -49,21 +54,17 @@
   <p>
     <b>Book Purchase Price: $<%= @book.price %></b>
   </p>
+  <% unless @book.available_for == Book::AVAILABLE_FOR[:sell] %>
+    <p>
+      <b> Available from:</b>
+      <%= @book.available_from %>
+    </p>
 
-  <p>
-    <b> Available:</b>
-    <%= @book.available == true ? "Yes" : "No" %>
-  </p>
-
-  <p>
-    <b> Available from:</b>
-    <%= @book.available_from %>
-  </p>
-
-  <p>
-    <b> Available Till:</b>
-    <%= @book.returning_date %>
-  </p>
+    <p>
+      <b> Available Till:</b>
+      <%= @book.returning_date %>
+    </p>
+  <% end %>
 <% end %>
 <% if current_user and @book.user_id == current_user.id %>
   <div class="form-actions">
@@ -100,10 +101,14 @@
     <% elsif @book.available == false %>
       <p style="color: red">This book is not available</p>
     <% elsif @book.available == true %>
-      <%= link_to "Borrow This Book", new_exchange_path(:id => @book.id),:class => 'btn btn-primary'  %>
+      <%= link_to "Get this Book", new_exchange_path(:id => @book.id),:class => 'btn btn-primary'  %>
     <% end %>
   <% elsif !current_user %>
-    <h5 style="color: red" >Rent this book now and save your money!</h5>
+    <% unless @book.available_for == Book::AVAILABLE_FOR[:sell]  %>
+      <h5 style="color: red" >Rent this book now and save your money!</h5>
+    <% else %>
+      <h5 style="color: red" >Get this book now !</h5>
+    <% end %>
     <%= link_to 'Sign Up!', new_user_path, :class => 'btn btn-primary' %>
   <% end %>
 </div>

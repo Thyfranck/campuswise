@@ -2,7 +2,9 @@ Dear <%= @user.name %>,
 <br/>
 <br/>
 You wanted to <%= @exchange.package == "buy" ? "sell" : "lend" %> the book titled
-'<%= @book.title %>' at the price $<%= @exchange.amount %>. But the borrower wants to <%= @exchange.package == "buy" ? "purchase" : "borrow" %>
+'<%= @book.title %>' at the price $<%= @exchange.amount %>. But the
+<%= @exchange.package == "buy" ? "buyer" : "borrower" %>
+wants to <%= @exchange.package == "buy" ? "purchase" : "borrow" %>
  at the price $<%= @exchange.counter_offer %>.
 <br/>
 <br/>

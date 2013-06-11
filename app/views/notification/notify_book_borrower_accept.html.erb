@@ -1,12 +1,12 @@
 Hello <%= @user.name %>,
 <br/>
 <br/>
-The borrow request for the book titled "<%= @book.title %>" has been accepted by the owner.
+The <%= @exchange.package == "buy" ? "purchase" : "borrow" %> request for the book titled "<%= @book.title %>" has been accepted by the <%= @exchange.package == "buy" ? "seller" : "borrower" %>.
 <br/>
 <br/>
-The book will be borrowed to you as soon as the payment processing is complete. We will notify you when it is done.
+The book will be <%= @exchange.package == "buy" ? "sold" : "borrowed" %> to you as soon as the payment processing is complete. We will notify you when it is done.
 <br/>
-Thank you for using Campuswise book renting service !
+Thank you for using Campuswise book <%= @exchange.package == "buy" ? "selling" : "renting" %> service !
 <br/>
 <br/>
 Have a great day.

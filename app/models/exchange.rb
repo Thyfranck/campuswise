@@ -26,12 +26,18 @@ class Exchange < ActiveRecord::Base
   before_create :compute_amount, :avilable_in_date?, :set_status, :set_counter_offer_maker, :valid_duration?
   before_create :set_ending_date, :if => Proc.new{|b| b.ending_date == nil}
   before_create :check_counter_offer
+  before_update :check_if_sold_book_not_returned
+
+  def check_if_sold_book_not_returned
+    return false if self.status == Exchange::STATUS[:returned] and self.package == "buy"
+    return false if self.status == Exchange::STATUS[:not_returned] and self.package == "buy"
+  end
 
   def check_counter_offer
     if self.amount <= self.counter_offer
       errors[:base] << "Counter offer must be less than actual amount"
       return false 
-    end
+    end if self.counter_offer.present?
   end
 
   scope :accepted, where(:status => STATUS[:accepted])
@@ -63,22 +69,27 @@ class Exchange < ActiveRecord::Base
   end
 
   def set_ending_date
-    if self.package == "semester"
-      fall_semester = self.user.school.fall_semester
-      spring_semester = self.user.school.spring_semester
-      if fall_semester.month > spring_semester.month
-        if fall_semester.month >= Date.today.month and Date.today.month >= spring_semester.month
-          self.ending_date = fall_semester - 1.day
-        else
-          self.ending_date = spring_semester - 1.day
+    if self.package == "buy"
+      self.starting_date = nil
+      self.ending_date = nil
+    else
+      if self.package == "semester"
+        fall_semester = self.user.school.fall_semester
+        spring_semester = self.user.school.spring_semester
+        if fall_semester.month > spring_semester.month
+          if fall_semester.month >= Date.today.month and Date.today.month >= spring_semester.month
+            self.ending_date = fall_semester - 1.day
+          else
+            self.ending_date = spring_semester - 1.day
+          end
         end
-      end
-      
-      if fall_semester.month < spring_semester.month
-        if fall_semester.month <= Date.today.month and Date.today.month <= spring_semester.month
-          self.ending_date = spring_semester - 1.day
-        else
-          self.ending_date = fall_semester - 1.day
+
+        if fall_semester.month < spring_semester.month
+          if fall_semester.month <= Date.today.month and Date.today.month <= spring_semester.month
+            self.ending_date = spring_semester - 1.day
+          else
+            self.ending_date = fall_semester - 1.day
+          end
         end
       end
     end
@@ -137,7 +148,7 @@ class Exchange < ActiveRecord::Base
         payment = self.build_payment(:payment_amount => self.amount, :charge_id => response.id, :status => Payment::STATUS[:pending])
       end      
       if payment.save
-        Notify.borrower_proposal_accept(self)
+        Notify.delay.borrower_proposal_accept(self)
       end
       return true
     rescue => e

@@ -1,7 +1,7 @@
 Hello <%= @user.name %>,<br/>
 <br/>
 Congratulation,<br/>
-You have successfully lended the book titled : " <%= @book.title %>" and payment amount of $<%= @exchange.amount  %> was charged from borrower's account.<br/>
+You have successfully <%= @exchange.package == "buy" ? "sold" : "lend" %> the book titled : " <%= @book.title %>" and payment amount of $<%= @exchange.amount  %> was charged from <%= @exchange.package == "buy" ? "buyer's" : "borrower's" %> account.<br/>
 <br/>
 Here is your summary:
 <br/>
@@ -10,17 +10,19 @@ Here is your summary:
   <li>Book publisher : <%= @book.publisher %></li>
   <li>Book authors : <%= @book.author %></li>
   <li>Book ISBN : <%= @book.isbn %></li>
-  <li>Book rented in : <%= @exchange.package.capitalize %> basis.</li>
-  <li>Book rent starting date : <%= @exchange.starting_date.to_date %></li>
-  <% if @exchange.package == "semester" %>
-    <li>Book rent ending time : End of the Semester.</li>
-  <% else %>
-    <li>Book rent ending date : <%= @exchange.ending_date.to_date %></li>
+  <% unless @exchange.package == "buy" %>
+    <li>Book rented in : <%= @exchange.package.capitalize %> basis.</li>
+    <li>Book rent starting date : <%= @exchange.starting_date.to_date %></li>
+    <% if @exchange.package == "semester" %>
+      <li>Book rent ending time : End of the Semester.</li>
+    <% else %>
+      <li>Book rent ending date : <%= @exchange.ending_date.to_date %></li>
+    <% end %>
   <% end %>
 </ul>
-Here is the borrowers contact info. And that is also available in your lended book list too.
+Here is the <%= @exchange.package == "buy" ? "buyer's" : "borrower's" %> contact info. And that is also available in your lend/sold book list too.
 <br/>
-<h5>Borrowers info:</h5>
+<h5><%= @exchange.package == "buy" ? "Buyer's" : "Borrower's" %> info:</h5>
 <ul>
   <li>Name: <%= @borrower.name %></li>
   <li>Email : <%= @borrower.email %></li>
@@ -29,13 +31,15 @@ Here is the borrowers contact info. And that is also available in your lended bo
 </ul>
 <br/>
 <br/>
-Please inform us when the renting period is over and the book is received or not.
-Inform us timely that if the borrower doesn't return your book we will return you the full book price along with your renting charge. This book's price will be decided from common book selling services available from internet.
+<% unless @exchange.package == "buy" %>
+  Please inform us when the renting period is over and the book is received or not.
+  Inform us timely that if the borrower doesn't return your book we will return you the full book price along with your renting charge. This book's price will be decided from common book selling services available from internet.
+<% end %>
 <br/>
 <br/>
-You can see your lended books list by clicking this <%= link_to "link", @url %>
+You can see your lend/sold books list by clicking this <%= link_to "link", @url %>
 <br/>
-Thank you for using Campuswise book renting service.<br/>
+Thank you for using Campuswise book <%= @exchange.package == "buy" ? "selling" : "renting" %> service.<br/>
 <br/>
 Have a great day!
 <br/>

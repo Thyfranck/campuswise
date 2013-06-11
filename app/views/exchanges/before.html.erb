@@ -2,9 +2,9 @@
   <div class="span4">
     <legend>
       <% if @exchange.user == current_user %>
-        <h4>Owner of the book titled "<%= @exchange.book.title.truncate(30) %>" wants to <%= @exchange.package == "sell" ? "sell" : "lend" %> the book at price $<%= @exchange.amount %>. What you want to do?</h4>
+        <h4>Owner of the book titled "<%= @exchange.book.title.truncate(30) %>" wants to <%= @exchange.package == "buy" ? "sell" : "lend" %> the book at price $<%= @exchange.amount %>. What you want to do?</h4>
       <% else %>
-        <h4><%= @exchange.user.email %> wants to <%= @exchange.package == "sell" ? "buy" : "borrow" %>  your book at the price of $<%= @exchange.counter_offer %>. What you want to do?</h4>
+        <h4><%= @exchange.user.email %> wants to <%= @exchange.package == "buy" ? "buy" : "borrow" %>  your book at the price of $<%= @exchange.counter_offer %>. What you want to do?</h4>
       <% end %>
     </legend>
 

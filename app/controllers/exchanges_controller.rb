@@ -42,7 +42,15 @@ class ExchangesController < ApplicationController
       if @exchange.counter_offer.present?
         @status = params[:agree]
         if @status == "agree"
-          @exchange.update_attributes(:amount => @exchange.counter_offer, :counter_offer_last_made_by => current_user.id)
+          if @exchange.counter_offer_count == 0
+            if @exchange.user == current_user
+              @exchange.update_attributes(:amount => @exchange.counter_offer, :counter_offer_last_made_by => current_user.id)
+            else
+              @exchange.update_attributes(:amount => @exchange.counter_offer)
+            end
+          else
+            @exchange.update_attributes(:amount => @exchange.counter_offer, :counter_offer_last_made_by => current_user.id)
+          end
           start(@exchange, format)
         elsif @status == "disagree"
           if @exchange.book.user == current_user
@@ -72,7 +80,7 @@ class ExchangesController < ApplicationController
           end
         end
       else
-        start(@exchange)
+        start(@exchange, format)
       end
     end
   end

@@ -3,7 +3,8 @@ Dear <%= @user.name %>,
 <br/>
 You sent a <%= @exchange.package == "buy" ? "purchase" : "borrow" %> request for
 the book titled '<%= @book.title %>' at the price $<%= @exchange.counter_offer %>.
-Owner want to <%= @exchange.package == "buy" ? "sell" : "lend" %>
+<%= @exchange.package == "buy" ? "Seller" : "Lender" %>
+want to <%= @exchange.package == "buy" ? "sell" : "lend" %>
 the book at $<%= @exchange.amount %>.
 <br/>
 <br/>

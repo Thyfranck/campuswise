@@ -20,7 +20,7 @@
     </ul>
   </li>
 
-  <li class="dropdown <%= "active" if (current_page?(new_book_path) and params[:requested].blank?) || current_page?(books_path) || current_page?(requested_books_path) %>">
+  <li class="dropdown <%= "active" if (current_page?(new_book_path) and params[:requested].blank?) ||  current_page?(requested_books_path) %>">
     <a class="dropdown-toggle" href="#" data-toggle="dropdown">
       Lend
       <b class="caret"></b>
@@ -51,7 +51,7 @@
         <%= link_to "Manage Borrow Requests", borrow_requests_path %>
       </li>
       <li class="<%= "active" if current_page?(new_book_path) and params[:requested].present? %>">
-        <%= link_to "Request For a Book", new_book_path(:requested => true) %>
+        <%= link_to "Request a Book", new_book_path(:requested => true) %>
       </li>
     </ul>
   </li>

@@ -24,15 +24,9 @@ class BooksController < ApplicationController
   def create
     unless params[:search] == "Search"
       @book = current_user.books.new(params[:book])
-      if params[:remote_url].present?
-        @book.set_google_image(params[:remote_url], current_user)
-      end
       respond_to do |format|
         if @book.save
-          unless params[:remote_url].blank?
-            File.delete("tmp/books/book_#{current_user.id}.jpg")
-          end
-          format.html {redirect_to books_path}
+          format.html {redirect_to book_path(@book)}
           flash[:notice] = "Request Completed"
         else
           format.html {render :action => 'new'}
@@ -64,7 +58,7 @@ class BooksController < ApplicationController
     respond_to do |format|
       unless @book.lended == true
         @book.update_attributes(params[:book])
-        format.html {redirect_to books_path}
+        format.html {redirect_to book_path(@book)}
         flash[:notice] = "Request Completed"
       else
         format.html {render :action => 'edit'}
