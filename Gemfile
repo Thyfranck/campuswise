@@ -19,7 +19,6 @@ gem 'twilio-ruby'
 gem 'stripe'
 gem 'delayed_job_active_record'
 gem 'amazon-ecs'
-gem 'omniauth-facebook'
 
 # Gems used only for assets and not required
 # in production environments by default.
