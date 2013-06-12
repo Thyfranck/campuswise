@@ -101,7 +101,17 @@
     <% elsif @book.available == false %>
       <p style="color: red">This book is not available</p>
     <% elsif @book.available == true %>
-      <%= link_to "Get this Book", new_exchange_path(:id => @book.id),:class => 'btn btn-primary'  %>
+      <% if @book.available_for == Book::AVAILABLE_FOR[:sell] %>
+        <%= link_to "Buy this Book", new_exchange_path(:id => @book.id, :buy => 'yes'),:class => 'btn btn-primary'  %>
+      <% elsif @book.available_for == Book::AVAILABLE_FOR[:both] %>
+        <%= link_to "Buy this Book", new_exchange_path(:id => @book.id, :buy => 'yes'),:class => 'btn btn-primary'  %>
+        <br/>
+        <br/>
+        <%= link_to "Borrow this Book", new_exchange_path(:id => @book.id),:class => 'btn btn-primary'  %>
+      <% elsif @book.available_for == Book::AVAILABLE_FOR[:rent] %>
+        <%= link_to "Borrow this Book", new_exchange_path(:id => @book.id),:class => 'btn btn-primary'  %>
+      <% end %>
+
     <% end %>
   <% elsif !current_user %>
     <% unless @book.available_for == Book::AVAILABLE_FOR[:sell]  %>

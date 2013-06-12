@@ -6,6 +6,12 @@ class ExchangesController < ApplicationController
 
   def new
     @book = Book.find(params[:id])
+    if params[:buy] == 'yes'
+      @buy = true
+    else
+      @buy = false
+    end if params[:buy].present?
+
     if session[:wanted_to_exchange_book]
       session[:wanted_to_exchange_book] = nil
     end
@@ -66,11 +72,16 @@ class ExchangesController < ApplicationController
         elsif @status == "negotiate"
           @amount = params[:negotiate]
           if @exchange.book.user == current_user
-            if @exchange.update_attributes(:amount => @amount, :counter_offer_last_made_by => current_user.id, :counter_offer_count => @exchange.counter_offer_count + 1)
-              format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+            if @exchange.amount == @amount
+              format.html { redirect_to dashboard_path, :notice => "Please provide a price that is lower than the previous one."}
             else
-              format.html { redirect_to dashboard_path, :alert => "Invalid negotiation."}
+              if @exchange.update_attributes(:amount => @amount, :counter_offer_last_made_by => current_user.id, :counter_offer_count => @exchange.counter_offer_count + 1)
+                format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+              else
+                format.html { redirect_to dashboard_path, :alert => "Invalid negotiation."}
+              end
             end
+            
           elsif @exchange.user == current_user
             if @exchange.update_attributes(:counter_offer => @amount, :counter_offer_last_made_by => current_user.id)
               format.html { redirect_to dashboard_path, :notice => "Request is in process."}

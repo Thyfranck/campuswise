@@ -60,7 +60,7 @@ class Exchange < ActiveRecord::Base
   def destroy_other_pending_requests
     book = self.book_id
     borrower = self.user_id
-    @other_pending_requests = Exchange.where("book_id = ? and user_id != ?", book, borrower)
+    @other_pending_requests = Exchange.where("status = ? and book_id = ? and user_id != ?", Exchange::STATUS[:pending], book, borrower)
     @other_pending_requests.each {|e| e.destroy} if @other_pending_requests.any?
   end
 
@@ -148,9 +148,16 @@ class Exchange < ActiveRecord::Base
         payment = self.build_payment(:payment_amount => self.amount, :charge_id => response.id, :status => Payment::STATUS[:pending])
       end      
       if payment.save
-        Notify.delay.borrower_proposal_accept(self)
+        if self.counter_offer.present?
+          if self.counter_offer_last_made_by != self.user.id
+            Notify.delay.borrower_proposal_accept(self)
+          else
+            return true
+          end
+        else
+          Notify.delay.borrower_proposal_accept(self)
+        end 
       end
-      return true
     rescue => e
       logger.error e.message
       self.errors.add(:base, e.message)

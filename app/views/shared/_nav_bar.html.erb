@@ -61,6 +61,11 @@
                   js.id = id;
                   js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
                   fjs.parentNode.insertBefore(js, fjs);
+                  window.fbAsyncInit = function() {
+                    FB.init({
+                      appId: '362079183898081'
+                    });
+                  };
                 }(document, 'script', 'facebook-jssdk'));
               </script>
               <div class="fb-like" data-href="https://www.facebook.com/CampusWise" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false" data-font="arial"></div>
