@@ -533,3 +533,17 @@ background: #808080; width: 5px;
 .purchase_price_lebel {
     float: left;
 }
+
+#slider {
+    width: 100%;
+    overflow: hidden;
+    background-color: #000;
+}
+
+#slider img {
+    left: 50%;
+    margin-left: -850px;
+    position: relative;
+    max-width: inherit;
+    z-index: auto;
+}
