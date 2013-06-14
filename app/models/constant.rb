@@ -10,7 +10,8 @@ class Constant
 
   PAYMENT_METHOD_TYPE = [
     "Bank Account",
-    "Credit Card"
+    "Credit Card",
+    "Paypal"
   ]
 
   COMPANY_COMMISION_RATE = 10 #percent

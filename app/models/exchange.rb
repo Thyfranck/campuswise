@@ -10,11 +10,12 @@ class Exchange < ActiveRecord::Base
   belongs_to :book
   belongs_to :user
   has_many :dashboard_notifications, :as => :dashboardable
+  has_one :transaction, :as => :transactable
   has_one :payment
 
   validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semester" or "buy"}
   validates :package, :inclusion => {:in => ["day", "week", "month", "semester", "buy"]}
-  validates :counter_offer, :allow_nil => true, :numericality => true
+#  validates :counter_offer, :allow_nil => true
 
   STATUS = {
     :accepted => "ACCEPTED",
@@ -34,8 +35,8 @@ class Exchange < ActiveRecord::Base
   end
 
   def check_counter_offer
-    if self.amount <= self.counter_offer
-      errors[:base] << "Counter offer must be less than actual amount"
+    if self.amount.to_f <= self.counter_offer.to_f or self.counter_offer.to_f < 0
+      errors[:base] << "Counter offer must be less than actual amount and must be greater than $1"
       return false 
     end if self.counter_offer.present?
   end
@@ -139,13 +140,13 @@ class Exchange < ActiveRecord::Base
   
   def charge
     begin
-      response = self.user.billing_setting.charge(self.amount, "Book renting charge - #{self.amount}")
+      response = self.user.billing_setting.charge(self.amount.to_f, "Book renting charge - #{self.amount.to_f}")
       if self.payment.present?
         payment = self.payment
         payment.charge_id = response.id
         payment.status = Payment::STATUS[:pending]
       else
-        payment = self.build_payment(:payment_amount => self.amount, :charge_id => response.id, :status => Payment::STATUS[:pending])
+        payment = self.build_payment(:payment_amount => self.amount.to_f, :charge_id => response.id, :status => Payment::STATUS[:pending])
       end      
       if payment.save
         if self.counter_offer.present?

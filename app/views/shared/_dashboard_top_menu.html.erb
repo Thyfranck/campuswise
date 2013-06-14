@@ -27,13 +27,13 @@
     </a>
     <ul class="dropdown-menu">
       <li class="<%= "active" if current_page?(new_book_path) and params[:requested].blank? %>">
-        <%= link_to "Add a new book", new_book_path %>
+        <%= link_to "Add a New Book", new_book_path %>
       </li>
       <%#*<li class="<%= "active" if current_page?(books_path) %>
         <%#= link_to "My books", books_path %>
       <%#*</li>%>
       <li class="<%= "active" if current_page?(requested_books_path) %>">
-        <%= link_to "Book requests", requested_books_path %>
+        <%= link_to "Book Requests", requested_books_path %>
       </li>
     </ul>
   </li>
@@ -45,7 +45,7 @@
     </a>
     <ul class="dropdown-menu">
       <li class="<%= "active" if current_page?(search_exchanges_path) %>">
-        <%= link_to "Borrow a book", search_exchanges_path %>
+        <%= link_to "Borrow a Book", search_exchanges_path %>
       </li>
       <li class="<%= "active" if current_page?(borrow_requests_path) %>">
         <%= link_to "Manage Borrow Requests", borrow_requests_path %>
@@ -96,10 +96,10 @@
         </li>
       <% end %>
       <li>
-        <%= link_to "Total Balance", '#' %>
+        <%= link_to "My Wallet", wallet_user_path(current_user) %>
       </li>
       <li>
-        <%= link_to "Withdraw balance", withdraw_requests_path %>
+        <%= link_to "Withdraw Balance", withdraw_requests_path %>
       </li>
     </ul>
   </li>

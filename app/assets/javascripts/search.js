@@ -1,5 +1,6 @@
 function book_title( message ) {
     $('#book_title').val(message);
+    $('.book_info').show();
 }
 
 function book_image(message) {
@@ -65,13 +66,13 @@ $(document).ready(function(){
                 "image not found");
             author(ui.item ?
                 ui.item.author :
-                "image not found");
+                "item not found");
             isbn(ui.item ?
                 ui.item.isbn :
-                "image not found");
+                "item not found");
             publisher(ui.item ?
                 ui.item.publisher :
-                "image not found");
+                "item not found");
         },
         open: function() {
             $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );

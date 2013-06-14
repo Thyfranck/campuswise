@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130610105732) do
+ActiveRecord::Schema.define(:version => 20130614111459) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -73,18 +73,18 @@ ActiveRecord::Schema.define(:version => 20130610105732) do
     t.string   "author"
     t.string   "isbn"
     t.string   "publisher"
-    t.decimal  "purchase_price", :precision => 10, :scale => 0
+    t.decimal  "purchase_price", :precision => 10, :scale => 2
     t.boolean  "available"
     t.date     "available_from"
     t.date     "returning_date"
     t.datetime "created_at",                                                       :null => false
     t.datetime "updated_at",                                                       :null => false
     t.boolean  "requested",                                     :default => false
-    t.decimal  "loan_daily",     :precision => 10, :scale => 0
-    t.decimal  "loan_weekly",    :precision => 10, :scale => 0
-    t.decimal  "loan_monthly",   :precision => 10, :scale => 0
-    t.decimal  "loan_semester",  :precision => 10, :scale => 0
-    t.decimal  "price",          :precision => 10, :scale => 0
+    t.decimal  "loan_daily",     :precision => 10, :scale => 2
+    t.decimal  "loan_weekly",    :precision => 10, :scale => 2
+    t.decimal  "loan_monthly",   :precision => 10, :scale => 2
+    t.decimal  "loan_semester",  :precision => 10, :scale => 2
+    t.decimal  "price",          :precision => 10, :scale => 2
     t.string   "available_for"
   end
 
@@ -121,12 +121,12 @@ ActiveRecord::Schema.define(:version => 20130610105732) do
     t.string   "status",                                                    :default => "0"
     t.datetime "created_at",                                                                 :null => false
     t.datetime "updated_at",                                                                 :null => false
-    t.decimal  "amount",                     :precision => 10, :scale => 0
+    t.decimal  "amount",                     :precision => 10, :scale => 2
     t.string   "package"
     t.integer  "duration"
     t.datetime "starting_date"
     t.datetime "ending_date"
-    t.decimal  "counter_offer",              :precision => 10, :scale => 0
+    t.decimal  "counter_offer",              :precision => 10, :scale => 2
     t.integer  "counter_offer_last_made_by"
     t.integer  "counter_offer_count",                                       :default => 0
   end
@@ -142,15 +142,16 @@ ActiveRecord::Schema.define(:version => 20130610105732) do
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
     t.string   "bank_branch"
+    t.string   "paypal"
   end
 
   create_table "payments", :force => true do |t|
     t.integer  "exchange_id"
-    t.decimal  "payment_amount", :precision => 10, :scale => 0, :default => 0
+    t.decimal  "payment_amount", :precision => 10, :scale => 2, :default => 0.0
     t.string   "status"
     t.string   "charge_id"
-    t.datetime "created_at",                                                   :null => false
-    t.datetime "updated_at",                                                   :null => false
+    t.datetime "created_at",                                                     :null => false
+    t.datetime "updated_at",                                                     :null => false
   end
 
   create_table "school_images", :force => true do |t|
@@ -167,6 +168,15 @@ ActiveRecord::Schema.define(:version => 20130610105732) do
     t.datetime "updated_at",      :null => false
     t.date     "spring_semester"
     t.date     "fall_semester"
+  end
+
+  create_table "transactions", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "transactable_id"
+    t.string   "transactable_type"
+    t.text     "description"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
   end
 
   create_table "users", :force => true do |t|
@@ -193,7 +203,8 @@ ActiveRecord::Schema.define(:version => 20130610105732) do
     t.datetime "activation_token_expires_at"
     t.string   "phone_verification"
     t.string   "phone_verified",                                                 :default => "pending"
-    t.decimal  "balance",                         :precision => 10, :scale => 0
+    t.decimal  "credit",                          :precision => 10, :scale => 2
+    t.decimal  "debit",                           :precision => 10, :scale => 2
   end
 
   add_index "users", ["activation_token"], :name => "index_users_on_activation_token"
@@ -202,7 +213,7 @@ ActiveRecord::Schema.define(:version => 20130610105732) do
 
   create_table "withdraw_requests", :force => true do |t|
     t.integer  "user_id"
-    t.decimal  "amount",     :precision => 10, :scale => 0
+    t.decimal  "amount",     :precision => 10, :scale => 2
     t.string   "status"
     t.datetime "created_at",                                :null => false
     t.datetime "updated_at",                                :null => false

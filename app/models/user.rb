@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   has_many :billing_events
   has_one :payment_method, :dependent => :destroy
   has_many :withdraw_requests
+  has_many :transactions
   
   def accepted_exchanges
     self.exchanges.where(:status => Exchange::STATUS[:accepted])
@@ -27,7 +28,7 @@ class User < ActiveRecord::Base
 
   attr_accessible :name, :email, :password, :password_confirmation, :current_password,
     :facebook, :phone_verification, :phone_verified,
-    :school_id, :phone, :balance
+    :school_id, :phone, :credit, :debit
   
   validates_uniqueness_of :email
   

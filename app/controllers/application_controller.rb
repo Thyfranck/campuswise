@@ -13,4 +13,8 @@ class ApplicationController < ActionController::Base
     redirect_to login_path
     flash[:alert] = "First log in to view this page."
   end
+
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to dashboard_url, :alert => exception.message
+  end
 end

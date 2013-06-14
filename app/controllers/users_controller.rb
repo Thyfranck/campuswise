@@ -2,6 +2,7 @@ class UsersController < ApplicationController
 
   before_filter :require_login, :except => [:new, :create, :activate, :sms_verification, :verify_code, :send_verification_sms ]
 
+  load_and_authorize_resource :only => [:edit, :update, :show, :destroy]
 
   def show
     @user = User.find(params[:id])
@@ -173,6 +174,15 @@ class UsersController < ApplicationController
     @notifications = current_user.dashboard_notifications.count
     respond_to do |format|
       format.json { render :json => @notifications }
+    end
+  end
+
+  def wallet
+    @user = User.find(params[:id])
+    @credit_transactions = @user.transactions.where(:transactable_type => Exchange).paginate(:page => params[:page], :per_page => 20)
+    @debit_transactions = @user.transactions.where(:transactable_type => WithdrawRequest).paginate(:page => params[:page], :per_page => 20)
+    respond_to do |format|
+      format.html {render layout: "dashboard"}
     end
   end
 end

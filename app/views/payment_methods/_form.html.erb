@@ -19,51 +19,59 @@
   <div class="control-group">
     <%= f.label :payment_method_type %>
     <div class="controls">
-      <%= f.select :payment_method_type, options_for_select(Constant::PAYMENT_METHOD_TYPE), :prompt => "Please Select" %>
+      <%= f.select :payment_method_type, options_for_select(Constant::PAYMENT_METHOD_TYPE), :prompt => "Please Select", :required => true %>
     </div>
   </div>
 
-  <div class="control-group">
+  <div class="control-group" style="display:none">
     <%= f.label :bank_name %>
     <div class="controls">
       <%= f.text_field :bank_name, :name => nil %>
     </div>
   </div>
 
-  <div class="control-group">
+  <div class="control-group" style="display:none">
     <%= f.label :bank_branch %>
     <div class="controls">
       <%= f.text_field :bank_branch, :name => nil %>
     </div>
   </div>
 
-  <div class="control-group">
+  <div class="control-group" style="display:none">
     <%= f.label :account_holder_name %>
     <div class="controls">
       <%= f.text_field :account_holder_name, :name => nil %>
     </div>
   </div>
 
-  <div class="control-group">
+  <div class="control-group" style="display:none">
     <%= f.label :account_number %>
     <div class="controls">
       <%= f.text_field :account_number,:name => nil %>
     </div>
   </div>
 
-  <div class="control-group">
+  <div class="control-group" style="display:none">
     <%= f.label :credit_card_type, "Credit Card Type" %>
     <div class="controls">
       <%= f.select :credit_card_type, options_for_select(Constant::CREDIT_CARD_TYPE) %>
     </div>
   </div>
 
-  <div class="control-group">
+  <div class="control-group" style="display:none">
     <%= f.label :card_number %>
     <div class="controls">
       <%= f.text_field :card_number, :name => nil %>
     </div>
   </div>
+
+  <div class="control-group" style="display:none">
+    <%= f.label :paypal, "Enter Email Address" %>
+    <div class="controls">
+      <%= f.email_field :paypal, :name => nil %>
+    </div>
+  </div>
+
 
   <div class="form-actions">
     <%= f.submit "Submit", :class => 'btn btn-primary' %>

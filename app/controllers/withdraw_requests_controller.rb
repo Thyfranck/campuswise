@@ -9,8 +9,12 @@ class WithdrawRequestsController < ApplicationController
 
   def new
     if current_user.payment_method.present?
-      session[:withdraw_request] = nil if session[:withdraw_request]
-      @withdraw_request = WithdrawRequest.new
+      if current_user.credit.to_f > 0.0
+        session[:withdraw_request] = nil if session[:withdraw_request]
+        @withdraw_request = WithdrawRequest.new
+      else
+        redirect_to user_path(current_user), :alert => 'You dont have enough credit.'
+      end
     else
       session[:withdraw_request] = "yes"
       redirect_to new_payment_method_path

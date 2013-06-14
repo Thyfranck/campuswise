@@ -124,7 +124,7 @@ class Notification < ActionMailer::Base
     @exchange = payment.exchange
     @user = payment.exchange.user
     @book = payment.exchange.book
-    @amount = payment.payment_amount
+    @amount = payment.payment_amount.to_f
     headers['X-SMTPAPI'] = "{\"category\" : \"Payment Alert\"}"
     mail(:to => @user.email,
       :subject => "Your payment was successfully received - CampusWise")
@@ -173,7 +173,7 @@ class Notification < ActionMailer::Base
   def notify_user_for_withdraw(withdraw_request)
     @user = withdraw_request.user
     @request = withdraw_request
-    @amount = @request.amount
+    @amount = @request.amount.to_f
     headers['X-SMTPAPI'] = "{\"category\" : \"Withdraw Request\"}"
     mail(:to => @user.email,
       :subject => "Congratulation your withraw request is complete. -Campuswise")

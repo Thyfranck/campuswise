@@ -14,7 +14,6 @@ $(document).ready(function(){
     if($('#book_available_for_rent').is(':checked')){
         $('.available_dates').show();
         $('.loan_rates').show();
-        $('.purchase_price').show();
     }
 
     if ($('#book_available_for_sell').is(':checked')){
@@ -27,7 +26,6 @@ $(document).ready(function(){
             if($('#book_available_for_rent').is(':checked')){
                 $('.available_dates').show();
                 $('.loan_rates').show();
-                $('.purchase_price').show();
             }
             if($('#book_available_for_both').is(':checked')){
                 $('.available_dates').show();
@@ -50,7 +48,7 @@ $(document).ready(function(){
         if($(this).is(':checked')){
             $('.available_dates').show();
             $('.loan_rates').show();
-            $('.purchase_price').show();
+            $('.purchase_price').hide();
         }
     })
 
@@ -68,5 +66,17 @@ $(document).ready(function(){
             $('.loan_rates').show();
             $('.purchase_price').show();
         }
+    })
+
+    $('.add_manually').click(function(){
+        $('.book_info').show();
+        $('#book_title').val("");
+        $('#book_isbn').val("");
+        $('#book_author').val("");
+        $('#book_publisher').val("");
+        $('#uniform-book_image').parent().parent().show();
+        $(".hidden_image img").attr("src", "");
+        $(".hidden_image").hide();
+        $('#remote_url').val("");
     })
 })

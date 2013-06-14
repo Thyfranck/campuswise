@@ -533,3 +533,7 @@ background: #808080; width: 5px;
 .purchase_price_lebel {
     float: left;
 }
+
+.slide-content a{
+    color: white;
+}

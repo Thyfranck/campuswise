@@ -30,7 +30,8 @@ ActiveAdmin.register User do
       row :email
       row :phone
       row :facebook
-      row :balance
+      row :credit
+      row :debit
       row :activation_state
       row :created_at
       row :updated_at
@@ -50,15 +51,16 @@ ActiveAdmin.register User do
 
   member_action :pay_form do
     @user = User.find(params[:id])
-    @requested_amount = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).first.amount
+    @requested_amount = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).first.amount.to_f
   end
 
   member_action :pay, :method => :post do
     @user = User.find(params[:id])
     if @request = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).present?
-      if params[:amount].present? and @user.balance.to_f > params[:amount].to_f
-        @new_balance = @user.balance.to_f - params[:amount].to_f
-        if @user.update_attribute(:balance, @new_balance)
+      if params[:amount].present? and @user.credit.to_f > params[:amount].to_f
+        @new_credit = @user.credit.to_f - params[:amount].to_f
+        @new_debit = (@user.debit.to_f or 0.0) + params[:amount].to_f
+        if @user.update_attribute(:credit, @new_credit) and @user.update_attribute(:debit, @new_debit)
           @request = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).first
           @request.update_attribute(:status,WithdrawRequest::STATUS[:paid])
           @request.dashboard_notifications.first.destroy

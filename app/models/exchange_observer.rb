@@ -25,14 +25,14 @@ class ExchangeObserver < ActiveRecord::Observer
         end
       end
       if record.counter_offer.present? and record.counter_offer_last_made_by.present?
-        if record.amount_was < record.amount
+        if record.amount_was < record.amount.to_f
           return false
         end
-        if record.counter_offer_was > record.counter_offer
+        if record.counter_offer_was > record.counter_offer.to_f
           return false
         end
 
-        if record.amount < record.counter_offer
+        if record.amount.to_f < record.counter_offer.to_f
           return false
         end
       end
@@ -56,12 +56,19 @@ class ExchangeObserver < ActiveRecord::Observer
           @payment_receiver = record.exchange.book.user
           @amount = record.payment_amount.to_f
           @will_be_paid_to_user = @amount - (@amount/Constant::COMPANY_COMMISION_RATE)
-          if @payment_receiver.balance.present?
-            @old_balance = record.exchange.book.user.balance
-            @new_balance = @old_balance + @will_be_paid_to_user
-            @payment_receiver.update_attribute(:balance, @new_balance)
+          @will_be_paid_to_user = @will_be_paid_to_user.to_f
+          @old_credit = record.exchange.book.user.credit.to_f or 0.0
+          @new_credit = @old_credit + @will_be_paid_to_user
+          @payment_receiver.update_attribute(:credit, @new_credit)
+       
+          if @exchange.package == 'buy'
+            @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
+              :description => "Sold book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} and received amount of $#{@will_be_paid_to_user}")
+            @transaction.save
           else
-            @payment_receiver.update_attribute(:balance, @amount)
+            @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
+              :description => "Lend the book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} for #{@exchange.package == 'semester' ? "full semester" : (@exchange.duration.to_s + " " + @exchange.package).pluralize(@exchange.duration)} and received amount of $#{@will_be_paid_to_user}")
+            @transaction.save
           end
           begin
             Notify.borrower_after_exchange_complete(record)
@@ -86,17 +93,12 @@ class ExchangeObserver < ActiveRecord::Observer
       elsif record.status == Exchange::STATUS[:not_returned]
         Notify.delay.admin_for_book_not_returned(record)
       elsif record.counter_offer.present?
-        if record.counter_offer_last_made_by == record.book.user.id and record.amount_was == record.amount
-          Notify.delay.borrower_about_owner_doesnt_want_to_negotiate(record, record.counter_offer_was)
-        end
-        if record.counter_offer_last_made_by == record.book.user.id and record.amount_was > record.amount and record.counter_offer_count > 0
-          Notify.delay.borrower_about_owner_want_to_negotiate(record)
+        if record.counter_offer_last_made_by == record.book.user.id and record.amount_was > record.amount.to_f and record.counter_offer_count > 0
           @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(record.id, record.book.user.id)
           @dashboard.destroy if @dashboard.present?
-        elsif record.counter_offer_last_made_by == record.user.id  and record.counter_offer_was < record.counter_offer
+        elsif record.counter_offer_last_made_by == record.user.id  and record.counter_offer_was < record.counter_offer.to_f
           @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(record.id, record.user.id)
           @dashboard.destroy if @dashboard.present?
-          Notify.delay.owner_about_borrower_want_to_negotiate(record)
         end
       end
     end
@@ -108,19 +110,13 @@ class ExchangeObserver < ActiveRecord::Observer
       if record.status == Exchange::STATUS[:accepted]
         return false
       else
-        if record.counter_offer.present? and record.counter_offer_count == 0
+        if record.payment.blank? and record.declined.present?
+          Notify.borrower_about_card_rejected(record)
+        elsif record.payment.blank?
           Notify.borrower_about_rejected_by_owner(record)
-        elsif record.counter_offer.present? and record.counter_offer_count > 0
-          Notify.owner_about_negotiation_failed(record)
-        else
-          if record.payment.blank? and record.declined.present?
-            Notify.borrower_about_card_rejected(record)
-          elsif record.payment.blank?
-            Notify.borrower_about_rejected_by_owner(record)
-          elsif record.payment.status == Payment::STATUS[:failed]
-            if record.book.available == true
-              Notify.borrower_about_card_problem(record)
-            end
+        elsif record.payment.status == Payment::STATUS[:failed]
+          if record.book.available == true
+            Notify.borrower_about_card_problem(record)
           end
         end
       end

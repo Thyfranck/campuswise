@@ -13,10 +13,11 @@ class Book < ActiveRecord::Base
 
   attr_accessor :remote_image
   validates :author, :presence => true
-  validates :isbn, :presence => true 
+  validates :isbn, :presence => true
   validates :title, :presence => true
+  validates :purchase_price, :numericality => true, :unless => Proc.new{|b| b.requested == true}
   validates :available_for, :inclusion => {:in => ["RENT", "SELL", "BOTH"]}, :if => Proc.new{|b| b.available == true}
-  validates :price, :presence => true, :numericality => {:greater_than_or_equal_to => 0}, :unless => Proc.new{|b| b.requested == true or b.available == false}
+  validates :price, :presence => true, :numericality => {:greater_than_or_equal_to => 0}, :unless => Proc.new{|b| b.requested == true or b.available == false or b.available_for == Book::AVAILABLE_FOR[:rent]}
   validates :loan_daily, :allow_nil => true ,:numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_weekly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_monthly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
@@ -25,10 +26,10 @@ class Book < ActiveRecord::Base
   belongs_to :user
   has_many :exchanges
 
-  before_save :atleast_one_loan_rate_exsists,
+  before_save :atleast_one_loan_rate_exsists, 
     :update_availability_options,
     :update_loan_and_purchase_prices,
-    :set_google_image
+    :set_google_image, :check_available_date_range
 
   mount_uploader :image, ImageUploader
 
@@ -38,18 +39,37 @@ class Book < ActiveRecord::Base
   scope :not_my_book, lambda { |current_user| where(["user_id != ?",current_user])}
 
   def update_availability_options
-    self.available_for = nil if self.available == false
+    unless self.requested == true
+      self.available_for = nil if self.available == false
+    end
   end
 
+  def check_available_date_range
+    if self.available_for == Book::AVAILABLE_FOR[:sell] or self.requested == true
+      return true
+    else
+      if self.returning_date < self.available_from
+        errors[:base] << "Invalid date range for rent."
+        return false
+      end
+    end
+  end
+
+  def check_if_requested
+    self.available = false if self.requested == true
+  end
+  
   def update_loan_and_purchase_prices
-    if self.available == true
-      if self.available_for == Book::AVAILABLE_FOR[:sell]
-        self.available_from = nil
-        self.returning_date = nil
-        self.loan_daily = nil
-        self.loan_monthly = nil
-        self.loan_semester = nil
-        self.loan_weekly = nil
+    unless self.requested == true
+      if self.available == true
+        if self.available_for == Book::AVAILABLE_FOR[:sell]
+          self.available_from = nil
+          self.returning_date = nil
+          self.loan_daily = nil
+          self.loan_monthly = nil
+          self.loan_semester = nil
+          self.loan_weekly = nil
+        end
       end
     end
   end
@@ -95,26 +115,28 @@ class Book < ActiveRecord::Base
   end
 
   def lended
-    if self.exchanges.where(:status => Exchange::STATUS[:accepted]).any?
-      return true
-    else
-      return false
+    unless self.requested == true
+      if self.exchanges.where(:status => Exchange::STATUS[:accepted]).any?
+        return true
+      else
+        return false
+      end
     end
   end
 
   def atleast_one_loan_rate_exsists
-    if self.requested == true
-      return true
-    elsif self.available_for == Book::AVAILABLE_FOR[:sell]
-      return true
-    elsif self.available == true and self.available_for != Book::AVAILABLE_FOR[:sell]
-      if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semester == nil
-        errors[:base] << "You must specify atleast one loan rate."
-        return false
-      else
+    unless self.requested == true
+      if self.available_for == Book::AVAILABLE_FOR[:sell]
         return true
+      elsif self.available == true and self.available_for != Book::AVAILABLE_FOR[:sell]
+        if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semester == nil
+          errors[:base] << "You must specify atleast one loan rate."
+          return false
+        else
+          return true
+        end
       end
-    end  
+    end
   end
 
   def make_available

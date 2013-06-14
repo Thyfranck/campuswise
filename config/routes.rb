@@ -14,7 +14,7 @@ Campuswise::Application.routes.draw do
     end
   end
 
-  resources :exchanges, :except => [:show, :index] do
+  resources :exchanges, :only => [:new, :create, :update, :destroy] do
     member do
       get :returned
       get :before
@@ -34,7 +34,7 @@ Campuswise::Application.routes.draw do
 
   match 'school-home' => 'static#school_home', :as => :school_home
 
-  resources :billing_settings, :except => [:index]
+  resources :billing_settings, :except => [:index, :destroy]
   
   resources :users, :except => [:index] do
     member do
@@ -44,6 +44,7 @@ Campuswise::Application.routes.draw do
       post :verify_code
       get :send_verification_sms
       get :payment
+      get :wallet
     end
   end
 

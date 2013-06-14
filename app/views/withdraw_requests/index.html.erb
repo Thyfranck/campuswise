@@ -1,5 +1,11 @@
-
-<%= link_to "New Withdraw Request", new_withdraw_request_path, :class => "btn btn-large btn-primary" %>
+<div class="pull-left">
+  <% if current_user.credit.to_f > 0.0 %>
+    <%= link_to "New Withdraw Request", new_withdraw_request_path, :class => "btn btn-large btn-primary" %>
+  <% end %>
+</div>
+<div class="pull-right">
+  <h4 style="color:green">Your Total Credit is now $<%= current_user.credit.to_f %></h4>
+</div>
 
 <% if @withdraw_requests.present? %>
   <table class="table table-striped">
@@ -12,12 +18,12 @@
     <% @withdraw_requests.each do |request| %>
       <tr>
         <td><%= request.created_at.to_date %></td>
-        <td>Requested for amount: <%= request.amount %></td>
+        <td>Requested for amount: <%= request.amount.to_f %></td>
         <td><%= request.status %></td>
       </tr>
     <% end %>
   </tbody>
   </table>
-<%= will_paginate @withdraw_requests %>
+  <%= will_paginate @withdraw_requests %>
 <% end %>
 

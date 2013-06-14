@@ -17,10 +17,10 @@ class Notify
     Notification.notify_book_borrower_accept(record).deliver
     @dashboard = record.dashboard_notifications.new(
       :user_id => record.user.id,
-      :content => "#{record.package == "buy" ? "Purchase":"Borrow"} request for the book titled : \"#{record.book.title}\" has been accepted by the #{record.package == "buy" ? "seller":"lender"}. It will be #{record.package == "buy" ? "sold" : "borrowed"} to you as soon as the payment is received and we will notify you.")
+      :content => "#{record.package == "buy" ? "Purchase":"Borrow"} request for the book titled : '#{record.book.title}' has been accepted by the #{record.package == "buy" ? "seller":"lender"}. It will be #{record.package == "buy" ? "sold" : "borrowed"} to you as soon as the payment is received and we will notify you.")
     @dashboard.save
     @to = record.user.phone
-    @body = "#{record.package == "buy" ? "Purchase":"Borrow"} request for the book titled:\"#{record.book.title.truncate(30)}\" has been accepted by the #{record.package == "buy" ? "seller":"lender"}.It will be processed when payment is complete -Campuswise"
+    @body = "#{record.package == "buy" ? "Purchase":"Borrow"} request for the book titled:'#{record.book.title.truncate(30)}' has been accepted by the #{record.package == "buy" ? "seller":"lender"}.It will be processed when payment is complete -Campuswise"
     TwilioRequest.send_sms(@body, @to)
   end
 
@@ -29,22 +29,37 @@ class Notify
     @request_receiver = record.book.user
     @requested_book = record.book
     if record.package == "buy"
-      @dashboard = record.dashboard_notifications.new(
-        :user_id => @request_receiver.id,
-        :content => "#{@request_sender.name} wants to purchase your book titled <a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)}</a>" )
-      @dashboard.save
+      if record.counter_offer.present?
+        @dashboard = record.dashboard_notifications.new(
+          :user_id => @request_receiver.id,
+          :content => "You wanted to sell the book titled <a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)}</a> at the price of $#{record.amount.to_f} but someone wants to purchase this book at the price of $#{record.counter_offer.to_f}.")
+        @dashboard.save
+      else
+        @dashboard = record.dashboard_notifications.new(
+          :user_id => @request_receiver.id,
+          :content => "Someone wants to purchase the book titled '<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)}</a>'.")
+        @dashboard.save
+      end     
     else
       @dashboard = record.dashboard_notifications.new(
         :user_id => @request_receiver.id,
-        :content => "#{@request_sender.name} wants to borrow your book titled \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : ("to next" + " " + record.duration.to_s + " " + record.package).pluralize(record.duration)} (till #{record.ending_date.to_date})\".")
+        :content => "Someone wants to borrow your book titled \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : ("to next" + " " + record.duration.to_s + " " + record.package).pluralize(record.duration)} (till #{record.ending_date.to_date})\" at the price $#{record.counter_offer.present? ? record.counter_offer.to_f : record.amount.to_f}.")
       @dashboard.save
     end
     Notification.notify_book_owner(record).deliver
     @to = @request_receiver.phone
     if record.counter_offer.present?
-      @body = "#{@request_sender.name} wants to buy \"#{@requested_book.title.truncate(20)}\" at the price $#{record.counter_offer} to negotiate goto our site.'-Campuswise" if record.package == "buy"
+      if record.package == 'buy'
+        @body = "Someone wants to buy '#{@requested_book.title.truncate(20)}' at the price $#{record.counter_offer.to_f} to negotiate goto our site -Campuswise"
+      else
+        @body = "Someone wants to borrow '#{@requested_book.title.truncate(20)}' at the price $#{record.counter_offer.to_f} from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},to negotiate goto our site -Campuswise"
+      end     
     else
-      @body = "#{@request_sender.name} wants to borrow \"#{@requested_book.title.truncate(20)}\"from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}'-Campuswise" if record.package != "buy"
+      if record.package == 'buy'
+        @body = "Someone wants to buy '#{@requested_book.title.truncate(20)}'at the price $#{record.amount.to_f},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}' -Campuswise -Campuswise"
+      else
+        @body = "Someone wants to borrow '#{@requested_book.title.truncate(20)}' from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},at the price $#{record.amount.to_f},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}' -Campuswise"
+      end   
     end
     TwilioRequest.send_sms(@body, @to)
   end
@@ -55,7 +70,7 @@ class Notify
     @request_receiver = @requested_book.user
     @dashboard = @exchange.dashboard_notifications.new(
       :user_id => @request_receiver.id,
-      :content => "Congratulation,the book titled \"<a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)} </a> \" #{record.exchange.package == "buy" ? "sold": "borrowed"} successfully. #{record.exchange.package == "buy" ? "": "Please inform us at admin@campuswise.com when the book is returned."}"
+      :content => "Congratulation,the book titled \"<a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)} </a> \" #{record.exchange.package == "buy" ? "sold": "borrowed"} successfully,at the price $#{record.amount.to_f}.#{record.exchange.package == "buy" ? "": "Please inform us at admin@campuswise.com when the book is returned."}"
     )
     @dashboard.save
     Notification.notify_book_owner_exchange_successfull(record).deliver
@@ -124,43 +139,43 @@ class Notify
   def self.user_for_withdraw(record) #withdraw_request
     @dashboard = record.dashboard_notifications.new(
       :user_id => record.user.id,
-      :content => "Your withdraw request for amount $#{record.amount} is complete."
+      :content => "Your withdraw request for amount $#{record.amount.to_f} is complete."
     )
     @dashboard.save
     Notification.notify_user_for_withdraw(record).deliver
     @to = record.user.phone
-    @body = "Congratulation your withdraw request for amount $#{record.amount} is complete."
+    @body = "Congratulation your withdraw request for amount $#{record.amount.to_f} is complete."
     TwilioRequest.send_sms(@body, @to)
   end
 
   def self.borrower_about_owner_doesnt_want_to_negotiate(record, requested_price) #exchange
     @dashboard = record.dashboard_notifications.new(
       :user_id => record.user.id,
-      :content => "Lender of the book titled '#{record.book.title}' doesn't want to negotiate below $#{record.amount}."
+      :content => "You wanted to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book titled '#{record.book.title}' at the price $#{requested_price}. But #{record.package == 'buy' ? 'seller' : 'lender'} of the book doesn't want to #{record.package == 'buy' ? 'sell' : 'lend'} below the price $#{record.amount.to_f}."
     )
     @dashboard.save
     Notification.borrower_about_owner_doesnt_want_to_negotiate(record, requested_price).deliver
     @to = record.user.phone
-    @body = "Lender of the book titled '#{record.book.title.truncate(30)}' doesn't want to negotiate below $#{record.amount}.Login to our site to accept or reject.- Campuswise"
+    @body = "Lender of the book titled '#{record.book.title.truncate(30)}' doesn't want to negotiate below $#{record.amount.to_f}.Login to our site to accept or reject.- Campuswise"
     TwilioRequest.send_sms(@body, @to)
   end
 
   def self.borrower_about_owner_want_to_negotiate(record) #exchange
     @dashboard = record.dashboard_notifications.new(
       :user_id => record.user.id,
-      :content => "Lender of the book titled '#{record.book.title}' will #{record.package == 'buy' ? 'sell' : 'lend'} the book at price $#{record.amount}."
+      :content => "You wanted to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book titled '#{record.book.title}' at the price of $#{record.counter_offer.to_f}. But the #{record.package == 'buy' ? 'seller' : 'lender'} wants #{record.package == 'buy' ? 'sell' : 'lend'} the book at price $#{record.amount.to_f}."
     )
     @dashboard.save
     Notification.borrower_about_owner_want_to_negotiate(record).deliver
     @to = record.user.phone
-    @body = "Lender of the book titled '#{record.book.title.truncate(30)}' will #{record.package == 'buy' ? 'sell' : 'lend'} the book at price $#{record.amount}."
+    @body = "Lender of the book titled '#{record.book.title.truncate(30)}' wants to #{record.package == 'buy' ? 'sell' : 'lend'} the book at price $#{record.amount.to_f}.To negotiate goto our site."
     TwilioRequest.send_sms(@body, @to)
   end
 
   def self.owner_about_negotiation_failed(record) #exchange
     @dashboard = record.dashboard_notifications.new(
       :user_id => record.book.user.id,
-      :content => "#{record.package == 'buy' ? 'Buyer' : 'Borrower'} of the book titled '#{record.book.title}' rejected your desired price $#{record.amount} and cancelled the borrow request."
+      :content => "#{record.package == 'buy' ? 'Buyer' : 'Borrower'} of the book titled '#{record.book.title}' rejected your desired price $#{record.amount.to_f} and cancelled the borrow request."
     )
     @dashboard.save
     Notification.owner_about_negotiation_failed(record).deliver
@@ -172,12 +187,12 @@ class Notify
   def self.owner_about_borrower_want_to_negotiate(record) #exchange
     @dashboard = record.dashboard_notifications.new(
       :user_id => record.book.user.id,
-      :content => "#{record.package == 'buy' ? 'Buyer' : 'Borrower'}  the book titled '#{record.book.title}' wants to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book at the price $#{record.counter_offer}."
+      :content => "You wanted to #{record.package == 'buy' ? 'sell' : 'lend'} the book titled '#{record.book.title}' at the price of $#{record.amount.to_f}.But the #{record.package == 'buy' ? 'buyer' : 'borrower'} wants to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book at the price $#{record.counter_offer.to_f}."
     )
     @dashboard.save
     Notification.owner_about_borrower_want_to_negotiate(record).deliver
     @to = record.book.user.phone
-    @body = "#{record.package == 'buy' ? 'Buyer' : 'Borrower'}  the book titled '#{record.book.title.truncate(30)}' wants to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book at the price $#{record.counter_offer}."
+    @body = "#{record.package == 'buy' ? 'Buyer' : 'Borrower'}  the book titled '#{record.book.title.truncate(30)}' wants to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book at the price $#{record.counter_offer.to_f}."
     TwilioRequest.send_sms(@body, @to)
   end
 

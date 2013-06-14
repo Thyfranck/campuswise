@@ -1,7 +1,7 @@
 Hello <%= @user.name %>,<br/>
 <br/>
 Congratulation,<br/>
-You have successfully <%= @exchange.package == "buy" ? "sold" : "lend" %> the book titled : " <%= @book.title %>" and payment amount of $<%= @exchange.amount  %> was charged from <%= @exchange.package == "buy" ? "buyer's" : "borrower's" %> account.<br/>
+You have successfully <%= @exchange.package == "buy" ? "sold" : "lend" %> the book titled : " <%= @book.title %>" and payment amount of $<%= @exchange.amount.to_f  %> was charged from <%= @exchange.package == "buy" ? "buyer's" : "borrower's" %> account.<br/>
 <br/>
 Here is your summary:
 <br/>
