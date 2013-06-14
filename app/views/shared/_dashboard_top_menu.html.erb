@@ -29,9 +29,9 @@
       <li class="<%= "active" if current_page?(new_book_path) and params[:requested].blank? %>">
         <%= link_to "Add a New Book", new_book_path %>
       </li>
-      <%#*<li class="<%= "active" if current_page?(books_path) %>
-        <%#= link_to "My books", books_path %>
-      <%#*</li>%>
+<%#*<li class="<%= "active" if current_page?(books_path) %>
+<%#= link_to "My books", books_path %>
+<%#*</li>%>
       <li class="<%= "active" if current_page?(requested_books_path) %>">
         <%= link_to "Book Requests", requested_books_path %>
       </li>
@@ -86,18 +86,18 @@
           <%= link_to "Payment Settings", new_billing_setting_path %>
         </li>
       <% end %>
-      <% if current_user.payment_method.present? %>
-        <li class="<%= "active" if current_page?(payment_method_path(current_user.payment_method)) %>">
-          <%= link_to "Payment Method", payment_method_path(current_user.payment_method) %>
-        </li>
-      <% else %>
-        <li class="<%= "active" if current_page?(new_payment_method_path) %>">
-          <%= link_to "Payment Method", new_payment_method_path %>
-        </li>
-      <% end %>
       <li>
         <%= link_to "My Wallet", wallet_user_path(current_user) %>
       </li>
+      <% if current_user.payment_method.present? %>
+        <li class="<%= "active" if current_page?(payment_method_path(current_user.payment_method)) %>">
+          <%= link_to "Withdrawal Methods", payment_method_path(current_user.payment_method) %>
+        </li>
+      <% else %>
+        <li class="<%= "active" if current_page?(new_payment_method_path) %>">
+          <%= link_to "Withdrawal Methods", new_payment_method_path %>
+        </li>
+      <% end %>
       <li>
         <%= link_to "Withdraw Balance", withdraw_requests_path %>
       </li>
