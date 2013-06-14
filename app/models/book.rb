@@ -13,10 +13,11 @@ class Book < ActiveRecord::Base
 
   attr_accessor :remote_image
   validates :author, :presence => true
-  validates :isbn, :presence => true 
+  validates :isbn, :presence => true
   validates :title, :presence => true
+  validates :purchase_price, :numericality => true, :unless => Proc.new{|b| b.requested == true}
   validates :available_for, :inclusion => {:in => ["RENT", "SELL", "BOTH"]}, :if => Proc.new{|b| b.available == true}
-  validates :price, :presence => true, :numericality => {:greater_than_or_equal_to => 0}, :unless => Proc.new{|b| b.requested == true}
+  validates :price, :presence => true, :numericality => {:greater_than_or_equal_to => 0}, :unless => Proc.new{|b| b.requested == true or b.available == false or b.available_for == Book::AVAILABLE_FOR[:rent]}
   validates :loan_daily, :allow_nil => true ,:numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_weekly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_monthly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
@@ -25,14 +26,55 @@ class Book < ActiveRecord::Base
   belongs_to :user
   has_many :exchanges
 
-  before_save :atleast_one_loan_rate_exsists
+  before_save :atleast_one_loan_rate_exsists, 
+    :update_availability_options,
+    :update_loan_and_purchase_prices,
+    :set_google_image, :check_available_date_range
 
   mount_uploader :image, ImageUploader
 
   scoped_search :on => [:author, :isbn, :publisher, :title]
   scope :available_now, :conditions => {:available => true}
-  scope :date_not_expired, lambda { where(["returning_date > ?",Time.now.to_date])}
+  scope :date_not_expired, lambda { where(["available_for = ? or returning_date > ?",Book::AVAILABLE_FOR[:sell],Time.now.to_date])}
   scope :not_my_book, lambda { |current_user| where(["user_id != ?",current_user])}
+
+  def update_availability_options
+    unless self.requested == true
+      self.available_for = nil if self.available == false
+    end
+  end
+
+  def check_available_date_range
+    if self.available_for == Book::AVAILABLE_FOR[:sell] or self.requested == true
+      return true
+    else
+      if self.returning_date < self.available_from
+        errors[:base] << "Invalid date range for rent."
+        return false
+      end
+    end
+  end
+
+  def check_if_requested
+    self.available = false if self.requested == true
+  end
+  
+  def update_loan_and_purchase_prices
+    unless self.requested == true
+      if self.available == true
+        if self.available_for == Book::AVAILABLE_FOR[:sell]
+          self.available_from = nil
+          self.returning_date = nil
+          self.loan_daily = nil
+          self.loan_monthly = nil
+          self.loan_semester = nil
+          self.loan_weekly = nil
+        end
+      end
+    end
+  end
+
+
 
   def set_google(book_id)
     google_book = GoogleBooks.search(book_id).first
@@ -52,34 +94,49 @@ class Book < ActiveRecord::Base
     self.isbn = @db_book.isbn
   end
 
-  def set_google_image(remote_url, current_user)
-    agent = Mechanize.new
-    agent.pluggable_parser.default = Mechanize::Download
-    agent.get(remote_url).save("#{Rails.root}/tmp/books/book_#{current_user.id}.jpg")
-    self.image = File.open("tmp/books/book_#{current_user.id}.jpg")
+  def set_google_image
+    if self.image.blank?
+      book = GoogleBooks.search("isbn:#{self.isbn}").first
+      if book
+        image_link = book.image_link(:zoom => 1)
+        agent = Mechanize.new
+        agent.pluggable_parser.default = Mechanize::Download
+        begin
+          @previous_image = File.open("tmp/books/book_#{self.user.id}.jpg").present?
+          File.delete("tmp/books/book_#{self.user.id}.jpg") if @previous_image
+        rescue Errno::ENOENT
+        end
+        agent.get(image_link).save("#{Rails.root}/tmp/books/book_#{self.user.id}.jpg")
+        self.image = File.open("tmp/books/book_#{self.user.id}.jpg")
+      else
+        return true
+      end
+    end
   end
 
   def lended
-    if self.exchanges.where(:status => Exchange::STATUS[:accepted]).any?
-      return true
-    else
-      return false
+    unless self.requested == true
+      if self.exchanges.where(:status => Exchange::STATUS[:accepted]).any?
+        return true
+      else
+        return false
+      end
     end
   end
 
   def atleast_one_loan_rate_exsists
-    if self.requested == true
-      return true
-    elsif self.available_for == Book::AVAILABLE_FOR[:sell]
-      return true
-    else
-      if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semester == nil
-        errors[:base] << "You must specify atleast one loan rate."
-        return false
-      else
+    unless self.requested == true
+      if self.available_for == Book::AVAILABLE_FOR[:sell]
         return true
+      elsif self.available == true and self.available_for != Book::AVAILABLE_FOR[:sell]
+        if self.loan_daily == nil and self.loan_monthly == nil and self.loan_weekly == nil and self.loan_semester == nil
+          errors[:base] << "You must specify atleast one loan rate."
+          return false
+        else
+          return true
+        end
       end
-    end  
+    end
   end
 
   def make_available

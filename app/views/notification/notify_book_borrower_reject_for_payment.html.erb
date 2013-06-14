@@ -1,6 +1,6 @@
 Hello <%= @user.name %>,<br/>
 <br/>
-The borrow request you sent for the book titled : "<%= @book.title %>" was rejected due to your card problem.<br/>
+The <%= @exchange.package == "buy" ? "purchase" : "borrow" %> request you sent for the book titled : "<%= @book.title %>" was rejected due to your card problem.<br/>
 <br/>
 Please try again later.
 <br/>

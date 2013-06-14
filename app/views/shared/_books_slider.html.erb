@@ -5,9 +5,9 @@
         <div class="span2 nav-link active" style="width: 70px;float: left;margin-left: 5px;margin-right: 5px;">
           <a href="javascript:;">JUST NOW</a>
         </div>
-        <div class="span2 nav-link" style="width: 70px;float: left;">
-          <a href="javascript:;">POPULAR</a>
-        </div>
+<%#*<div class="span2 nav-link" style="width: 70px;float: left;">%>
+<%#*<a href="javascript:;">POPULAR</a>%>
+<%#*</div>%>
       </div>
       <div class="row">
         <div class="carousel slide" id="myCarousel">
@@ -18,17 +18,18 @@
                   <% @recent_books.limit(3).each_with_index do |book, index| %>
                     <li class="<%= "offsetplplpl" if index == 0 %>" style="width: 230px;">
                       <div class="slide-content">
-                        <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px">
-                          <%= image_tag book.image_url(:book) %>
-                        </div>
-                        <div class="slider_book_text" style="float: left;width:146px">
-                          <p class="title">
-                            <%= book.title.truncate(50) %>
-                          </p>
-                          <p class="author">
-                            by <%= book.author.truncate(50) %>
-                          </p>
-
+                        <%= link_to book_path(book) do %>
+                          <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px">
+                            <%= image_tag book.image_url(:book) %>
+                          </div>
+                          <div class="slider_book_text" style="float: left;width:146px">
+                            <p class="title">
+                              <%= book.title.truncate(50) %>
+                            </p>
+                            <p class="author">
+                              by <%= book.author.truncate(50) %>
+                            </p>
+                          <% end %>
                         </div>
                       </div>
                     </li>
@@ -42,6 +43,7 @@
                   <% @recent_books.limit(3).offset(3).each_with_index do |book, index| %>
                     <li class="<%= "offsetpllplplp" if index == 0 %>" style="width: 230px;">
                       <div class="slide-content">
+                        <%= link_to book_path(book) do %>
                         <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px;">
                           <%= image_tag book.image_url(:book) %>
                         </div>
@@ -54,6 +56,7 @@
                           </p>
 
                         </div>
+                        <% end %>
                       </div>
                     </li>
 
@@ -67,6 +70,7 @@
                   <% @recent_books.limit(3).offset(6).each_with_index do |book, index| %>
                     <li class="<%= "offset1fgdfdf" if index == 0 %>" style="width: 230px;">
                       <div class="slide-content">
+                        <%= link_to book_path(book) do %>
                         <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px;">
                           <%= image_tag book.image_url(:book) %>
                         </div>
@@ -79,6 +83,7 @@
                           </p>
 
                         </div>
+                        <% end %>
                       </div>
                     </li>
                   <% end %>

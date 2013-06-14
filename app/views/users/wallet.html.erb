@@ -1,0 +1,58 @@
+You can manage your borrow requests Here.
+
+<div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">Total Balance</a></li>
+    <li><a href="#tab2" data-toggle="tab">Credit transactions (<%= @credit_transactions.count %>)</a></li>
+    <li><a href="#tab3" data-toggle="tab">Debit transactions (<%= @debit_transactions.count %>)</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+      <% if @user.transactions.any? %>
+      <h4>My total credit :<h4 style="color:green">$<%= @user.credit %></h4></h4>
+      <br/>
+      <h4>Total withdrawn amount :<h4 style="color:red">$<%= @user.debit %></h4></h4>
+      <% else %>
+        Currently Empty.
+      <% end %>
+    </div>
+    <div class="tab-pane" id="tab2">
+      <% if @credit_transactions.any? %>
+        <%= will_paginate @credit_transactions %>
+        <table class="table table-hover table-bordered">
+          <thead>
+          <th>Description</th>
+          </thead>
+          <% @credit_transactions.each do |transaction| %>
+            <tbody>
+              <tr>
+                <td><%= transaction.description %></td>
+              </tr>
+            </tbody>
+          <% end %>
+        </table>
+      <% else %>
+        Currently Empty.
+      <% end %>
+    </div>
+    <div class="tab-pane" id="tab3">
+      <% if @debit_transactions.any? %>
+        <%= will_paginate @debit_transactions %>
+        <table class="table table-hover table-bordered">
+          <thead>
+          <th>Description</th>
+          </thead>
+          <% @debit_transactions.each do |transaction| %>
+            <tbody>
+              <tr>
+                <td><%= transaction.description %></td>
+              </tr>
+            </tbody>
+          <% end %>
+        </table>
+      <% else %>
+        Currently Empty.
+      <% end %>
+    </div>
+  </div>
+</div>

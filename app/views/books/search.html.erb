@@ -49,7 +49,7 @@
         return
       }
       google_url = $('.next').attr('href');
-      if(google_url && ($(window).scrollTop() > $(document).height() - $(window).height() - 200)){
+      if(google_url && ($(window).scrollTop() > $(document).height() - $(window).height() - 300)){
         window.pagination_loading = true
         $.getScript(google_url).always(function(){
           window.pagination_loading = false
@@ -62,7 +62,7 @@
         return
       };
       db_url = $('.pagination .next_page').attr('href');
-      if(db_url && ($(window).scrollTop() > $(document).height() - $(window).height() - 200)){
+      if(db_url && ($(window).scrollTop() > $(document).height() - $(window).height() - 300)){
         window.pagination_loading = true
         $.getScript(db_url).always(function(){
           window.pagination_loading = false

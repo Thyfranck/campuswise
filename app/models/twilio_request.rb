@@ -10,12 +10,15 @@ class TwilioRequest
   end
 
   def self.send_sms(body, to, from = @from)
-    return true
-#    @client = Twilio::REST::Client.new(@account_sid, @auth_token)
-#    @client.account.sms.messages.create(
-#      :from => from,
-#      :to => to,
-#      :body => body
-#    )
+    begin
+      @client = Twilio::REST::Client.new(@account_sid, @auth_token)
+      @client.account.sms.messages.create(
+        :from => from,
+        :to => to,
+        :body => body
+      )
+    rescue Timeout::Error
+      return true
+    end
   end
 end

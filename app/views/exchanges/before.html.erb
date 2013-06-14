@@ -1,29 +1,47 @@
 <div class="row">
-  <div class="span4">
+  <div class="span5">
     <legend>
       <% if @exchange.user == current_user %>
-        <h4>Owner of the book titled "<%= @exchange.book.title.truncate(30) %>" wants to <%= @exchange.package == "sell" ? "sell" : "lend" %> the book at price $<%= @exchange.counter_offer %>. What you want to do?</h4>
+        <% unless @exchange.amount.to_f == @exchange.counter_offer.to_f %>
+          <% unless @exchange.package == 'buy' %>
+            <h4>You wanted to borrow the book titled "<%= @exchange.book.title.truncate(30) %>" for <%= @exchange.package == 'semester' ? "full semester" : "#{(@exchange.duration.to_s + " " + @exchange.package).pluralize(@exchange.duration)}" %> at the price of $<%= @exchange.counter_offer.to_f %>. But lender of the book wants to lend the book at price $<%= @exchange.amount.to_f %>. What you want to do?</h4>
+          <% else %>
+            <h4>You wanted to purchase the book titled "<%= @exchange.book.title.truncate(30) %>" at the price of $<%= @exchange.counter_offer.to_f %>. But seller of the book wants to sell the book at price $<%= @exchange.amount.to_f %>. What you want to do?</h4>
+          <% end %>
+        <% else %>
+          <% unless @exchange.package == 'buy' %>
+            <h4>Lender of the book titled "<%= @exchange.book.title.truncate(30) %>" doesn't wants to <%= @exchange.package == "buy" ? "sell" : "lend" %> the book for <%= @exchange.package == 'semester' ? "full semester" : "#{(@exchange.duration.to_s + " " + @exchange.package).pluralize(@exchange.duration)}" %> below price $<%= @exchange.amount.to_f %>. What you want to do?</h4>
+          <% else %>
+            <h4>Seller of the book titled "<%= @exchange.book.title.truncate(30) %>" doesn't wants to sell the book below price $<%= @exchange.amount.to_f %>. What you want to do?</h4>
+          <% end %>
+        <% end %>
       <% else %>
-        <h4><%= @exchange.user.email %> wants to <%= @exchange.package == "sell" ? "buy" : "borrow" %>  your book at the price of $<%= @exchange.counter_offer %>. What you want to do?</h4>
+        <% unless @exchange.package == 'buy' %>
+          <h4>You wanted to lend the book titled "<%= @exchange.book.title.truncate(30) %>" for <%= @exchange.package == 'semester' ? "full semester" : "#{(@exchange.duration.to_s + " " + @exchange.package).pluralize(@exchange.duration)}" %> at the price of $<%= @exchange.amount.to_f %>. But one borrower wants to borrow your book at the price of $<%= @exchange.counter_offer.to_f %>. What you want to do?</h4>
+        <% else %>
+          <h4>You wanted to sell the book titled "<%= @exchange.book.title.truncate(30) %>" at the price of $<%= @exchange.amount.to_f %>. But one buyer wants to buy your book at the price of $<%= @exchange.counter_offer %>. What you want to do?</h4>
+        <% end %>
       <% end %>
     </legend>
 
-    <%= form_tag(exchange_path(@exchange),:method => :put, :class => 'form') do %>
+
+
+    <%= form_tag(exchange_path(@exchange),:method => :put, :class => 'form', :id => 'before_exchange') do %>
       <div class="control-group">
         <div class="controls">
-          <div class="span12">
+          <div class="span4">
             <%= radio_button_tag :agree, "agree" %><span class="available_type_text">I agree with this price</span><div class="clear"></div><br/>
           </div>
 
-          <div class="span12">
-            <%= radio_button_tag :agree, "disagree" %><span class="available_type_text">I don't want to negotiate.</span><div class="clear"></div><br/>
+          <div class="span4">
+            <%= radio_button_tag :agree, "disagree" %><span class="available_type_text">I don't accept this price.</span><div class="clear"></div><br/>
           </div>
-          <% if @exchange.counter_offer_last_made_by != current_user.id %>
-            <div class="span12">
+          <% unless @exchange.amount.to_f == @exchange.counter_offer.to_f  %>
+            <div class="span4">
               <%= radio_button_tag :agree, "negotiate" %><span class="available_type_text">I want to negotiate.</span><div class="clear"></div><br/>
             </div>
-            <div class="span12">
-              <%= number_field_tag :negotiate,  nil,:class => 'number_field' %>
+            <div class="span4">
+              <%= text_field_tag :negotiate,  nil,:class => 'number_field' %>
             </div>
           <% end %>
         </div>
@@ -44,18 +62,30 @@
   $('#agree_negotiate').change(function(){
     if($('#agree_negotiate').is(':checked')){
       $('#negotiate').attr('required','required');
+      $('#negotiate').removeAttr('disabled');
     }
   });
 
   $('#agree_agree').change(function(){
     if($('#agree_agree').is(':checked')){
       $('#negotiate').removeAttr('required');
+      $('#negotiate').val("");
+      $('#negotiate').attr('disabled','disabled');
     }
   });
 
   $('#agree_disagree').change(function(){
     if($('#agree_disagree').is(':checked')){
       $('#negotiate').removeAttr('required');
+      $('#negotiate').val("");
+      $('#negotiate').attr('disabled','disabled');
+    }
+  });
+
+  $('#before_exchange').submit(function(e){
+    if (!($('#agree_negotiate').is(':checked')) && !($('#agree_agree').is(':checked')) && !($('#agree_disagree').is(':checked'))){
+      e.preventDefault();
+      return false;
     }
   });
 </script>

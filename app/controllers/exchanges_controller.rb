@@ -6,6 +6,12 @@ class ExchangesController < ApplicationController
 
   def new
     @book = Book.find(params[:id])
+    if params[:buy] == 'yes'
+      @buy = true
+    else
+      @buy = false
+    end if params[:buy].present?
+
     if session[:wanted_to_exchange_book]
       session[:wanted_to_exchange_book] = nil
     end
@@ -42,41 +48,70 @@ class ExchangesController < ApplicationController
       if @exchange.counter_offer.present?
         @status = params[:agree]
         if @status == "agree"
+          if @exchange.counter_offer_count == 0
+            if @exchange.user == current_user
+              @exchange.update_attributes(:amount => @exchange.counter_offer.to_f, :counter_offer_last_made_by => current_user.id)
+            else
+              @exchange.update_attributes(:amount => @exchange.counter_offer.to_f)
+            end
+          else
+            @exchange.update_attributes(:amount => @exchange.counter_offer.to_f, :counter_offer_last_made_by => current_user.id)
+          end
           start(@exchange, format)
         elsif @status == "disagree"
           if @exchange.book.user == current_user
-            Notify.borrower_about_owner_doesnt_want_to_negotiate(@exchange)
+            @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
+            @dashboard.destroy if @dashboard.present?
+            counter_offer = @exchange.counter_offer.to_f
+            Notify.delay.borrower_about_owner_doesnt_want_to_negotiate(@exchange, counter_offer )
+            @exchange.update_attributes(:counter_offer => @exchange.amount.to_f, :counter_offer_last_made_by => current_user.id)
           elsif @exchange.user == current_user
+            @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
+            @dashboard.destroy if @dashboard.present?
             @exchange.destroy
           end
           format.html { redirect_to dashboard_path, :notice => "Request is in process."}
         elsif @status == "negotiate"
           @amount = params[:negotiate]
           if @exchange.book.user == current_user
-            @exchange.update_attributes(:amount => @amount, :counter_offer => @amount, :counter_offer_last_made_by => current_user.id)
+            if @exchange.amount == @amount
+              format.html { redirect_to dashboard_path, :notice => "Please provide a price that is lower than the previous one."}
+            else
+              if @exchange.update_attributes(:amount => @amount, :counter_offer_last_made_by => current_user.id, :counter_offer_count => @exchange.counter_offer_count + 1)
+                Notify.delay.borrower_about_owner_want_to_negotiate(@exchange)
+                format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+              else
+                format.html { redirect_to dashboard_path, :alert => "Invalid negotiation."}
+              end
+            end
+            
           elsif @exchange.user == current_user
-            @exchange.update_attributes(:counter_offer => @amount, :counter_offer_last_made_by => current_user.id)
+            if @exchange.update_attributes(:counter_offer => @amount, :counter_offer_last_made_by => current_user.id)
+              Notify.delay.owner_about_borrower_want_to_negotiate(@exchange)
+              format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+            else
+              format.html { redirect_to dashboard_path, :alert => "Invalid negotiation."}
+            end
           end
-          format.html { redirect_to dashboard_path, :notice => "Request is in process."}
         end
       else
-        start(@exchange)
+        start(@exchange, format)
       end
     end
   end
 
   def start(exchange, format)
-    if exchange.book.available == true
-      unless exchange.other_pending_payment_present?
-        exchange.counter_offer = nil if exchange.counter_offer.present?
-        if exchange.delay.charge
-          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(exchange.id, current_user.id)
-          @old_dashboard_notification.destroy
-          format.html { redirect_to dashboard_path, :notice => "Request is in process."}
-        elsif exchange.errors.any?
-          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(exchange.id, current_user.id)
-          @old_dashboard_notification.destroy
-          format.html { redirect_to dashboard_path, :alert => exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
+    @exchange = Exchange.find(exchange)
+    if @exchange.book.available == true
+      unless @exchange.other_pending_payment_present?
+        if @exchange.delay.charge
+          @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
+          @dashboard.destroy if @dashboard.present?
+          format.html {redirect_to dashboard_path, :notice => "Request is in process."}
+        elsif @exchange.errors.any?
+          @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
+          @dashboard.destroy if @dashboard.present?
+          format.html { redirect_to dashboard_path, :alert => @exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
         end
       else
         format.html { redirect_to dashboard_path, :notice => "Already a request for this book is under process."}
@@ -88,6 +123,13 @@ class ExchangesController < ApplicationController
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
       DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id).destroy
+      if @exchange.counter_offer.present?
+        if @exchange.user == current_user
+          Notify.owner_about_negotiation_failed(record)
+        elsif @exchange.book.user == current_user
+          Notify.borrower_about_rejected_by_owner(record)
+        end  
+      end
       @exchange.destroy
       format.html {redirect_to request.referrer, :notice => "You Rejected the request"}
     end
@@ -110,7 +152,7 @@ class ExchangesController < ApplicationController
       @body = params[:Body]
       @body = @body.downcase
       if @body.match(/accept\s*/).present?
-        @id = @body.gsub /\D/, ""   
+        @id = @body.gsub /\D/, ""
         if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
           @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, @user.id)
           @old_dashboard_notification.destroy
@@ -120,7 +162,7 @@ class ExchangesController < ApplicationController
           render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
         end
       elsif @body.match(/reject\s*/).present?
-        @id = @body.gsub /\D/, "" 
+        @id = @body.gsub /\D/, ""
         if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
           @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, @user.id)
           @old_dashboard_notification.destroy

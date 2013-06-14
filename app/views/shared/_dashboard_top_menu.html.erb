@@ -20,20 +20,20 @@
     </ul>
   </li>
 
-  <li class="dropdown <%= "active" if (current_page?(new_book_path) and params[:requested].blank?) || current_page?(books_path) || current_page?(requested_books_path) %>">
+  <li class="dropdown <%= "active" if (current_page?(new_book_path) and params[:requested].blank?) ||  current_page?(requested_books_path) %>">
     <a class="dropdown-toggle" href="#" data-toggle="dropdown">
       Lend
       <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
       <li class="<%= "active" if current_page?(new_book_path) and params[:requested].blank? %>">
-        <%= link_to "Add a new book", new_book_path %>
+        <%= link_to "Add a New Book", new_book_path %>
       </li>
-      <%#*<li class="<%= "active" if current_page?(books_path) %>
-        <%#= link_to "My books", books_path %>
-      <%#*</li>%>
+<%#*<li class="<%= "active" if current_page?(books_path) %>
+<%#= link_to "My books", books_path %>
+<%#*</li>%>
       <li class="<%= "active" if current_page?(requested_books_path) %>">
-        <%= link_to "Book requests", requested_books_path %>
+        <%= link_to "Book Requests", requested_books_path %>
       </li>
     </ul>
   </li>
@@ -45,13 +45,13 @@
     </a>
     <ul class="dropdown-menu">
       <li class="<%= "active" if current_page?(search_exchanges_path) %>">
-        <%= link_to "Borrow a book", search_exchanges_path %>
+        <%= link_to "Borrow a Book", search_exchanges_path %>
       </li>
       <li class="<%= "active" if current_page?(borrow_requests_path) %>">
         <%= link_to "Manage Borrow Requests", borrow_requests_path %>
       </li>
       <li class="<%= "active" if current_page?(new_book_path) and params[:requested].present? %>">
-        <%= link_to "Request For a Book", new_book_path(:requested => true) %>
+        <%= link_to "Request a Book", new_book_path(:requested => true) %>
       </li>
     </ul>
   </li>
@@ -86,20 +86,20 @@
           <%= link_to "Payment Settings", new_billing_setting_path %>
         </li>
       <% end %>
+      <li>
+        <%= link_to "My Wallet", wallet_user_path(current_user) %>
+      </li>
       <% if current_user.payment_method.present? %>
         <li class="<%= "active" if current_page?(payment_method_path(current_user.payment_method)) %>">
-          <%= link_to "Payment Method", payment_method_path(current_user.payment_method) %>
+          <%= link_to "Withdrawal Methods", payment_method_path(current_user.payment_method) %>
         </li>
       <% else %>
         <li class="<%= "active" if current_page?(new_payment_method_path) %>">
-          <%= link_to "Payment Method", new_payment_method_path %>
+          <%= link_to "Withdrawal Methods", new_payment_method_path %>
         </li>
       <% end %>
       <li>
-        <%= link_to "Total Balance", '#' %>
-      </li>
-      <li>
-        <%= link_to "Withdraw balance", withdraw_requests_path %>
+        <%= link_to "Withdraw Balance", withdraw_requests_path %>
       </li>
     </ul>
   </li>

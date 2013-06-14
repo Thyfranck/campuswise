@@ -1,6 +1,6 @@
 Hello <%= @user.name %>,
 <br/>
-Your borrow request for the book titled : "<%= @book.title %>" was failed due to "<%= @message %>"
+Your <%= @exchange.package == "buy" ? "purchase" : "borrow" %> request for the book titled : "<%= @book.title %>" was failed due to "<%= @message %>"
 <br/>
 Please try another time.
 <br/>

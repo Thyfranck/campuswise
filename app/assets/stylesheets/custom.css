@@ -1,3 +1,7 @@
+.min_height_section{
+    min-height: 500px;
+}
+
 clear{
     clear: both;
 }
@@ -58,15 +62,15 @@ clear{
 
 #slider img{
     /* IE 8 */
-/* -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";*/
+    /* -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";*/
     /* IE 5-7 */
-/* filter: alpha(opacity=50);*/
+    /* filter: alpha(opacity=50);*/
     /* Netscape */
-/* -moz-opacity: 0.5;*/
+    /* -moz-opacity: 0.5;*/
     /* Safari 1.x */
-/* -khtml-opacity: 0.5;*/
+    /* -khtml-opacity: 0.5;*/
     /* Good browsers */
-/* opacity: 0.5;*/
+    /* opacity: 0.5;*/
 }
 
 #slider img.show-it{
@@ -152,7 +156,7 @@ clear{
 
 @media (max-width: 767px){
     #books-slider{
-/* margin-bottom: 200px;*/
+        /* margin-bottom: 200px;*/
     }
     ul.thumbnails {
         padding-left: 20%;
@@ -288,7 +292,7 @@ a:hover{
 }
 
 .min_height_section {
-/* min-height: 582px;*/
+    /* min-height: 582px;*/
 }
 
 .dashboard.min_height_section {
@@ -391,7 +395,7 @@ a:hover{
 
     /* For visualization
 background: #808080; width: 5px;
-*/
+    */
 }
 
 .centered {
@@ -518,4 +522,22 @@ background: #808080; width: 5px;
 
 #agree_negotiate {
     float: left;
+}
+
+.nav_user_email {
+    color: white;
+    margin-top:18px;
+}
+
+#exchange_package_buy {
+    float: left;
+    margin-right: 8px;
+}
+
+.purchase_price_lebel {
+    float: left;
+}
+
+.slide-content a{
+    color: white;
 }

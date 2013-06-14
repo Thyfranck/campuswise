@@ -1,5 +1,6 @@
 class BooksController < ApplicationController
   before_filter :require_login, :except => [:show, :available, :campus_bookshelf]
+  load_and_authorize_resource :except => [:show, :available]
 
   layout "dashboard"
 
@@ -12,7 +13,15 @@ class BooksController < ApplicationController
     if params[:google_book_id]
       @book.set_google(params[:google_book_id])
     end
+    unless params[:google_book_id] or params[:requested]
+      @new_book_page = true
+    end
     if params[:requested]
+      session[:requested] = 'yes'
+    else
+      session[:requested] = nil
+    end
+    if session[:requested] == 'yes'
       @requested_book = true
     end
     if params[:book_id]
@@ -24,15 +33,12 @@ class BooksController < ApplicationController
   def create
     unless params[:search] == "Search"
       @book = current_user.books.new(params[:book])
-      if params[:remote_url].present?
-        @book.set_google_image(params[:remote_url], current_user)
+      if session[:requested] == 'yes'
+        session[:requested] = nil
       end
       respond_to do |format|
         if @book.save
-          unless params[:remote_url].blank?
-            File.delete("tmp/books/book_#{current_user.id}.jpg")
-          end
-          format.html {redirect_to books_path}
+          format.html {redirect_to book_path(@book)}
           flash[:notice] = "Request Completed"
         else
           format.html {render :action => 'new'}
@@ -64,7 +70,7 @@ class BooksController < ApplicationController
     respond_to do |format|
       unless @book.lended == true
         @book.update_attributes(params[:book])
-        format.html {redirect_to books_path}
+        format.html {redirect_to book_path(@book)}
         flash[:notice] = "Request Completed"
       else
         format.html {render :action => 'edit'}

@@ -3,9 +3,9 @@ Hello <%= @user.name %>,
 <br/>
 Payment received amount of : $<%= @amount %> for the book titled "<%= @book.title %>" with thankfully.
 <br/>
-Renting process will be completed shortly and we will inform you when it is done.
+<%= @exchange.package == "buy" ? "Selling" : "Renting" %> process will be completed shortly and we will inform you when it is done.
 <br/>
-Thank you for using Campuswise book renting service ! <br/>
+Thank you for using Campuswise book <%= @exchange.package == "buy" ? "selling" : "renting" %> service ! <br/>
 <br/>
 Have a great day!
 <br/>

@@ -17,62 +17,74 @@
         </ul>
       </div>
     <% end %>
-    <div style="width:inherit">Type a keyword related to your books and you will get some quick suggestion, If you don't find your desired book then click on the search button to get more results.</div>
+    <div style="width:inherit">Type a keyword related to your books and you will get some quick suggestion, If you don't find your desired book then click on the search button to get more results. Or you can manually add a book.</div>
     <br/>
     <%= form_tag search_path, :class => "form-horizontal", :remote => true do %>
       <div class="control-group">
         <div class="controls">
           <%= text_field_tag :value, nil ,:placeholder => "Enter Title, Author or ISBN", :class => 'text_field search_field' %>
           <%= submit_tag "Search", :name => 'search',:class => "btn btn-primary search_button" %>
+          <%= link_to "Add Manually", '#',:class => "btn btn-primary add_manually" %>
         </div>
       </div>
     <% end %>
-    <legend>Book Info</legend>
-    <div class="control-group">
-      <%= f.label :title, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.text_field :title , :class => 'text_field'%>
-      </div>
-    </div>
-
-    <% if @book.remote_image.blank? %>
+    <div class="book_info" style="<%= "display:none" if @book.title.blank? %>">
+      <legend>Book Info</legend>
       <div class="control-group">
-        <%= f.label :image, :class => 'control-label' %>
+        <%= f.label :title, :class => 'control-label' %>
         <div class="controls">
-          <%= f.file_field :image, :class => 'text_field uniform' %>
+          <%= f.text_field :title , :class => 'text_field'%>
         </div>
       </div>
-    <% end %>
+
+      <% if @book.remote_image.blank? %>
+        <div class="control-group">
+          <%= f.label :image, :class => 'control-label' %>
+          <div class="controls">
+            <%= f.file_field :image, :class => 'text_field uniform' %>
+          </div>
+        </div>
+      <% end %>
 
 
-    <div class="control-group">
-      <div class="controls">
-        <div class="hidden_image"  style="<%= "display:none" unless @book.remote_image.present? %>">
-          <img alt="image" src="<%= @book.remote_image %>"></img>
-          <%= hidden_field_tag :remote_url, @book.remote_image.present? ? @book.remote_image : "" %>
+      <div class="control-group">
+        <div class="controls">
+          <div class="hidden_image"  style="<%= "display:none" unless @book.remote_image.present? %>">
+            <img alt="image" src="<%= @book.remote_image %>"></img>
+            <%= hidden_field_tag :remote_url, @book.remote_image.present? ? @book.remote_image : "" %>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="control-group">
-      <%= f.label :author, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.text_field :author, :class => 'text_field'%>
+      <div class="control-group">
+        <%= f.label :author, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.text_field :author, :class => 'text_field'%>
+        </div>
       </div>
-    </div>
-    <div class="control-group">
-      <%= f.label :isbn, "ISBN", :class => 'control-label' %>
-      <div class="controls">
-        <%= f.text_field :isbn, :class => 'text_field'%>
+      <div class="control-group">
+        <%= f.label :isbn, "ISBN", :class => 'control-label' %>
+        <div class="controls">
+          <%= f.text_field :isbn, :class => 'text_field'%>
+        </div>
       </div>
-    </div>
-    <div class="control-group">
-      <%= f.label :publisher, :class => 'control-label' %>
-      <div class="controls">
-        <%= f.text_field :publisher, :class => 'text_field'%>
+      <div class="control-group">
+        <%= f.label :publisher, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.text_field :publisher, :class => 'text_field'%>
+        </div>
       </div>
+      <% unless @book.requested == true or @requested_book == true %>
+        <legend>Book Purchase Price</legend>
+        If the borrower fails to return your book, this price will be credited to your account.
+        <div class="control-group">
+          <%= f.label :purchase_price, :class => 'control-label' %>
+          <div class="controls">
+            <%= f.text_field :purchase_price, :class => 'text_field'%>
+          </div>
+        </div>
+      <% end %>
     </div>
-
 
     <% unless @book.requested == true or @requested_book == true %>
 
@@ -98,7 +110,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="available_dates" style="display:none">
         <div class="control-group">
           <%= f.label :available_from, :class => 'control-label' %>
@@ -113,42 +125,46 @@
           </div>
         </div>
       </div>
-      
-      <legend>Book Purchase Price (in USD)</legend>
-      This will be the selling rate and this amount will be charged to the book borrower along with your loan amount if the book is not returned to you.
-      <div class="control-group">
-        <%= f.label :price, "Book Purchase Price", :class => 'control-label' %>
-        <div class="controls">
-          <%= f.text_field :price, :class => 'text_field' %>
+
+      <div class="purchase_price" style="display:none">
+        <legend>Book Selling Price</legend>
+        <div class="control-group">
+          <%= f.label :price, "What's your price?", :class => 'control-label' %>
+          <div class="controls">
+            <%= f.text_field :price, :class => 'text_field' %>
+          </div>
         </div>
       </div>
 
-      <legend>Loan Rates (in USD)</legend>
-      <div class="loan_error" style="color:red"></div>
-      <div class="control-group">
-        <h5><%= f.label :loan_daily, "Daily", :class => 'control-label' %></h5>
-        <div class="controls">
-          <%= f.number_field :loan_daily, :class => 'number_field' %>
+      <div class="loan_rates" style="display:none">
+        <legend>Loan Rates (in USD)</legend>
+        <div class="loan_error" style="color:red"></div>
+        <div class="control-group">
+          <h5><%= f.label :loan_daily, "Daily", :class => 'control-label' %></h5>
+          <div class="controls">
+            <%= f.number_field :loan_daily, :class => 'number_field' %>
+          </div>
+        </div>
+        <div class="control-group">
+          <%= f.label :loan_weekly, "Weekly", :class => 'control-label' %>
+          <div class="controls">
+            <%= f.number_field :loan_weekly, :class => 'number_field'%>
+          </div>
+        </div>
+        <div class="control-group">
+          <%= f.label :loan_monthly, "Monthly", :class => 'control-label' %>
+          <div class="controls">
+            <%= f.number_field :loan_monthly, :class => 'number_field' %>
+          </div>
+        </div>
+        <div class="control-group">
+          <%= f.label :loan_semester, "Full Semester", :class => 'control-label' %>
+          <div class="controls">
+            <%= f.number_field :loan_semester, :class => 'number_field' %>
+          </div>
         </div>
       </div>
-      <div class="control-group">
-        <%= f.label :loan_weekly, "Weekly", :class => 'control-label' %>
-        <div class="controls">
-          <%= f.number_field :loan_weekly, :class => 'number_field'%>
-        </div>
-      </div>
-      <div class="control-group">
-        <%= f.label :loan_monthly, "Monthly", :class => 'control-label' %>
-        <div class="controls">
-          <%= f.number_field :loan_monthly, :class => 'number_field' %>
-        </div>
-      </div>
-      <div class="control-group">
-        <%= f.label :loan_semester, "Full Semester", :class => 'control-label' %>
-        <div class="controls">
-          <%= f.number_field :loan_semester, :class => 'number_field' %>
-        </div>
-      </div>
+
     <% else @requested_book == true %>
       <%= f.hidden_field :requested, :value => true %>
     <% end %>

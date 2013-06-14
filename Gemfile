@@ -19,7 +19,7 @@ gem 'twilio-ruby'
 gem 'stripe'
 gem 'delayed_job_active_record'
 gem 'amazon-ecs'
-
+gem 'cancan'
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -36,7 +36,7 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'jquery-rails'
+gem 'jquery-rails',"2.3.0"
 
 gem 'rvm-capistrano', '>= 1.1.0'
 gem 'capistrano-ext'

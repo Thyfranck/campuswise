@@ -2,10 +2,10 @@ You can manage your borrow requests Here.
 
 <div class="tabbable"> <!-- Only required for left/right tabs -->
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#tab1" data-toggle="tab">Borrowed Books (<%= "#{@borrowed_books.count}" %>)</a></li>
+    <li class="active"><a href="#tab1" data-toggle="tab">Borrowed / Purchased Books (<%= "#{@borrowed_books.count}" %>)</a></li>
     <li><a href="#tab2" data-toggle="tab">Waiting for Owner's Approval (<%= "#{@pending_for_owner.count}" %>)</a></li>
     <li><a href="#tab3" data-toggle="tab">Waiting for Your Approval (<%= "#{@pending_for_me.count}" %>)</a></li>
-    <li><a href="#tab4" data-toggle="tab">Lended (<%= "#{@lended.count}" %>)</a></li>
+    <li><a href="#tab4" data-toggle="tab">Lend / Sold (<%= "#{@lended.count}" %>)</a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="tab1">
@@ -14,9 +14,10 @@ You can manage your borrow requests Here.
         <table class="table table-hover table-bordered">
           <thead>
           <th>Book Title</th>
+          <th>Borrowed / Purchased</th>
           <th>Borrowed Date</th>
           <th>Returning Time</th>
-          <th>Owner contact info</th>
+          <th>Seller / Lender's contact info</th>
           <th>Book Action</th>
           </thead>
           <% @borrowed_books.each do |exchange| %>
@@ -24,8 +25,14 @@ You can manage your borrow requests Here.
             <tbody>
               <tr>
                 <td><%= @book.title %></td>
-                <td><%= exchange.created_at.strftime("%m/%d/%Y") %></td>
-                <td><%= @book.returning_date.strftime("%m/%d/%Y") %></td>
+                <td><%= exchange.package == "buy" ? "Purchased" : "Borrowed" %></td>
+                <% unless exchange.package == "buy"  %>
+                  <td><%= exchange.created_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= exchange.ending_date.strftime("%m/%d/%Y") %></td>
+                <% else %>
+                  <td>N/A</td>
+                  <td>N/A</td>
+                <% end %>
                 <td>
                   <ul>
                     <li>Name : <%= User.find(@book.user_id).name %></li>
@@ -73,6 +80,7 @@ You can manage your borrow requests Here.
         <table class="table table-hover table-bordered">
           <thead>
           <th>Book Title</th>
+          <th>Request for</th>
           <th>Request Received At</th>
           <th>Requester Name</th>
           <th></th>
@@ -82,12 +90,18 @@ You can manage your borrow requests Here.
             <tbody>
               <tr>
                 <td><%= @book.title %></td>
+                <td><%= exchange.package == "buy" ? "Purchase" : "Borrow" %></td>
                 <td><%= exchange.created_at.strftime("%m/%d/%Y") %></td>
                 <td><%= User.find(exchange.user_id).name %></td>
                 <td style="min-width:145px;">
-                  <%= link_to "Approve", exchange_path(exchange.id), :method => :put, :class => "btn btn-mini btn-primary" %>
-                  <%= link_to "Deny", exchange_path(exchange.id), :method => :delete, :class => "btn btn-mini btn-primary" %>
-                  <%= link_to "Show", book_path(@book), :class => "btn btn-mini btn-primary" %>
+                  <%  if exchange.counter_offer.present? %>
+                    <%= link_to "View", before_exchange_path(exchange), :class => "btn btn-mini btn-primary fancybox fancybox.ajax" %>
+                    <%= link_to "Deny", exchange_path(exchange), :method => :delete, :class => "btn btn-mini btn-primary" %>
+                  <% else %>
+                    <%= link_to "Approve", exchange_path(exchange.id), :method => :put, :class => "btn btn-mini btn-primary" %>
+                    <%= link_to "Deny", exchange_path(exchange.id), :method => :delete, :class => "btn btn-mini btn-primary" %>
+                    <%= link_to "Show", book_path(@book), :class => "btn btn-mini btn-primary" %>
+                  <% end %>
                 </td>
               </tr>
             </tbody>
@@ -104,9 +118,10 @@ You can manage your borrow requests Here.
         <table class="table table-hover table-bordered">
           <thead>
           <th>Title</th>
+          <th>Lend / Sold</th>
           <th>Borrowed Date</th>
           <th>Returning Time</th>
-          <th>Borrower info</th>
+          <th>Borrower / Buyer info</th>
           <th>Action</th>
           </thead>
           <% @lended.each do |exchange| %>
@@ -114,8 +129,14 @@ You can manage your borrow requests Here.
             <tbody>
               <tr>
                 <td><%= @book.title %></td>
-                <td><%= exchange.created_at.strftime("%m/%d/%Y") %></td>
-                <td><%= @book.returning_date.strftime("%m/%d/%Y") %></td>
+                <td><%= exchange.package == "buy" ? "Sold" : "Lend"  %></td>
+                <% unless exchange.package == "buy"  %>
+                  <td><%= exchange.created_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= exchange.ending_date.strftime("%m/%d/%Y") %></td>
+                <% else %>
+                  <td>N/A</td>
+                  <td>N/A</td>
+                <% end %>
                 <td>
                   <ul>
                     <li>Name : <%= User.find(exchange.user_id).name %></li>
@@ -123,10 +144,14 @@ You can manage your borrow requests Here.
                     <li>Phone: <%= User.find(exchange.user_id).phone %></li>
                   </ul>
                 </td>
+                <% unless exchange.package == "buy"  %>
                 <td>
                   <%= link_to "Returned", returned_exchange_path(exchange.id, :returned => true), :class => "btn btn-mini btn-primary"  %>
                   <%= link_to "Not Returned", returned_exchange_path(exchange.id,:returned => false), :class => "btn btn-mini btn-primary"  %>
                 </td>
+                <% else %>
+                <td>N/A</td>
+                <% end %>              
               </tr>
             </tbody>
           <% end %>

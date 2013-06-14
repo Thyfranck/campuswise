@@ -22,43 +22,56 @@
     <b> ISBN:</b>
     <%= @book.isbn %>
   </p>
-  <% unless @book.requested == true %>
+  <% if @book.available.present? %>
     <p>
-      <b> Loan Rates</b>
-    <ul>
-      <% if @book.loan_daily.present? %>
-        <li>Daily : <%= @book.loan_daily %></li>
-      <% end %>
-      <% if @book.loan_weekly.present? %>
-        <li>Weekly : <%= @book.loan_weekly %></li>
-      <% end %>
-      <% if @book.loan_monthly.present? %>
-        <li>Monthly : <%= @book.loan_monthly %></li>
-      <% end %>
-      <% if @book.loan_semester.present? %>
-        <li>Full Semester : <%= @book.loan_semester %></li>
-      <% end %>
-    </ul>
-  </p>
-
+      <b> Available Now:</b>
+      <%= @book.available == false ? "No" : "Yes" %>
+    </p>
+  <% end %>
+  <% unless @book.requested == true or @book.available == false  %>
+    <p>
+      <b>This book is available for : </b>
+      <%= @book.available_for == Book::AVAILABLE_FOR[:both] ? "Sell and Rent" : @book.available_for.capitalize %>
+    </p>
+    <% unless @book.available_for == Book::AVAILABLE_FOR[:sell] %>
+      <p>
+        <b> Loan Rates</b>
+      <ul>
+        <% if @book.loan_daily.present? %>
+          <li>Daily : $<%= @book.loan_daily.to_f %></li>
+        <% end %>
+        <% if @book.loan_weekly.present? %>
+          <li>Weekly : $<%= @book.loan_weekly.to_f %></li>
+        <% end %>
+        <% if @book.loan_monthly.present? %>
+          <li>Monthly : $<%= @book.loan_monthly.to_f %></li>
+        <% end %>
+        <% if @book.loan_semester.present? %>
+          <li>Full Semester : $<%= @book.loan_semester.to_f %></li>
+        <% end %>
+      </ul>
+    </p>
+  <% end %>
   <p>
-    <b>Book Purchase Price: $<%= @book.price %></b>
+    <b>Book Purchase Price: $<%= @book.purchase_price.to_f %></b>
   </p>
+  <% unless @book.available_for == Book::AVAILABLE_FOR[:rent] %>
+    <p>
+      <b>Book Selling Price: $<%= @book.price.to_f %></b>
+    </p>
+  <% end %>
+    
+  <% unless @book.available_for == Book::AVAILABLE_FOR[:sell] %>
+    <p>
+      <b> Available from:</b>
+      <%= @book.available_from %>
+    </p>
 
-  <p>
-    <b> Available:</b>
-    <%= @book.available == true ? "Yes" : "No" %>
-  </p>
-
-  <p>
-    <b> Available from:</b>
-    <%= @book.available_from %>
-  </p>
-
-  <p>
-    <b> Available Till:</b>
-    <%= @book.returning_date %>
-  </p>
+    <p>
+      <b> Available Till:</b>
+      <%= @book.returning_date %>
+    </p>
+  <% end %>
 <% end %>
 <% if current_user and @book.user_id == current_user.id %>
   <div class="form-actions">
@@ -95,13 +108,80 @@
     <% elsif @book.available == false %>
       <p style="color: red">This book is not available</p>
     <% elsif @book.available == true %>
-      <%= link_to "Borrow This Book", new_exchange_path(:id => @book.id),:class => 'btn btn-primary'  %>
+      <% if @book.available_for == Book::AVAILABLE_FOR[:rent] %>
+        <%= link_to "Borrow this Book", new_exchange_path(:id => @book.id),:class => 'btn btn-primary'  %>
+      <% elsif @book.available_for == Book::AVAILABLE_FOR[:both] %>
+        <%= link_to "Borrow this Book", new_exchange_path(:id => @book.id),:class => 'btn btn-primary'  %>
+        <br/>
+        <br/>
+        <a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal" id="continue">Buy This Book</a>
+      <% elsif @book.available_for == Book::AVAILABLE_FOR[:sell] %>
+        <a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal" id="continue">Buy This Book</a>
+      <% end %>
+
     <% end %>
   <% elsif !current_user %>
-    <h5 style="color: red" >Rent this book now and save your money!</h5>
+    <% unless @book.available_for == Book::AVAILABLE_FOR[:sell]  %>
+      <h5 style="color: red" >Rent this book now and save your money!</h5>
+    <% else %>
+      <h5 style="color: red" >Get this book now !</h5>
+    <% end %>
     <%= link_to 'Sign Up!', new_user_path, :class => 'btn btn-primary' %>
   <% end %>
 </div>
+<% if current_user and @book.user != current_user %>
+  <% unless @book.available_for == Book::AVAILABLE_FOR[:rent] %>
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Take a review</h3>
+      </div>
+      <div class="modal-body span6">
+        <h4>Your credit card information</h4>
+        <p>
+          <b>Card Holder Name :</b>
+          <%= current_user.billing_setting.card_holder_name %>
+        </p>
+
+        <p>
+          <b>Card Number :</b>
+          <%= "*********#{current_user.billing_setting.card_last_four_digits}" %>
+        </p>
+
+        <p>
+          <b>Card Type :</b>
+          <%= current_user.billing_setting.card_type %>
+        </p>
+
+        <p>
+          <b>Card Expiry Date :</b>
+          <%= current_user.billing_setting.card_expiry_date.to_date %>
+        </p>
+      </div>
+      <div class="modal-body span5">
+        <h4>Total amount to pay</h4>
+        <h1 class="total_amount_to_pay" style="color:red">$<%= @book.price.to_f %></h1>
+      </div>
+      <%= form_for @exchange = Exchange.new  do |f| %>
+        <div class="modal-body span5">
+          <%= f.hidden_field :book_id, :value => @book.id  %>
+          <%= f.hidden_field :package, :value => "buy"  %>
+          <div class="control-group">
+            <%= f.label :counter_offer, "Counter offer (if any?)", :class => 'control-label' %>
+            <div class="controls">
+              <%= f.text_field :counter_offer,:class => 'input-medium' %>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+          <%= f.submit "Submit", :class => 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+
 
 
 

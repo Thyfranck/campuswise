@@ -50,9 +50,3 @@
   </div>
 
 <% end %>
-
-<% if current_user.billing_setting.present? %>
-  <br/><br/>
-  <%= link_to "Cancel update Card", "javascript:;", :id => "cancel_update_card", :class => "blue" %>
-  <br/>
-<% end %>

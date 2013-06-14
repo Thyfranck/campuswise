@@ -26,12 +26,13 @@ class Notification < ActionMailer::Base
   end
 
   def notify_book_borrower_failed_to_charge(exchange)
+    @exchange = exchange
     @user = exchange.user
     @book = exchange.book
     @message = exchange.declined
     headers['X-SMTPAPI'] = "{\"category\" : \"Card Error Alert\"}"
     mail(:to => @user.email,
-      :subject => "Borrow request failed - CampusWise")
+      :subject => "#{@exchange.package == "buy" ? "Purchase" : "Borrow"}  request failed - CampusWise")
   end
 
   def notify_book_owner(exchange)
@@ -42,39 +43,88 @@ class Notification < ActionMailer::Base
     @url = dashboard_url
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
     mail(:to => @user.email,
-      :subject => "You have received a book borrow request - CampusWise")
+      :subject => "You have received a book #{@exchange.package == "buy" ? "purchase" : "borrow"} request - CampusWise")
   end
 
   def notify_book_borrower_accept(exchange)
+    @exchange = exchange
     @user = exchange.user
     @book = exchange.book
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
     mail(:to => @user.email,
-      :subject => "Your Borrow request has been accepted by the book owner - CampusWise")
+      :subject => "Your #{@exchange.package == "buy" ? "purchase" : "borrow"} request has been accepted by the book owner - CampusWise")
   end
 
   def notify_book_borrower_reject_by_user(exchange)
+    @exchange = exchange
     @user = exchange.user
     @owner  = exchange.book.user
     @book = exchange.book
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
     mail(:to => @user.email,
-      :subject => "Your book borrow request was rejected by the owner - CampusWise")
+      :subject => "Your book #{@exchange.package == "buy" ? "purchase" : "borrow"}  request was rejected by the owner - CampusWise")
+  end
+
+  def borrower_about_owner_doesnt_want_to_negotiate(exchange, requested_price)
+    @requested_price = requested_price
+    @exchange = exchange
+    @user = exchange.user
+    @owner  = exchange.book.user
+    @book = exchange.book
+    @url = login_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert - Negotiation\"}"
+    mail(:to => @user.email,
+      :subject => "#{@exchange.package == "buy" ? "Seller" : "Lender"} doesn't want to negotiate - CampusWise")
+  end
+
+  def borrower_about_owner_want_to_negotiate(exchange)
+    @exchange = exchange
+    @user = exchange.user
+    @owner  = exchange.book.user
+    @book = exchange.book
+    @url = login_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert - Negotiation\"}"
+    mail(:to => @user.email,
+      :subject => "#{@exchange.package == "buy" ? "Seller" : "Lender"} want to negotiate - CampusWise")
+  end
+
+  def owner_about_borrower_want_to_negotiate(exchange)
+    @exchange = exchange
+    @user = exchange.book.user
+    @borrower  = exchange.user
+    @book = exchange.book
+    @url = login_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert - Negotiation\"}"
+    mail(:to => @user.email,
+      :subject => "#{@exchange.package == "buy" ? "Buyer" : "Borrower"} want to negotiate - CampusWise")
+  end
+
+  def owner_about_negotiation_failed(exchange)
+    @exchange = exchange
+    @user = exchange.book.user
+    @borrower  = exchange.user
+    @book = exchange.book
+    @url = login_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert - Negotiation\"}"
+    mail(:to => @user.email,
+      :subject => "#{@exchange.package == "buy" ? "Buyer" : "Borrower"} cancelled the request - CampusWise")
   end
 
   def notify_book_borrower_reject_for_payment(exchange)
+    @exchange = exchange
     @user = exchange.user
     @owner  = exchange.book.user
     @book = exchange.book
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
     mail(:to => @user.email,
-      :subject => "Your book borrow request was rejected due to your card error - CampusWise")
+      :subject => "Your book #{@exchange.package == "buy" ? "purchase" : "borrow"} request was rejected due to your card error - CampusWise")
   end
 
   def email_after_payment(payment)
+    @exchange = payment.exchange
     @user = payment.exchange.user
     @book = payment.exchange.book
-    @amount = payment.payment_amount
+    @amount = payment.payment_amount.to_f
     headers['X-SMTPAPI'] = "{\"category\" : \"Payment Alert\"}"
     mail(:to => @user.email,
       :subject => "Your payment was successfully received - CampusWise")
@@ -88,7 +138,7 @@ class Notification < ActionMailer::Base
     @url = dashboard_url
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
     mail(:to => @user.email,
-      :subject => "Congratulation Your Borrow request is now complete - CampusWise")
+      :subject => "Congratulation Your #{@exchange.package == "buy" ? "purchase" : "borrow"} request is now complete - CampusWise")
   end
 
   def notify_book_owner_exchange_successfull(payment)
@@ -99,7 +149,7 @@ class Notification < ActionMailer::Base
     @url = dashboard_url
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
     mail(:to => @user.email,
-      :subject => "Congratulation Your Book lending process is complete - CampusWise")
+      :subject => "Congratulation Your Book #{@exchange.package == "buy" ? "selling" : "lending"}  process is complete - CampusWise")
   end
 
   def send_reminder_email_to_borrower(payment)
@@ -123,7 +173,7 @@ class Notification < ActionMailer::Base
   def notify_user_for_withdraw(withdraw_request)
     @user = withdraw_request.user
     @request = withdraw_request
-    @amount = @request.amount
+    @amount = @request.amount.to_f
     headers['X-SMTPAPI'] = "{\"category\" : \"Withdraw Request\"}"
     mail(:to => @user.email,
       :subject => "Congratulation your withraw request is complete. -Campuswise")

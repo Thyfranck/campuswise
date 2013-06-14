@@ -45,9 +45,10 @@
 
     <% unless @user.new_record? %>
       <div class="control-group">
-        <%= f.label :facebook, "Facebook ID", :class => 'control-label' %>
+        <%= f.label :facebook, "Facebook Profile", :class => 'control-label' %>
         <div class="controls">
           <%= f.text_field :facebook, :class => 'text_field' %>
+          <%= link_to 'Get', '#', :id => 'sign_in', :class => 'btn btn-mini btn-info' %>
         </div>
       </div>
     <% else %>
@@ -65,7 +66,6 @@
         </div>
       </div>
     <% end %>
-
     <div class="form-actions <%= "no_background_color" if @user.new_record? %>">
       <%= f.submit :class => 'btn btn-primary have_a_account' %>
       <% if @user.new_record? %>

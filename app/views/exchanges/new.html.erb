@@ -1,6 +1,6 @@
 <fieldset>
   <legend>
-    <h4>How you want to get this book?</h4>
+    <h4>How you want to borrow this book?</h4>
   </legend>
 
   <%= form_for @exchange do |f| %>
@@ -20,16 +20,15 @@
     <%= f.hidden_field :book_id, :value => @book.id %>
 
     <div class="row span12">
-
       <% if @book.loan_daily.present? %>
         <div class="span2">
           <div class="control-group">
             <%= f.label :package, "Daily", :class => 'control-label' %>
             <div class="controls">
-              <%= f.radio_button :package , 'daily', :class => 'radio'%>
+              <%= f.radio_button :package , 'day', :class => 'radio'%>
             </div>
             <br/>
-            $ <span id="day_rate"><%= @book.loan_daily %></span> / day
+            $ <span id="day_rate"><%= @book.loan_daily.to_f %></span> / day
           </div>
         </div>
       <% end %>
@@ -39,7 +38,7 @@
           <div class="control-group">
             <%= f.label :package, "Weekly", :class => 'control-label' %>
             <div class="controls">
-              <%= f.radio_button :package ,'weekly' ,:class => 'radio'%>
+              <%= f.radio_button :package ,'week' ,:class => 'radio'%>
             </div>
             <br/>
             $ <span id="week_rate"><%= @book.loan_weekly %></span> / week
@@ -52,7 +51,7 @@
           <div class="control-group">
             <%= f.label :package, "Monthly", :class => 'control-label' %>
             <div class="controls">
-              <%= f.radio_button :package ,'monthly' ,:class => 'radio'%>
+              <%= f.radio_button :package ,'month' ,:class => 'radio'%>
             </div>
             <br/>
             $ <span id="month_rate"><%= @book.loan_monthly %></span> / month
@@ -71,43 +70,32 @@
             $ <span id="semester_rate"><%= @book.loan_semester %></span> / semester
           </div>
         </div>
-      <% end %>
-
-      <% if @book.available_for == Book::AVAILABLE_FOR[:sell] or @book.available_for == Book::AVAILABLE_FOR[:both] %>
-        <div class="span2">
-          <div class="control-group">
-            <%= f.label :package, "Buy", :class => 'control-label' %>
-            <div class="controls">
-              <%= f.radio_button :package ,'buy'%>
-            </div>
-            <br/>
-            $ <span id="purchase_rate"><%= @book.price %></span>
-          </div>
-        </div>
-      <% end %>
-    </div>
-    <br/>
-    <br/>
-    <div class="row span12 exchange_amount" style="display:none">
-      <legend>
-        <h5>Please Specify the duration</h5>
-      </legend>
-      <h5 style="color:#fd492a">This book is available from <%= @book.available_from.to_date %> to <%= @book.returning_date.to_date %>.</h5>
-      <br/>
-      <br/>
-      <div class="span10 offest2" style="text-align:center">
-        <div class="control-group">
-          <%= f.label :duration, "I want to borrow this book from date", :class => 'control-label' %>
-          <div class="controls">
-            <%= f.date_select :starting_date, {}, :class => 'span3 selectpicker' %>
-          </div>
-          To
-          <div class="controls">
-            <%= f.number_field :duration,:class => 'input-small number_field'%><div class="amount_text"></div>
-          </div>
-        </div>
       </div>
-    </div>
+      <br/>
+      <br/>
+      <% unless @book.available_for == Book::AVAILABLE_FOR[:sell] %>
+        <div class="row span12 exchange_amount" style="display:none">
+          <legend>
+            <h5>Please Specify the duration</h5>
+          </legend>
+          <h5 style="color:#fd492a">This book is available from <%= @book.available_from.to_date %> to <%= @book.returning_date.to_date %>.</h5>
+          <br/>
+          <br/>
+          <div class="span10 offest2" style="text-align:center">
+            <div class="control-group">
+              <%= f.label :duration, "I want to borrow this book from date", :class => 'control-label' %>
+              <div class="controls">
+                <%= f.date_select :starting_date, {}, :class => 'span3 selectpicker' %>
+              </div>
+              To
+              <div class="controls">
+                <%= f.number_field :duration,:class => 'input-small number_field'%><div class="amount_text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
     <div class="exchange_submit_section" style="display:none">
       <a href="#myModal" role="button" class="btn" data-toggle="modal" id="continue">Continue</a>
     </div>
@@ -143,12 +131,13 @@
       <div class="modal-body span5">
         <h4>Total amount to pay</h4>
         <h1 class="total_amount_to_pay" style="color:red"></h1>
+        <p> + book price ($<%= @book.purchase_price %>) if you don't return this book in time. </p>
       </div>
       <div class="modal-body span5">
         <div class="control-group">
           <%= f.label :counter_offer, "Counter offer (if any?)", :class => 'control-label' %>
           <div class="controls">
-            <%= f.number_field :counter_offer, :class => 'number_field input-medium' %>
+            <%= f.text_field :counter_offer, :class => 'number_field input-medium' %>
           </div>
         </div>
       </div>
