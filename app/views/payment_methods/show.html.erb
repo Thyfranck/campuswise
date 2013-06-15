@@ -22,7 +22,7 @@
         <b>Account Number :</b>
         <%= @payment_method.account_number %>
       </p>
-    <% else %>
+    <% elsif @payment_method.payment_method_type == PaymentMethod::TYPE[:card] %>
       <p>
         <b>Credit Card Type :</b>
         <%= @payment_method.credit_card_type %>
@@ -31,6 +31,11 @@
       <p>
         <b>Credit Card Number :</b>
         <%= @payment_method.card_number %>
+      </p>
+      <% elsif @payment_method.payment_method_type == PaymentMethod::TYPE[:paypal] %>
+      <p>
+        <b>Email :</b>
+        <%= @payment_method.paypal %>
       </p>
     <% end %>
   </div>
