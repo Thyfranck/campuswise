@@ -34,7 +34,7 @@ ActiveAdmin.register Book do
     default_actions
   end
 
-  show do
+  show do |book|
     attributes_table do
       row :id
       row :user
@@ -42,7 +42,8 @@ ActiveAdmin.register Book do
       row :author
       row :isbn
       row :publisher
-      row :price
+      row "Price(for selling feature)" do book.price end
+      row "Selling price" do book.purchase_price end
       row :loan_daily
       row :loan_weekly
       row :loan_monthly

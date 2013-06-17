@@ -1,6 +1,6 @@
 class BooksController < ApplicationController
   before_filter :require_login, :except => [:show, :available, :campus_bookshelf]
-  load_and_authorize_resource :except => [:show, :available]
+  load_and_authorize_resource :except => [:show, :available, :campus_bookshelf]
 
   layout "dashboard"
 

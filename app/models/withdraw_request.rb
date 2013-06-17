@@ -5,7 +5,7 @@ class WithdrawRequest < ActiveRecord::Base
   has_many :dashboard_notifications, :as => :dashboardable
   has_one :transaction, :as => :transactable
 
-  validates :amount, :presence => true, :numericality => true
+  validates :amount, :presence => true, :numericality => {:greater_than => 0}
 
   STATUS = {
     :paid => "PAID",

@@ -29,7 +29,8 @@ class Book < ActiveRecord::Base
   before_save :atleast_one_loan_rate_exsists, 
     :update_availability_options,
     :update_loan_and_purchase_prices,
-    :set_google_image, :check_available_date_range
+    :set_google_image, :check_available_date_range,
+    :update_availability_dates
 
   mount_uploader :image, ImageUploader
 
@@ -37,6 +38,13 @@ class Book < ActiveRecord::Base
   scope :available_now, :conditions => {:available => true}
   scope :date_not_expired, lambda { where(["available_for = ? or returning_date > ?",Book::AVAILABLE_FOR[:sell],Time.now.to_date])}
   scope :not_my_book, lambda { |current_user| where(["user_id != ?",current_user])}
+
+  def update_availability_dates
+    if self.available == false
+      self.available_from = nil
+      self.returning_date = nil
+    end
+  end
 
   def update_availability_options
     unless self.requested == true

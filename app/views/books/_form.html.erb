@@ -17,16 +17,18 @@
         </ul>
       </div>
     <% end %>
-    <div style="width:inherit">Type a keyword related to your books and you will get some quick suggestion, If you don't find your desired book then click on the search button to get more results. Or you can manually add a book.</div>
-    <br/>
-    <%= form_tag search_path, :class => "form-horizontal", :remote => true do %>
-      <div class="control-group">
-        <div class="controls">
-          <%= text_field_tag :value, nil ,:placeholder => "Enter Title, Author or ISBN", :class => 'text_field search_field' %>
-          <%= submit_tag "Search", :name => 'search',:class => "btn btn-primary search_button" %>
-          <%= link_to "Add Manually", '#',:class => "btn btn-primary add_manually" %>
+    <% if @book.new_record? %>
+      <div style="width:inherit">Type a keyword related to your books and you will get some quick suggestion, If you don't find your desired book then click on the search button to get more results. Or you can manually add a book.</div>
+      <br/>
+      <%= form_tag search_path, :class => "form-horizontal", :remote => true do %>
+        <div class="control-group">
+          <div class="controls">
+            <%= text_field_tag :value, nil ,:placeholder => "Enter Title, Author or ISBN", :class => 'text_field search_field' %>
+            <%= submit_tag "Search", :name => 'search',:class => "btn btn-primary search_button" %>
+            <%= link_to "Add Manually", '#',:class => "btn btn-primary add_manually" %>
+          </div>
         </div>
-      </div>
+      <% end %>
     <% end %>
     <div class="book_info" style="<%= "display:none" if @book.title.blank? %>">
       <legend>Book Info</legend>
@@ -75,12 +77,10 @@
         </div>
       </div>
       <% unless @book.requested == true or @requested_book == true %>
-        <legend>Book Purchase Price</legend>
-        If the borrower fails to return your book, this price will be credited to your account.
         <div class="control-group">
-          <%= f.label :purchase_price, :class => 'control-label' %>
+          <%= f.label :purchase_price,"Selling Price", :class => 'control-label' %>
           <div class="controls">
-            <%= f.text_field :purchase_price, :class => 'text_field'%>
+            <%= f.text_field :purchase_price, :class => 'text_field'%><span> (If the borrower fails to return your book, this price will be credited to your account.)</span>
           </div>
         </div>
       <% end %>
@@ -142,25 +142,25 @@
         <div class="control-group">
           <h5><%= f.label :loan_daily, "Daily", :class => 'control-label' %></h5>
           <div class="controls">
-            <%= f.number_field :loan_daily, :class => 'number_field' %>
+            <%= f.text_field :loan_daily, :class => 'number_field' %>
           </div>
         </div>
         <div class="control-group">
           <%= f.label :loan_weekly, "Weekly", :class => 'control-label' %>
           <div class="controls">
-            <%= f.number_field :loan_weekly, :class => 'number_field'%>
+            <%= f.text_field :loan_weekly, :class => 'number_field'%>
           </div>
         </div>
         <div class="control-group">
           <%= f.label :loan_monthly, "Monthly", :class => 'control-label' %>
           <div class="controls">
-            <%= f.number_field :loan_monthly, :class => 'number_field' %>
+            <%= f.text_field :loan_monthly, :class => 'number_field' %>
           </div>
         </div>
         <div class="control-group">
           <%= f.label :loan_semester, "Full Semester", :class => 'control-label' %>
           <div class="controls">
-            <%= f.number_field :loan_semester, :class => 'number_field' %>
+            <%= f.text_field :loan_semester, :class => 'number_field' %>
           </div>
         </div>
       </div>

@@ -48,7 +48,9 @@
         <%= f.label :facebook, "Facebook Profile", :class => 'control-label' %>
         <div class="controls">
           <%= f.text_field :facebook, :class => 'text_field' %>
-          <%= link_to 'Get', '#', :id => 'sign_in', :class => 'btn btn-mini btn-info' %>
+          <%= link_to '#', :id => 'sign_in' do %>
+            <%= image_tag 'facebook_button.png', :id => 'facebook_button' %>
+          <% end %>
         </div>
       </div>
     <% else %>

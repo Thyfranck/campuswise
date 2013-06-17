@@ -38,11 +38,11 @@ ActiveAdmin.register User do
     end
     active_admin_comments
   end
-
+  
   action_item only:[:show] do
     link_to "Pay", pay_form_admin_user_path(user)
   end
-
+  
   member_action :login do
     @user = User.find(params[:id])
     auto_login @user
@@ -51,7 +51,12 @@ ActiveAdmin.register User do
 
   member_action :pay_form do
     @user = User.find(params[:id])
-    @requested_amount = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).first.amount.to_f
+    @pending_request = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending])
+    if @pending_request.present?
+      @requested_amount = @pending_request.first.amount.to_f
+    else
+      redirect_to admin_user_path(@user)
+    end
   end
 
   member_action :pay, :method => :post do

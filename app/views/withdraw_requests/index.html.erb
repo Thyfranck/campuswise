@@ -1,6 +1,6 @@
 <div class="pull-left">
   <% if current_user.credit.to_f > 0.0 %>
-    <%= link_to "New Withdraw Request", new_withdraw_request_path, :class => "btn btn-large btn-primary" %>
+    <%= link_to "Withdraw Balance", new_withdraw_request_path, :class => "btn btn-large btn-primary" %>
   <% end %>
 </div>
 <div class="pull-right">
@@ -18,7 +18,7 @@
     <% @withdraw_requests.each do |request| %>
       <tr>
         <td><%= request.created_at.to_date %></td>
-        <td>Requested for amount: <%= request.amount.to_f %></td>
+        <td>Requested for amount: $<%= request.amount.to_f %></td>
         <td><%= request.status %></td>
       </tr>
     <% end %>
