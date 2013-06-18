@@ -10,7 +10,7 @@ $(document).ready(function() {
             });
         };
     });
-        
+
     $('a#sign_in').click(function(e) {
         e.preventDefault();
         FB.login(function(response) {

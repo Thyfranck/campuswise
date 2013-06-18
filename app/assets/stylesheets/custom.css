@@ -545,3 +545,9 @@ background: #808080; width: 5px;
     max-width: inherit;
     z-index: auto;
 }
+
+.withdraw_request_sidebar {
+    border: 1px solid;
+    margin-top: 25px;
+    padding: 25px;
+}

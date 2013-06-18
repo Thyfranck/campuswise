@@ -1,14 +1,15 @@
 class WithdrawRequest < ActiveRecord::Base
-  attr_accessible :amount, :user_id
+  attr_accessible :amount, :user_id, :payment_method
 
   belongs_to :user
   has_many :dashboard_notifications, :as => :dashboardable
   has_one :transaction, :as => :transactable
 
   validates :amount, :presence => true, :numericality => {:greater_than => 0}
+  validates :payment_method, :inclusion => {:in => Constant::PAYMENT_METHOD_TYPE}
 
   STATUS = {
-    :paid => "PAID",
+    :paid => "APPROVED",
     :rejected => "REJECTED",
     :pending => "PENDING"
   }
@@ -26,7 +27,8 @@ class WithdrawRequest < ActiveRecord::Base
   def make_transaction_history
     if self.status_was == WithdrawRequest::STATUS[:pending] and self.status == WithdrawRequest::STATUS[:paid]
       transaction = self.build_transaction(:user_id => self.user.id,
-        :description => "Withdrawed amount of $#{self.amount} at #{self.updated_at.to_date}")
+        :description => "Withdrawed amount of $#{self.amount} at #{self.updated_at.to_date} via your #{self.payment_method}",
+        :amount => self.amount)
       transaction.save
     end
   end
@@ -46,7 +48,7 @@ class WithdrawRequest < ActiveRecord::Base
   end
 
   def check_if_has_payment_method
-    if self.user.payment_method.present?
+    if self.user.payment_methods.any?
       return true
     else
       errors[:base] << "Payment method not specified yet."
@@ -68,7 +70,7 @@ class WithdrawRequest < ActiveRecord::Base
   def notify_admin
     @notification = self.dashboard_notifications.new(
       :admin_user_id => AdminUser.first.id,
-      :content => "<a href='/admin/users/#{self.user.id}'>#{self.user.email}</a> wants to withdraw amount of : $#{self.amount.to_f}"
+      :content => "<a href='/admin/users/#{self.user.id}'>#{self.user.email}</a> wants to withdraw amount of : $#{self.amount.to_f} via #{self.payment_method}"
     )
     @notification.save
   end

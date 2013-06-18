@@ -57,24 +57,23 @@ class ExchangeObserver < ActiveRecord::Observer
           @amount = record.payment_amount.to_f
           @will_be_paid_to_user = @amount - (@amount/Constant::COMPANY_COMMISION_RATE)
           @will_be_paid_to_user = @will_be_paid_to_user.to_f
-          @old_credit = record.exchange.book.user.credit.to_f or 0.0
+          @old_credit = @payment_receiver.credit.to_f or 0.0
           @new_credit = @old_credit + @will_be_paid_to_user
           @payment_receiver.update_attribute(:credit, @new_credit)
-       
+
           if @exchange.package == 'buy'
             @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
-              :description => "Sold book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} and received amount of $#{@will_be_paid_to_user}")
+              :description => "Sold book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} and received amount of $#{@will_be_paid_to_user}",
+              :amount => @will_be_paid_to_user)
             @transaction.save
           else
             @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
-              :description => "Lend the book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} for #{@exchange.package == 'semester' ? "full semester" : (@exchange.duration.to_s + " " + @exchange.package).pluralize(@exchange.duration)} and received amount of $#{@will_be_paid_to_user}")
+              :description => "Lend the book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} for #{@exchange.package == 'semester' ? "full semester" : (@exchange.duration.to_s + " " + @exchange.package).pluralize(@exchange.duration)} and received amount of $#{@will_be_paid_to_user}",
+              :amount => @will_be_paid_to_user)
             @transaction.save
           end
-          begin
-            Notify.borrower_after_exchange_complete(record)
-            Notify.owner_after_exchange_complete(record)
-          rescue
-          end
+          Notify.delay.borrower_after_exchange_complete(record)
+          Notify.delay.owner_after_exchange_complete(record)
           record.exchange.destroy_other_pending_requests
           unless record.exchange.package == "buy"
             @returning_date = (@exchange.ending_date.to_date - Date.today)

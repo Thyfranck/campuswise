@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130614111459) do
+ActiveRecord::Schema.define(:version => 20130618113017) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -91,9 +91,10 @@ ActiveRecord::Schema.define(:version => 20130614111459) do
   create_table "dashboard_notifications", :force => true do |t|
     t.integer  "user_id"
     t.string   "content"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.integer  "admin_user_id"
+    t.integer  "withdraw_request_id"
     t.integer  "dashboardable_id"
     t.string   "dashboardable_type"
   end
@@ -174,8 +175,9 @@ ActiveRecord::Schema.define(:version => 20130614111459) do
     t.integer  "transactable_id"
     t.string   "transactable_type"
     t.text     "description"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",                                       :null => false
+    t.datetime "updated_at",                                       :null => false
+    t.decimal  "amount",            :precision => 10, :scale => 2
   end
 
   create_table "users", :force => true do |t|
@@ -212,10 +214,11 @@ ActiveRecord::Schema.define(:version => 20130614111459) do
 
   create_table "withdraw_requests", :force => true do |t|
     t.integer  "user_id"
-    t.decimal  "amount",     :precision => 10, :scale => 2
+    t.decimal  "amount",         :precision => 10, :scale => 2
     t.string   "status"
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
+    t.string   "payment_method"
   end
 
 end

@@ -43,7 +43,7 @@ class Notify
     else
       @dashboard = record.dashboard_notifications.new(
         :user_id => @request_receiver.id,
-        :content => "Someone wants to borrow your book titled \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : ("to next" + " " + record.duration.to_s + " " + record.package).pluralize(record.duration)} (till #{record.ending_date.to_date})\" at the price $#{record.counter_offer.present? ? record.counter_offer.to_f : record.amount.to_f}.")
+        :content => "Someone wants to borrow your book titled \"<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)} </a> \" from \"#{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : ("next" + " " + record.duration.to_s + " " + record.package).pluralize(record.duration)} (till #{record.ending_date.to_date})\" at the price $#{record.counter_offer.present? ? record.counter_offer.to_f : record.amount.to_f}.")
       @dashboard.save
     end
     Notification.notify_book_owner(record).deliver
@@ -70,7 +70,7 @@ class Notify
     @request_receiver = @requested_book.user
     @dashboard = @exchange.dashboard_notifications.new(
       :user_id => @request_receiver.id,
-      :content => "Congratulation,the book titled \"<a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)} </a> \" #{record.exchange.package == "buy" ? "sold": "borrowed"} successfully,at the price $#{record.amount.to_f}.#{record.exchange.package == "buy" ? "": "Please inform us at admin@campuswise.com when the book is returned."}"
+      :content => "Congratulation,the book titled \"<a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)} </a> \" #{record.exchange.package == "buy" ? "sold": "borrowed"} successfully,at the price $#{record.payment_amount.to_f}.#{record.exchange.package == "buy" ? "": "Please inform us at admin@campuswise.com when the book is returned."}"
     )
     @dashboard.save
     Notification.notify_book_owner_exchange_successfull(record).deliver

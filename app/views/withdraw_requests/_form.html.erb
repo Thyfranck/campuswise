@@ -16,9 +16,16 @@
 <%= form_for @withdraw_request do |f| %>
 
   <div class="control-group">
-    <%= f.label :amount, "Please Specify the Amount" %>
+    <%= f.label :amount, "Please specify the amount" %>
     <div class="controls">
       <%= f.text_field :amount, :class => 'number_field' %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= f.label :payment_method, "Please specify payment method" %>
+    <div class="controls">
+      <%= f.select :payment_method, options_for_select(@methods), :prompt => "Please Select", :required => true %>
     </div>
   </div>
 

@@ -60,7 +60,7 @@
       <b>Book Selling Price: $<%= @book.price.to_f %></b>
     </p>
   <% end %>
-    
+
   <% unless @book.available_for == Book::AVAILABLE_FOR[:sell] %>
     <p>
       <b> Available from:</b>
@@ -100,7 +100,7 @@
     <h5 style="color: red">This book is already borrowed or in a borrow process. You can't edit this book now.</h5>
   <% end %>
 
-  <% if current_user and @book.user != current_user %>
+  <% if current_user and @book.user != current_user and current_user.billing_setting.present? %>
     <% if current_user.already_borrowed_this_book(@book.id) %>
       <h5 style="color: red">You borrowed this book</h5>
     <% elsif current_user.already_sent_request(@book.id) %>
@@ -129,7 +129,7 @@
     <%= link_to 'Sign Up!', new_user_path, :class => 'btn btn-primary' %>
   <% end %>
 </div>
-<% if current_user and @book.user != current_user %>
+<% if current_user and @book.user != current_user and current_user.billing_setting.present? %>
   <% unless @book.available_for == Book::AVAILABLE_FOR[:rent] %>
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-header">
@@ -182,6 +182,11 @@
   <% end %>
 <% end %>
 
+<% if current_user and @book.user != current_user and current_user.billing_setting.blank? %>
+  <div class="span3 offset1">
+    <h4 style="color:red">Please provide your payment info in payment settings to borrow/buy this book.</h4>
+  </div>
+<% end %>
 
 
 

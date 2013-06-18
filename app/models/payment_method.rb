@@ -21,4 +21,10 @@ class PaymentMethod < ActiveRecord::Base
   validates :card_number, :presence => true, :if => Proc.new{|b| b.payment_method_type == PaymentMethod::TYPE[:card]}
   validates :paypal, :presence => true, :if => Proc.new{|b| b.payment_method_type == PaymentMethod::TYPE[:paypal]}
 
+  before_save :check_user_payment_methods
+
+  def check_user_payment_methods
+    return false if self.user.payment_methods.count > 3
+  end
+
 end

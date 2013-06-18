@@ -4,7 +4,7 @@
   <% end %>
 </div>
 <div class="pull-right">
-  <h4 style="color:green">Your Total Credit is now $<%= current_user.credit.to_f %></h4>
+  <h4 style="color:green">Your balance is now $<%= current_user.balance.to_f %></h4>
 </div>
 
 <% if @withdraw_requests.present? %>

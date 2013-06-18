@@ -19,7 +19,7 @@
   <div class="control-group">
     <%= f.label :payment_method_type %>
     <div class="controls">
-      <%= f.select :payment_method_type, options_for_select(Constant::PAYMENT_METHOD_TYPE), :prompt => "Please Select", :required => true %>
+      <%= f.select :payment_method_type, options_for_select(@methods), :prompt => "Please Select", :required => true %>
     </div>
   </div>
 

@@ -59,13 +59,6 @@ $(document).ready(function(){
         }
     })
 
-    $('#exchange_package_buy').change(function(){
-        if($('#exchange_package_buy').is(':checked')){
-            $('.exchange_amount').hide();
-            $('.exchange_submit_section').show();
-        }
-    })
-
     $('#continue').click(function(){
         var myRegEx = new RegExp('[0-9]+');       
         var rate1 = ($('#day_rate').html());

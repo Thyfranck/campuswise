@@ -1,58 +1,31 @@
-You can manage your borrow requests Here.
+<% if @transactions.any? %>
+  <table class="table table-hover table-bordered">
+    <thead>
+    <th colspan="3">Description</th>
+    <th style="text-align: right">Amount</th>
+  </thead>
 
-<div class="tabbable"> <!-- Only required for left/right tabs -->
-  <ul class="nav nav-tabs">
-    <li class="active"><a href="#tab1" data-toggle="tab">Total Balance</a></li>
-    <li><a href="#tab2" data-toggle="tab">Credit Transactions (<%= @credit_transactions.count %>)</a></li>
-    <li><a href="#tab3" data-toggle="tab">Debit Transactions (<%= @debit_transactions.count %>)</a></li>
-  </ul>
-  <div class="tab-content">
-    <div class="tab-pane active" id="tab1">
-      <% if @user.transactions.any? %>
-      <h4>My total credit :<h4 style="color:green">$<%= @user.credit %></h4></h4>
-      <br/>
-      <h4>Total withdrawn amount :<h4 style="color:red">$<%= @user.debit %></h4></h4>
-      <% else %>
-        Currently Empty.
-      <% end %>
-    </div>
-    <div class="tab-pane" id="tab2">
-      <% if @credit_transactions.any? %>
-        <%= will_paginate @credit_transactions %>
-        <table class="table table-hover table-bordered">
-          <thead>
-          <th>Description</th>
-          </thead>
-          <% @credit_transactions.each do |transaction| %>
-            <tbody>
-              <tr>
-                <td><%= transaction.description %></td>
-              </tr>
-            </tbody>
-          <% end %>
-        </table>
-      <% else %>
-        Currently Empty.
-      <% end %>
-    </div>
-    <div class="tab-pane" id="tab3">
-      <% if @debit_transactions.any? %>
-        <%= will_paginate @debit_transactions %>
-        <table class="table table-hover table-bordered">
-          <thead>
-          <th>Description</th>
-          </thead>
-          <% @debit_transactions.each do |transaction| %>
-            <tbody>
-              <tr>
-                <td><%= transaction.description %></td>
-              </tr>
-            </tbody>
-          <% end %>
-        </table>
-      <% else %>
-        Currently Empty.
-      <% end %>
-    </div>
-  </div>
-</div>
+  <tbody>
+    <% @transactions.each do |transaction| %>
+      <tr>
+        <td colspan="3"><%= transaction.description %></td>
+        <td style="text-align: right"><%= transaction.transactable_type == "Exchange" ? "+ " : "- " %>$<%= transaction.amount.to_f %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td colspan="3" style="text-align: right">Total Credit</td>
+      <td style="text-align: right">+ $<%= @user.credit %></td>
+    </tr>
+    <tr>
+      <td colspan="3" style="text-align: right">Total Withdraw</td>
+      <td style="text-align: right">- $<%= @user.debit %></td>
+    </tr>
+    <tr>
+      <td colspan="3" style="text-align: right">Total Balance</td>
+      <td style="text-align: right">$<%= @user.balance %></td>
+    </tr>
+  </tbody>
+  </table>
+<% else %>
+  <h4>Currently Empty</h4>
+<% end %>

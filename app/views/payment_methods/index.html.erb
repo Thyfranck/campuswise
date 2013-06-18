@@ -1,0 +1,12 @@
+<h4>Withdrawal Methods</h4>
+<% if @payment_methods.any? %>
+<% @payment_methods.each_with_index do |payment_method, index| %>
+<%= index + 1 %>.<%= link_to payment_method.payment_method_type, payment_method_path(payment_method) %><br/>
+<br/>
+<% end %>
+<% else %>
+<h4>No withdrawal method specified.</h4>
+<% end %>
+<% if @payment_methods.count < 3 %>
+  <%= link_to 'New', new_payment_method_path, :class => 'btn btn-mini btn-primary' %>
+<% end %>

@@ -48,14 +48,11 @@ class ExchangesController < ApplicationController
       if @exchange.counter_offer.present?
         @status = params[:agree]
         if @status == "agree"
-          if @exchange.counter_offer_count == 0
-            if @exchange.user == current_user
-              @exchange.update_attributes(:amount => @exchange.counter_offer.to_f, :counter_offer_last_made_by => current_user.id)
-            else
-              @exchange.update_attributes(:amount => @exchange.counter_offer.to_f)
-            end
-          else
+          if @exchange.book.user == current_user
             @exchange.update_attributes(:amount => @exchange.counter_offer.to_f, :counter_offer_last_made_by => current_user.id)
+          end
+          if @exchange.user == current_user
+            @exchange.update_attributes(:counter_offer => @exchange.amount.to_f)
           end
           start(@exchange, format)
         elsif @status == "disagree"
@@ -74,8 +71,8 @@ class ExchangesController < ApplicationController
         elsif @status == "negotiate"
           @amount = params[:negotiate]
           if @exchange.book.user == current_user
-            if @exchange.amount == @amount
-              format.html { redirect_to dashboard_path, :notice => "Please provide a price that is lower than the previous one."}
+            if @exchange.amount.to_f == @amount.to_f
+              format.html { redirect_to dashboard_path, :alert => "Please provide a price that is lower than the previous one."}
             else
               if @exchange.update_attributes(:amount => @amount, :counter_offer_last_made_by => current_user.id, :counter_offer_count => @exchange.counter_offer_count + 1)
                 Notify.delay.borrower_about_owner_want_to_negotiate(@exchange)

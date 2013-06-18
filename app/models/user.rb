@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
   has_many :dashboard_notifications, :dependent => :destroy
   has_one :billing_setting, :dependent => :destroy
   has_many :billing_events
-  has_one :payment_method, :dependent => :destroy
+  has_many :payment_methods, :dependent => :destroy
   has_many :withdraw_requests
   has_many :transactions
   
@@ -41,6 +41,10 @@ class User < ActiveRecord::Base
   #  before_update :check_if_phone_changed
   #  after_update :send_sms_verification
   before_update :check_if_email_changed
+
+  def balance
+    self.credit.to_f - self.debit.to_f
+  end
 
   def check_if_email_changed
     if self.email_changed?

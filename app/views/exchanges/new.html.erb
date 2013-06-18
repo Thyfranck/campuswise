@@ -70,32 +70,33 @@
             $ <span id="semester_rate"><%= @book.loan_semester %></span> / semester
           </div>
         </div>
-      </div>
-      <br/>
-      <br/>
-      <% unless @book.available_for == Book::AVAILABLE_FOR[:sell] %>
-        <div class="row span12 exchange_amount" style="display:none">
-          <legend>
-            <h5>Please Specify the duration</h5>
-          </legend>
-          <h5 style="color:#fd492a">This book is available from <%= @book.available_from.to_date %> to <%= @book.returning_date.to_date %>.</h5>
-          <br/>
-          <br/>
-          <div class="span10 offest2" style="text-align:center">
-            <div class="control-group">
-              <%= f.label :duration, "I want to borrow this book from date", :class => 'control-label' %>
-              <div class="controls">
-                <%= f.date_select :starting_date, {}, :class => 'span3 selectpicker' %>
-              </div>
-              To
-              <div class="controls">
-                <%= f.number_field :duration,:class => 'input-small number_field'%><div class="amount_text"></div>
-              </div>
+      <% end %>
+    </div>
+    <br/>
+    <br/>
+    <% unless @book.available_for == Book::AVAILABLE_FOR[:sell] %>
+      <div class="row span12 exchange_amount" style="display:none">
+        <legend>
+          <h5>Please Specify the duration</h5>
+        </legend>
+        <h5 style="color:#fd492a">This book is available from <%= @book.available_from.to_date %> to <%= @book.returning_date.to_date %>.</h5>
+        <br/>
+        <br/>
+        <div class="span10 offest2" style="text-align:center">
+          <div class="control-group">
+            <%= f.label :duration, "I want to borrow this book from date", :class => 'control-label' %>
+            <div class="controls">
+              <%= f.date_select :starting_date, {}, :class => 'span3 selectpicker' %>
+            </div>
+            To
+            <div class="controls">
+              <%= f.number_field :duration,:class => 'input-small number_field'%><div class="amount_text"></div>
             </div>
           </div>
         </div>
-      <% end %>
+      </div>
     <% end %>
+
     <div class="exchange_submit_section" style="display:none">
       <a href="#myModal" role="button" class="btn" data-toggle="modal" id="continue">Continue</a>
     </div>

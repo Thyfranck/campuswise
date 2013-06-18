@@ -89,17 +89,11 @@
       <li>
         <%= link_to "My Wallet", wallet_user_path(current_user) %>
       </li>
-      <% if current_user.payment_method.present? %>
-        <li class="<%= "active" if current_page?(payment_method_path(current_user.payment_method)) %>">
-          <%= link_to "Withdrawal Methods", payment_method_path(current_user.payment_method) %>
-        </li>
-      <% else %>
-        <li class="<%= "active" if current_page?(new_payment_method_path) %>">
-          <%= link_to "Withdrawal Methods", new_payment_method_path %>
-        </li>
-      <% end %>
+      <li class="<%= "active" if current_page?(payment_methods_path) %>">
+        <%= link_to "Withdrawal Methods", payment_methods_path %>
+      </li>
       <li>
-        <%= link_to "Withdraw Balance", withdraw_requests_path %>
+        <%= link_to "Withdraw Fund", new_withdraw_request_path %>
       </li>
     </ul>
   </li>

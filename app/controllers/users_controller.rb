@@ -179,6 +179,7 @@ class UsersController < ApplicationController
 
   def wallet
     @user = User.find(params[:id])
+    @transactions = @user.transactions.order("created_at DESC")
     @credit_transactions = @user.transactions.where(:transactable_type => Exchange).paginate(:page => params[:page], :per_page => 20)
     @debit_transactions = @user.transactions.where(:transactable_type => WithdrawRequest).paginate(:page => params[:page], :per_page => 20)
     respond_to do |format|
