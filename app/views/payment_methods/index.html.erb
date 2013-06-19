@@ -5,7 +5,6 @@
 <br/>
 <% end %>
 <% else %>
-<h4>No withdrawal method specified.</h4>
 <% end %>
 <% if @payment_methods.count < 3 %>
   <%= link_to 'New', new_payment_method_path, :class => 'btn btn-mini btn-primary' %>

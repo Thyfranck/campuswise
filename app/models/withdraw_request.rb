@@ -6,7 +6,7 @@ class WithdrawRequest < ActiveRecord::Base
   has_one :transaction, :as => :transactable
 
   validates :amount, :presence => true, :numericality => {:greater_than => 0}
-  validates :payment_method, :inclusion => {:in => Constant::PAYMENT_METHOD_TYPE}
+  validates :payment_method, :presence => true
 
   STATUS = {
     :paid => "APPROVED",

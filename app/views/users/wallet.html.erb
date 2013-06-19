@@ -14,11 +14,11 @@
     <% end %>
     <tr>
       <td colspan="3" style="text-align: right">Total Credit</td>
-      <td style="text-align: right">+ $<%= @user.credit %></td>
+      <td style="text-align: right">+ $<%= @user.credit.present? ? "#{@user.credit}" : "00.0" %></td>
     </tr>
     <tr>
       <td colspan="3" style="text-align: right">Total Withdraw</td>
-      <td style="text-align: right">- $<%= @user.debit %></td>
+      <td style="text-align: right">- $<%= @user.debit.present? ? "#{@user.debit}" : "00.0" %></td>
     </tr>
     <tr>
       <td colspan="3" style="text-align: right">Total Balance</td>

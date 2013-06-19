@@ -18,7 +18,7 @@
     <% @withdraw_requests.each do |request| %>
       <tr>
         <td><%= request.created_at.to_date %></td>
-        <td>Requested for amount: $<%= request.amount.to_f %></td>
+        <td>Requested for amount: $<%= request.amount.to_f %> via <%= request.payment_method %></td>
         <td><%= request.status %></td>
       </tr>
     <% end %>

@@ -133,7 +133,7 @@
     <%= link_to 'Sign Up!', new_user_path, :class => 'btn btn-primary' %>
   <% end %>
 </div>
-<% if current_user and @book.user != current_user and current_user.billing_setting.present? %>
+<% if current_user and @book.available == true and @book.user != current_user and current_user.billing_setting.present? %>
   <% unless @book.available_for == Book::AVAILABLE_FOR[:rent] %>
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-header">
@@ -186,7 +186,7 @@
   <% end %>
 <% end %>
 
-<% if current_user and @book.user != current_user and current_user.billing_setting.blank? %>
+<% if current_user and @book.user != current_user and current_user.billing_setting.blank? and @book.available == true %>
   <div class="span3 offset1">
     <h4 style="color:red">Please provide your payment info in payment settings to borrow/buy this book.</h4>
   </div>
