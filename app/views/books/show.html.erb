@@ -28,7 +28,7 @@
       <%= @book.available == false ? "No" : "Yes" %>
     </p>
   <% end %>
-  <% unless @book.requested == true or @book.available == false  %>
+  <% unless @book.available_for == nil or @book.available == false or @book.requested == true  %>
     <p>
       <b>This book is available for : </b>
       <%= @book.available_for == Book::AVAILABLE_FOR[:both] ? "Sell and Rent" : @book.available_for.capitalize %>
@@ -102,7 +102,11 @@
 
   <% if current_user and @book.user != current_user and current_user.billing_setting.present? %>
     <% if current_user.already_borrowed_this_book(@book.id) %>
-      <h5 style="color: red">You borrowed this book</h5>
+      <% if @book.exchanges.where('status = ? and package = ? and user_id = ?',Exchange::STATUS[:accepted],'buy', current_user.id).present? %>
+        <h5 style="color: red">You sold this book</h5>
+      <% else %>
+        <h5 style="color: red">You borrowed this book</h5>
+      <% end %>
     <% elsif current_user.already_sent_request(@book.id) %>
       <h5 style="color: red">Your borrow request for this book is pending for approval</h5>
     <% elsif @book.available == false %>

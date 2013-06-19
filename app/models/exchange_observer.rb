@@ -60,7 +60,7 @@ class ExchangeObserver < ActiveRecord::Observer
           @old_credit = @payment_receiver.credit.to_f or 0.0
           @new_credit = @old_credit + @will_be_paid_to_user
           @payment_receiver.update_attribute(:credit, @new_credit)
-
+          
           if @exchange.package == 'buy'
             @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
               :description => "Sold book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} and received amount of $#{@will_be_paid_to_user}",

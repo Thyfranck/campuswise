@@ -70,12 +70,12 @@ class Notify
     @request_receiver = @requested_book.user
     @dashboard = @exchange.dashboard_notifications.new(
       :user_id => @request_receiver.id,
-      :content => "Congratulation,the book titled \"<a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)} </a> \" #{record.exchange.package == "buy" ? "sold": "borrowed"} successfully,at the price $#{record.payment_amount.to_f}.#{record.exchange.package == "buy" ? "": "Please inform us at admin@campuswise.com when the book is returned."}"
+      :content => "Congratulation,the book titled \"<a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)} </a> \" #{record.exchange.package == "buy" ? "sold": "lend"} successfully,at the price $#{record.payment_amount.to_f}.#{record.exchange.package == "buy" ? "": "Please inform us at admin@campuswise.com when the book is returned."}"
     )
     @dashboard.save
     Notification.notify_book_owner_exchange_successfull(record).deliver
     @to = @request_receiver.phone
-    @body = "Congratulation,the book titled: \"#{@requested_book.title.truncate(30)}\" has been #{record.exchange.package == "buy" ? "sold": "borrowed"} successfully. -Campuswise"
+    @body = "Congratulation,the book titled: \"#{@requested_book.title.truncate(30)}\" has been #{record.exchange.package == "buy" ? "sold": "lend"} successfully. -Campuswise"
     TwilioRequest.send_sms(@body, @to)
   end
 

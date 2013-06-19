@@ -56,9 +56,11 @@ class Book < ActiveRecord::Base
     if self.available_for == Book::AVAILABLE_FOR[:sell] or self.requested == true
       return true
     else
-      if self.returning_date < self.available_from
-        errors[:base] << "Invalid date range for rent."
-        return false
+      if self.returning_date.present? and self.available_from.present?
+        if self.returning_date < self.available_from
+          errors[:base] << "Invalid date range for rent."
+          return false
+        end
       end
     end
   end

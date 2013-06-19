@@ -92,7 +92,11 @@ class ExchangesController < ApplicationController
           end
         end
       else
-        start(@exchange, format)
+        if @exchange.book.user == current_user
+          start(@exchange, format)
+        else
+          format.html {redirect_to dashboard_path, :alert => "Unauthorized"}
+        end
       end
     end
   end
