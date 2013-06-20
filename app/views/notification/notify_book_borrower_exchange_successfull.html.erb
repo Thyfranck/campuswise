@@ -1,7 +1,7 @@
 Hello <%= @user.name %>,<br/>
 <br/>
 Congratulation,<br/>
-You have successfully <%= @exchange.package == "buy" ? "purchased" : "borrowed" %> the book titled : " <%= @book.title %> " and payment amount of $<%= @exchange.amount.to_f  %> was charged from your account.<br/>
+You have successfully <%= @exchange.package == "buy" ? "purchased" : "borrowed" %> the book titled : " <%= @book.title %> " and payment amount of <%= number_to_currency(@exchange.amount.to_f, :prescision => 2)  %> was charged from your account.<br/>
 <br/>
 Here is your <%= @exchange.package == "buy" ? "purchase" : "borrow" %> details:
 <br/>
@@ -34,7 +34,7 @@ Here is the <%= @exchange.package == "buy" ? "seller's" : "borrower's" %> contac
 <% unless @exchange.package == "buy"  %>
   Please return the book to the owner after the renting period is over.
   <br/>
-  Please also note if you don't return the book timely after the renting period is over we will charge you the full book price $<%= @book.purchase_price %>.
+  Please also note if you don't return the book timely after the renting period is over we will charge you the full book price <%= number_to_currency(@book.purchase_price, :prescision => 2) %>.
   To avoid such kind of situation please return this book to the owner.
   <br/>
 <% end %>

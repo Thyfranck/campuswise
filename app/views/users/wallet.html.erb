@@ -9,20 +9,20 @@
     <% @transactions.each do |transaction| %>
       <tr>
         <td colspan="3"><%= transaction.description %></td>
-        <td style="text-align: right"><%= transaction.transactable_type == "Exchange" ? "+ " : "- " %>$<%= transaction.amount.to_f %></td>
+        <td style="text-align: right"><%= transaction.transactable_type == "Exchange" ? "+ " : "- " %><%= number_to_currency(transaction.amount.to_f, :prescision => 2) %></td>
       </tr>
     <% end %>
     <tr>
       <td colspan="3" style="text-align: right">Total Credit</td>
-      <td style="text-align: right">+ $<%= @user.credit.present? ? "#{@user.credit}" : "00.0" %></td>
+      <td style="text-align: right">+ <%= @user.credit.present? ? "#{number_to_currency(@user.credit, :prescision => 2)}" : "00.0" %></td>
     </tr>
     <tr>
       <td colspan="3" style="text-align: right">Total Withdraw</td>
-      <td style="text-align: right">- $<%= @user.debit.present? ? "#{@user.debit}" : "00.0" %></td>
+      <td style="text-align: right">- <%= @user.debit.present? ? "#{number_to_currency(@user.debit, :prescision => 2)}" : "00.0" %></td>
     </tr>
     <tr>
       <td colspan="3" style="text-align: right">Total Balance</td>
-      <td style="text-align: right">$<%= @user.balance %></td>
+      <td style="text-align: right"><%= number_to_currency(@user.balance, :prescision => 2) %></td>
     </tr>
   </tbody>
   </table>

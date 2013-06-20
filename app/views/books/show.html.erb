@@ -38,26 +38,26 @@
         <b> Loan Rates</b>
       <ul>
         <% if @book.loan_daily.present? %>
-          <li>Daily : $<%= @book.loan_daily.to_f %></li>
+          <li>Daily : <%= number_to_currency(@book.loan_daily.to_f, :prescision => 2) %></li>
         <% end %>
         <% if @book.loan_weekly.present? %>
-          <li>Weekly : $<%= @book.loan_weekly.to_f %></li>
+          <li>Weekly : <%= number_to_currency(@book.loan_weekly.to_f, :prescision => 2) %></li>
         <% end %>
         <% if @book.loan_monthly.present? %>
-          <li>Monthly : $<%= @book.loan_monthly.to_f %></li>
+          <li>Monthly : <%= number_to_currency(@book.loan_monthly.to_f, :prescision => 2) %></li>
         <% end %>
         <% if @book.loan_semester.present? %>
-          <li>Full Semester : $<%= @book.loan_semester.to_f %></li>
+          <li>Full Semester : <%= number_to_currency(@book.loan_semester.to_f, :prescision => 2)%></li>
         <% end %>
       </ul>
     </p>
   <% end %>
   <p>
-    <b>Book Purchase Price: $<%= @book.purchase_price.to_f %></b>
+    <b>Book Purchase Price: <%= number_to_currency(@book.purchase_price.to_f, :prescision => 2) %></b>
   </p>
   <% unless @book.available_for == Book::AVAILABLE_FOR[:rent] %>
     <p>
-      <b>Book Selling Price: $<%= @book.price.to_f %></b>
+      <b>Book Selling Price: <%= number_to_currency(@book.price.to_f, :prescision => 2) %></b>
     </p>
   <% end %>
 
@@ -164,7 +164,7 @@
       </div>
       <div class="modal-body span5">
         <h4>Total amount to pay</h4>
-        <h1 class="total_amount_to_pay" style="color:red">$<%= @book.price.to_f %></h1>
+        <h1 class="total_amount_to_pay" style="color:red"><%= number_to_currency(@book.price.to_f, :prescision => 2) %></h1>
       </div>
       <%= form_for @exchange = Exchange.new  do |f| %>
         <div class="modal-body span5">

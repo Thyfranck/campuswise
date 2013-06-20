@@ -36,7 +36,7 @@ class Exchange < ActiveRecord::Base
 
   def check_counter_offer
     if self.amount.to_f <= self.counter_offer.to_f or self.counter_offer.to_f < 0
-      errors[:base] << "Counter offer must be less than actual amount and must be greater than $1"
+      errors[:base] << "Counter offer must be less than actual amount and must be greater than $1.00"
       return false 
     end if self.counter_offer.present?
   end

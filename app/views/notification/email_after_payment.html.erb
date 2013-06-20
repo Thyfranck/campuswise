@@ -1,7 +1,7 @@
 Hello <%= @user.name %>,
 <br/>
 <br/>
-Payment received amount of : $<%= @amount %> for the book titled "<%= @book.title %>" with thankfully.
+Payment received amount of : <%= number_to_currency(@amount, :prescision => 2) %> for the book titled "<%= @book.title %>" with thankfully.
 <br/>
 <%= @exchange.package == "buy" ? "Selling" : "Renting" %> process will be completed shortly and we will inform you when it is done.
 <br/>

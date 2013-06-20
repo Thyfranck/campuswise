@@ -3,6 +3,13 @@ $(document).ready(function(){
         $('.available_for').show();
     }
 
+    if($('#book_title').length != 0){
+        if ($('#book_title').val().length > 0 || $('#book_isbn').val().length > 0 || $('#book_author').val().length > 0 || $('#book_publisher').val().length > 0 || $('#book_purchase_price').val().length > 0){
+            $('.book_info').show();
+        }
+    }
+    
+
 
     if($('#book_available_for_both').is(':checked')){
         $('.available_dates').show();

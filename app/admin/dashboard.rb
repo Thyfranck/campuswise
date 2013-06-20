@@ -33,10 +33,10 @@ ActiveAdmin.register_page "Dashboard" do
             td ": #{Exchange.accepted.count}"
             tr
             td "Total PAID Amount"
-            td ": $#{Payment.sum(&:payment_amount).to_f}"
+            td ": #{number_to_currency(Payment.sum(&:payment_amount).to_f, :prescision => 2)}"
             tr
             td "Total Compay Revenue"
-            td ": $#{Payment.sum(&:payment_amount) *(Constant::COMPANY_COMMISION_RATE)/100}"
+            td ": #{number_to_currency(Payment.sum(&:payment_amount) *(Constant::COMPANY_COMMISION_RATE)/100, :prescision => 2)}"
             tr
             td "Total Withdraw Request"
             td ": #{WithdrawRequest.count}"

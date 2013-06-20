@@ -4,7 +4,7 @@
   <% end %>
 </div>
 <div class="pull-right">
-  <h4 style="color:green">Your balance is now $<%= current_user.balance.to_f %></h4>
+  <h4 style="color:green">Your balance is now <%= number_to_currency(current_user.balance.to_f, :prescision => 2) %></h4>
 </div>
 
 <% if @withdraw_requests.present? %>
@@ -18,7 +18,7 @@
     <% @withdraw_requests.each do |request| %>
       <tr>
         <td><%= request.created_at.to_date %></td>
-        <td>Requested for amount: $<%= request.amount.to_f %> via <%= request.payment_method %></td>
+        <td>Requested for amount: <%= number_to_currency(request.amount.to_f, :prescision => 2) %> via <%= request.payment_method %></td>
         <td><%= request.status %></td>
       </tr>
     <% end %>

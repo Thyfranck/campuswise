@@ -28,7 +28,7 @@
               <%= f.radio_button :package , 'day', :class => 'radio'%>
             </div>
             <br/>
-            $ <span id="day_rate"><%= @book.loan_daily.to_f %></span> / day
+            $<span id="day_rate"><%= number_with_precision(@book.loan_daily.to_f, :precision => 2) %></span> / day
           </div>
         </div>
       <% end %>
@@ -41,7 +41,7 @@
               <%= f.radio_button :package ,'week' ,:class => 'radio'%>
             </div>
             <br/>
-            $ <span id="week_rate"><%= @book.loan_weekly %></span> / week
+            $ <span id="week_rate"><%= number_with_precision(@book.loan_weekly, :precision => 2) %></span> / week
           </div>
         </div>
       <% end %>
@@ -54,7 +54,7 @@
               <%= f.radio_button :package ,'month' ,:class => 'radio'%>
             </div>
             <br/>
-            $ <span id="month_rate"><%= @book.loan_monthly %></span> / month
+            $ <span id="month_rate"><%= number_with_precision(@book.loan_monthly, :precision => 2) %></span> / month
           </div>
         </div>
       <% end %>
@@ -67,7 +67,7 @@
               <%= f.radio_button :package ,'semester'%>
             </div>
             <br/>
-            $ <span id="semester_rate"><%= @book.loan_semester %></span> / semester
+            $ <span id="semester_rate"><%= number_with_precision(@book.loan_semester, :precision => 2) %></span> / semester
           </div>
         </div>
       <% end %>
@@ -132,7 +132,7 @@
       <div class="modal-body span5">
         <h4>Total amount to pay</h4>
         <h1 class="total_amount_to_pay" style="color:red"></h1>
-        <p> + book price ($<%= @book.purchase_price %>) if you don't return this book in time. </p>
+        <p> + book price (<%= number_to_currency(@book.purchase_price.to_f, :prescision => 2) %>) if you don't return this book in time. </p>
       </div>
       <div class="modal-body span5">
         <div class="control-group">
