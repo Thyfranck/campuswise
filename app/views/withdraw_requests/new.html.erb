@@ -5,7 +5,7 @@
 
 <div class="span4 pull-right withdraw_request_sidebar">
   <legend>
-  <h4 style="color:green">Your balance is now $<%= current_user.balance.to_f %></h4>
+  <h4 style="color:green">Your balance is now <%= number_to_currency(current_user.balance.to_f, :prescision => 2) %></h4>
   </legend>
   <%= link_to 'Withdraw requests history', withdraw_requests_path %><br/>
   <%= link_to 'Transaction history',  wallet_user_path(current_user) %>

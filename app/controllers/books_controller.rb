@@ -93,7 +93,7 @@ class BooksController < ApplicationController
 
   def show_search
     if params[:google_book_id]
-      @book = GoogleBooks.search(params[:google_book_id]).first
+      @book = GoogleBooks.search(params[:google_book_id], {}, "4.2.2.1").first
     elsif params[:db_book_id]
       @book = Book.find(params[:db_book_id])
     end
@@ -128,7 +128,7 @@ class BooksController < ApplicationController
       session[:book_page] = 1
     end
     if params[:value]
-      @google_books  = GoogleBooks.search(params[:value], {:count => 15, :page => session[:book_page] })
+      @google_books  = GoogleBooks.search(params[:value], {:count => 15, :page => session[:book_page] }, "4.2.2.1")
       @google_books = prepare(@google_books)
     elsif params[:book_isbn_for_price]
       res = Amazon::Ecs.item_search(params[:book_isbn_for_price], {:response_group => "Medium", :search_index => 'Books'})
@@ -169,7 +169,7 @@ class BooksController < ApplicationController
   end
 
   def campus_bookshelf
-    @books = current_school.books.paginate(:page => params[:page], :per_page => 6)
+    @books = current_school.books.available_now.date_not_expired.paginate(:page => params[:page], :per_page => 6)
     render :action => 'available' if current_user.present?
     render :layout => "application", :template => "books/public_search" if current_user.blank?
   end

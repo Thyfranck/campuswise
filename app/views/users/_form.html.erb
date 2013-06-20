@@ -1,8 +1,12 @@
 <%= form_for @user, :html => { :class => 'form-horizontal' } do |f| %>
   <fieldset>
     <legend>
+      <% if controller.action_name == 'new' %>
+      Sign Up
+      <% else %>
       <%= controller.action_name.capitalize %>
       User
+      <% end %>
     </legend>
 
     <% if @user.errors.any? %>
@@ -71,7 +75,7 @@
     <div class="form-actions <%= "no_background_color" if @user.new_record? %>">
       <%= f.submit :class => 'btn btn-primary have_a_account' %>
       <% if @user.new_record? %>
-        <%= link_to "Already Have a account", login_path(:school => @school), :class => "have_a_account btn btn-info" %>
+        <%= link_to "I Already Have An Account", login_path(:school => @school), :class => "have_a_account btn btn-info" %>
       <% end %>
     </div>
   <% end %>

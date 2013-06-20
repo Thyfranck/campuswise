@@ -61,6 +61,10 @@ class Book < ActiveRecord::Base
           errors[:base] << "Invalid date range for rent."
           return false
         end
+        if self.available_from < Date.tomorrow or self.returning_date < Date.tomorrow
+          errors[:base] << "'Available From' date must be start from tomorrow date."
+          return false
+        end
       end
     end
   end
@@ -87,7 +91,7 @@ class Book < ActiveRecord::Base
 
 
   def set_google(book_id)
-    google_book = GoogleBooks.search(book_id).first
+    google_book = GoogleBooks.search(book_id, {}, "4.2.2.1").first
     self.title = google_book.title
     self.author = google_book.authors
     self.publisher = google_book.publisher
@@ -106,7 +110,7 @@ class Book < ActiveRecord::Base
 
   def set_google_image
     if self.image.blank?
-      book = GoogleBooks.search("isbn:#{self.isbn}").first
+      book = GoogleBooks.search("isbn:#{self.isbn}",{}, "4.2.2.1").first
       if book
         image_link = book.image_link(:zoom => 1)
         agent = Mechanize.new

@@ -1,4 +1,9 @@
 class WithdrawRequest < ActiveRecord::Base
+
+  def helpers
+    ActionController::Base.helpers
+  end
+
   attr_accessible :amount, :user_id, :payment_method
 
   belongs_to :user
@@ -27,7 +32,7 @@ class WithdrawRequest < ActiveRecord::Base
   def make_transaction_history
     if self.status_was == WithdrawRequest::STATUS[:pending] and self.status == WithdrawRequest::STATUS[:paid]
       transaction = self.build_transaction(:user_id => self.user.id,
-        :description => "Withdrawed amount of $#{self.amount} at #{self.updated_at.to_date} via your #{self.payment_method}",
+        :description => "Withdrawed amount of #{helpers.number_to_currency(self.amount, :prescision => 2)} at #{self.updated_at.to_date} via your #{self.payment_method}",
         :amount => self.amount)
       transaction.save
     end
@@ -70,7 +75,7 @@ class WithdrawRequest < ActiveRecord::Base
   def notify_admin
     @notification = self.dashboard_notifications.new(
       :admin_user_id => AdminUser.first.id,
-      :content => "<a href='/admin/users/#{self.user.id}'>#{self.user.email}</a> wants to withdraw amount of : $#{self.amount.to_f} via #{self.payment_method}"
+      :content => "<a href='/admin/users/#{self.user.id}'>#{self.user.email}</a> wants to withdraw amount of : #{helpers.number_to_currency(self.amount.to_f, :prescision => 2)} via #{self.payment_method}"
     )
     @notification.save
   end

@@ -1,6 +1,10 @@
 class ExchangeObserver < ActiveRecord::Observer
   observe :exchange, :book, :payment
 
+  def helpers
+    ActionController::Base.helpers
+  end
+
   def before_create(record)
     if record.class == Exchange
       return false if Book.find(record.book_id).available == false
@@ -63,12 +67,12 @@ class ExchangeObserver < ActiveRecord::Observer
           
           if @exchange.package == 'buy'
             @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
-              :description => "Sold book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} and received amount of $#{@will_be_paid_to_user}",
+              :description => "Sold book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} and received amount of #{helpers.number_to_currency(@will_be_paid_to_user, :prescision => 2)}",
               :amount => @will_be_paid_to_user)
             @transaction.save
           else
             @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
-              :description => "Lend the book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} for #{@exchange.package == 'semester' ? "full semester" : (@exchange.duration.to_s + " " + @exchange.package).pluralize(@exchange.duration)} and received amount of $#{@will_be_paid_to_user}",
+              :description => "Lend the book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} for #{@exchange.package == 'semester' ? "full semester" : (@exchange.duration.to_s + " " + @exchange.package).pluralize(@exchange.duration)} and received amount of #{helpers.number_to_currency(@will_be_paid_to_user, :prescision => 2)}",
               :amount => @will_be_paid_to_user)
             @transaction.save
           end

@@ -2,7 +2,7 @@ Dear <%= @user.name %>,
 <br/>
 <br/>
 You wanted to <%= @exchange.package == "buy" ? "sell" : "lend" %> the book titled
-'<%= @book.title %>' at the price $<%= @exchange.amount.to_f %>. But the <%= @exchange.package == "buy" ? "buyer" : "borrower" %>
+'<%= @book.title %>' at the price <%= number_to_currency(@exchange.amount.to_f, :prescision => 2) %>. But the <%= @exchange.package == "buy" ? "buyer" : "borrower" %>
 didn't agree with your requested price.
 <br/>
 <br/>
