@@ -32,7 +32,8 @@ Campuswise::Application.routes.draw do
   match '/borrow_requests' => 'users#borrow_requests'
   match '/smsresponse' => 'exchanges#process_sms'
 
-  match 'school-home' => 'static#school_home', :as => :school_home
+  match 'privacy-policy' => 'static#privacy_policy',  :as => :privacy_policy
+  match 'school-home' => 'static#school_home',        :as => :school_home
 
   resources :billing_settings, :except => [:index, :destroy]
   

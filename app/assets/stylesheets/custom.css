@@ -555,3 +555,16 @@ background: #808080; width: 5px;
 .campus-book-shelf {
     width: 64%;
 }
+
+#privacy-policy h5{
+    font-size: 18px;
+    margin-top: 25px;
+}
+
+#privacy-policy p{
+    text-align: justify;
+}
+
+#privacy-policy fieldset{
+    margin-bottom: 30px;
+}

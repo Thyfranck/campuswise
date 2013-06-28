@@ -33,4 +33,8 @@ class StaticController < ApplicationController
       end
     end
   end
+
+  def privacy_policy
+    
+  end
 end
