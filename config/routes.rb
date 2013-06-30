@@ -32,6 +32,7 @@ Campuswise::Application.routes.draw do
   match '/borrow_requests' => 'users#borrow_requests'
   match '/smsresponse' => 'exchanges#process_sms'
 
+  match 'contact-us' => 'static#contact_us',          :as => :contact_us
   match 'terms-and-conditions' => 'static#terms',     :as => :terms
   match 'privacy-policy' => 'static#privacy_policy',  :as => :privacy_policy
   match 'school-home' => 'static#school_home',        :as => :school_home
@@ -40,13 +41,17 @@ Campuswise::Application.routes.draw do
   
   resources :users, :except => [:index] do
     member do
-      get :activate
-      get :change_password
-      get :sms_verification
+      get  :activate
+      get  :change_password
+      get  :new_password
+      put :create_password
+      get  :new_phone
+      put :create_phone
+      get  :sms_verification
       post :verify_code
-      get :send_verification_sms
-      get :payment
-      get :wallet
+      get  :send_verification_sms
+      get  :payment
+      get  :wallet
     end
   end
 

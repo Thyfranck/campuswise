@@ -568,3 +568,7 @@ background: #808080; width: 5px;
 #privacy-policy fieldset{
     margin-bottom: 30px;
 }
+
+.form-horizontal .field_with_errors input{
+    border-color: #B94A48;
+}

@@ -22,25 +22,30 @@ class User < ActiveRecord::Base
   has_many :pending_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:pending]}'" ,:source => :exchanges #for request receiver(book owner)
   has_many :accepted_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:accepted]}'" ,:source => :exchanges #for request receiver(book owner)
 
-  
-
   attr_accessor :current_password
 
-  attr_accessible :name, :email, :password, :password_confirmation, :current_password,
+  attr_accessible :email, :password, :password_confirmation, :current_password,
     :facebook, :phone_verification, :phone_verified,
-    :school_id, :phone, :credit, :debit
-  
+    :school_id, :phone, :credit, :debit, :first_name, :last_name
+
   validates_uniqueness_of :email
   
-  validates :name, :presence => true
-  validates :phone, :presence => true
+  validates :first_name, :presence => true
+  validates :last_name, :presence => true
+
   validates_length_of :password, :minimum => 6, :if => :password
   validates_confirmation_of :password, :if => :password
   validates :email, :format =>  { :with => /^[\w\.\+-]{1,}\@([\da-zA-Z-]{1,}\.){1,}[\da-zA-Z-]{2,6}$/ }
-  before_create :send_sms_verification
-  #  before_update :check_if_phone_changed
-  #  after_update :send_sms_verification
+  
+  before_update :check_if_phone_changed
   before_update :check_if_email_changed
+
+  before_create :setup_activation
+  after_create :send_activation_needed_email!
+
+  def name
+    "#{first_name} #{last_name}"
+  end
 
   def balance
     self.credit.to_f - self.debit.to_f
@@ -112,7 +117,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  private
+  private  
   def generate_unique_token
     Digest::SHA1.hexdigest([Time.now, rand].join)
   end

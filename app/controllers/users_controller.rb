@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_filter :require_login, :except => [:new, :create, :activate, :sms_verification, :verify_code, :send_verification_sms ]
+  before_filter :require_login, :except => [:new, :create, :activate, :new_password, :create_password, :new_phone, :create_phone, :sms_verification, :verify_code, :send_verification_sms ]
 
   load_and_authorize_resource :only => [:edit, :update, :show, :destroy]
 
@@ -40,20 +40,14 @@ class UsersController < ApplicationController
     @school = School.find(params[:user][:school_id])
     @user = User.new(params[:user])
     @user.make_email_format
-    @user.set_phone_verification
+    
     respond_to do |format|
-      begin
-        if @user.save
-          format.html { redirect_to login_path(:school => @school), notice: 'Please Check your email and your phone for verification code.' }
-        else
-          @user.email = @user.email.gsub(/\@\S*/, "")
-          format.html { render action: "new" }
-          format.json { render json: @user.errors, status: :unprocessable_entity }
-        end
-      rescue Twilio::REST::RequestError
+      if @user.save
+        format.html { redirect_to login_path(:school => @school), notice: 'Please check your email to activate your account.' }
+      else
         @user.email = @user.email.gsub(/\@\S*/, "")
-        @user.errors.add(:phone, "number you entered #{@user.phone} is not a valid phone number")
         format.html { render action: "new" }
+        format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -91,12 +85,49 @@ class UsersController < ApplicationController
 
   def activate
     if (@user = User.load_from_activation_token(params[:id]))
-      @user.update_attribute(:phone_verified, "not_verified")
       @user.activate!
       @school = @user.school
-      redirect_to(login_path(:school => @school), :notice => 'User was successfully activated. Use your email and password to login.')
+      session[:user_tmp_id] = @user.id
+      redirect_to new_password_user_path(@user), :notice => "Successfully activated your account. Please create password for your account."
     else
       not_authenticated
+    end
+  end
+
+  def new_password
+    @user = User.find(session[:user_tmp_id])
+  end
+
+  def create_password
+    @user = User.find(session[:user_tmp_id])
+    respond_to do |format|
+      if @user.update_attributes(params[:user])
+        format.html { redirect_to new_phone_user_path(@user), :notice => "Please give your mobile phone number." }
+      else
+        format.html { render action: "new_password" }
+      end
+    end
+  end
+
+  def new_phone
+    @user = User.find(session[:user_tmp_id])
+  end
+
+  def create_phone
+    @user = User.find(session[:user_tmp_id])
+    
+    if @user.update_attributes(params[:user]) and @user.phone.present?
+      begin
+        @user.set_phone_verification
+        @user.save
+        @user.send_sms_verification
+        redirect_to sms_verification_user_path(@user), :notice => "Verification sms sent! Please check your mobile phone."
+      rescue Twilio::REST::RequestError
+        @user.errors.add(:phone, "number you entered #{@user.phone} is not a valid phone number")
+        render action: "new"
+      end
+    else
+      render action: "new_phone"
     end
   end
 
@@ -108,24 +139,24 @@ class UsersController < ApplicationController
   end
 
   def send_verification_sms
-    @user = User.find(params[:id])
+    @user = User.find(session[:user_tmp_id])
     @user.send_sms_verification
     redirect_to sms_verification_user_path(@user), :notice => "Verification sms sent! Please check your mobile phone."
   end
 
   def sms_verification
-    @user = User.find(params[:id])
+    @user = User.find(session[:user_tmp_id])
     respond_to do |format|
       if @user.phone_verified == "verified"
         format.html { redirect_to dashboard_path, :notice => "Logged in"}
       else
         format.html
-      end     
+      end
     end
   end
 
   def verify_code
-    @user = User.find(params[:id])
+    @user = User.find(session[:user_tmp_id])
     @verified_user = User.find_by_phone_verification(params[:code])
     if @verified_user == @user
       @user.verify_phone
@@ -150,7 +181,7 @@ class UsersController < ApplicationController
         format.html { redirect_to dashboard_path}
       else
         format.html { redirect_to dashboard_path, :alert => 'Error Occured'}
-      end  
+      end
     end
   end
 

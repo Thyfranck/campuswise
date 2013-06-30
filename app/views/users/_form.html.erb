@@ -25,11 +25,19 @@
     <%= f.hidden_field :school_id, :value => @school.id %>
 
     <div class="control-group">
-      <%= f.label :name, :class => 'control-label' %>
+      <%= f.label :first_name, :class => 'control-label' %>
       <div class="controls">
-        <%= f.text_field :name,:class => 'text_field',:required => true %>
+        <%= f.text_field :first_name,:class => 'text_field',:required => true %>
       </div>
     </div>
+    <div class="control-group">
+      <%= f.label :last_name, :class => 'control-label' %>
+      <div class="controls">
+        <%= f.text_field :last_name,:class => 'text_field',:required => true %>
+      </div>
+    </div>
+
+
     <% if @user.new_record? %>
       <div class="control-group">
         <%= f.label :email, :class => 'control-label' %>

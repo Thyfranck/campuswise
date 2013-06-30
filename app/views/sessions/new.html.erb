@@ -1,19 +1,19 @@
 <div class="span3"></div>
 <div class="span5">
-  <%= form_tag sessions_path, :method => :post,:class => 'form-horizontal' do %>
+  <%= form_tag sessions_path, :method => :post, :class => 'form-horizontal' do %>
     <fieldset>
       <legend>Login</legend>
       <div class="control-group">
-        <%= label_tag :email, "Email",:class => 'control-label' %>
+        <%= label_tag :email, "Email", :class => 'control-label' %>
         <div class="controls">
-          <%= text_field_tag :email, nil,:required => true %>
+          <%= text_field_tag :email, nil, :required => true %>
         </div>
       </div>
 
       <div class="control-group">
-        <%= label_tag :password, "Password",:class => 'control-label'%>
+        <%= label_tag :password, "Password", :class => 'control-label'%>
         <div class="controls">
-          <%= password_field_tag :password,nil ,:required => true %>
+          <%= password_field_tag :password, nil, :required => true %>
         </div>
       </div>
 
