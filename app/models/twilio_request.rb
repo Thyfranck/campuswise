@@ -17,7 +17,8 @@ class TwilioRequest
         :to => to,
         :body => body
       )
-    rescue Timeout::Error
+    rescue Timeout::Error => e
+      logger.info e.message
       return true
     end
   end

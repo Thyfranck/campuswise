@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130618113017) do
+ActiveRecord::Schema.define(:version => 20130630214341) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -182,7 +182,6 @@ ActiveRecord::Schema.define(:version => 20130618113017) do
   create_table "users", :force => true do |t|
     t.integer  "school_id"
     t.string   "email",                                                                                 :null => false
-    t.string   "name"
     t.string   "phone"
     t.string   "facebook"
     t.string   "crypted_password"
@@ -205,6 +204,8 @@ ActiveRecord::Schema.define(:version => 20130618113017) do
     t.string   "phone_verified",                                                 :default => "pending"
     t.decimal  "credit",                          :precision => 10, :scale => 2
     t.decimal  "debit",                           :precision => 10, :scale => 2
+    t.string   "first_name"
+    t.string   "last_name"
   end
 
   add_index "users", ["activation_token"], :name => "index_users_on_activation_token"

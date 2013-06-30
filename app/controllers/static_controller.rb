@@ -33,4 +33,14 @@ class StaticController < ApplicationController
       end
     end
   end
+
+  def privacy_policy
+  end
+
+  def terms
+  end
+
+  def contact_us
+    
+  end
 end
