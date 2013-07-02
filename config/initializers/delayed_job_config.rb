@@ -4,5 +4,5 @@ Delayed::Worker.max_attempts        = 5          # default 25
 Delayed::Worker.max_run_time        = 60.minutes # default 4.hours
 Delayed::Worker.read_ahead          = 15         # default 5
 
-Delayed::Worker.logger = Rails.logger
+Delayed::Worker.logger = Logger.new(File.join(Rails.root, 'log', 'delayed_job.log'))
 Delayed::Worker.logger.auto_flushing = true
