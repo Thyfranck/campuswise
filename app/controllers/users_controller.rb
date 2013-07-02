@@ -43,7 +43,7 @@ class UsersController < ApplicationController
     
     respond_to do |format|
       if @user.save
-        format.html { redirect_to login_path(:school => @school), notice: 'Please check your email to activate your account.' }
+        format.html { redirect_to school_home_path, notice: 'Please check your email to activate your account.' }
       else
         @user.email = @user.email.gsub(/\@\S*/, "")
         format.html { render action: "new" }

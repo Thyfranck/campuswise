@@ -1,0 +1,66 @@
+<div class="modal-header">
+  <h3 id="myModalLabel">Take a review</h3>
+</div>
+
+<% if @exchange.errors.any? %>
+  <div id="error_explanation" class="alert alert-error">
+    <h4>
+      Please fill correctly following <%= pluralize(@exchange.errors.count, "field") %>.
+    </h4>
+    <ul>
+      <% @exchange.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="modal-body span6">
+  <h4>Your credit card information</h4>
+  <p>
+    <b>Card Holder Name :</b>
+    <%= current_user.billing_setting.card_holder_name %>
+  </p>
+
+  <p>
+    <b>Card Number :</b>
+    <%= "*********#{current_user.billing_setting.card_last_four_digits}" %>
+  </p>
+
+  <p>
+    <b>Card Type :</b>
+    <%= current_user.billing_setting.card_type %>
+  </p>
+
+  <p>
+    <b>Card Expiry Date :</b>
+    <%= current_user.billing_setting.card_expiry_date.to_date %>
+  </p>
+</div>
+<div class="modal-body span5">
+  <h4>Total amount to pay</h4>
+  <h4 class="total_amount_to_pay" style="color:#23722E;">
+    <%= number_to_currency(@book.price.to_f, :prescision => 2) %>
+  </h4>
+</div>
+<%= form_for @exchange, :url => buy_book_path(@book)  do |f| %>
+  <div class="modal-body span5">
+    <%= f.hidden_field :book_id, :value => @book.id  %>
+    <%= f.hidden_field :package, :value => "buy"  %>
+    <div class="control-group">
+      <div class="counter-offer-notice">
+        You can offer your price here.<br/>
+        Your offering price must be greater than $1.00 and
+        less than
+        <%= number_to_currency(@book.price.to_f, :prescision => 2) %>
+      </div>
+      <br/>
+      <div class="controls">
+        <%= f.text_field :counter_offer, :class => 'input-medium', :placeholder => "Your Price" %>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <%= f.submit "Submit", :class => 'btn btn-primary' %>
+  </div>
+<% end %>

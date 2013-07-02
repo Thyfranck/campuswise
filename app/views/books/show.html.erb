@@ -2,7 +2,7 @@
   <h1>Book Details</h1>
 </div>
 
-<div class="span4 ">
+<div class="span5">
   <p>
     <b> Title:</b>
     <%= @book.title %>
@@ -53,13 +53,11 @@
     </p>
   <% end %>
   <p>
-    <b>Book Purchase Price: <%= number_to_currency(@book.purchase_price.to_f, :prescision => 2) %></b>
+    <b>
+      <%= @book.available_for == Book::AVAILABLE_FOR[:rent] ? "Buy Back Price:" : "Book Selling Price:" %>
+    </b>
+    <%= number_to_currency(@book.price.to_f, :prescision => 2) %>
   </p>
-  <% unless @book.available_for == Book::AVAILABLE_FOR[:rent] %>
-    <p>
-      <b>Book Selling Price: <%= number_to_currency(@book.price.to_f, :prescision => 2) %></b>
-    </p>
-  <% end %>
 
   <% unless @book.available_for == Book::AVAILABLE_FOR[:sell] %>
     <p>
@@ -87,7 +85,7 @@
   </div>
 <% end %>
 </div>
-<div class="span3 offset1">
+<div class="span5 offset1">
   <p>
     <%  if @book.image.present?  %>
       <%= image_tag @book.image_url%>
@@ -100,39 +98,17 @@
     <h5 style="color: red">This book is already borrowed or in a borrow process. You can't edit this book now.</h5>
   <% end %>
 
-  <% if current_user and @book.user != current_user and current_user.billing_setting.present? %>
-    <% if current_user.already_borrowed_this_book(@book.id) %>
-      <% if @book.exchanges.where('status = ? and package = ? and user_id = ?',Exchange::STATUS[:accepted],'buy', current_user.id).present? %>
-        <h5 style="color: red">You sold this book</h5>
-      <% else %>
-        <h5 style="color: red">You borrowed this book</h5>
-      <% end %>
-    <% elsif current_user.already_sent_request(@book.id) %>
-      <h5 style="color: red">Your borrow request for this book is pending for approval</h5>
-    <% elsif @book.available == false %>
-      <p style="color: red">This book is not available</p>
-    <% elsif @book.available == true %>
-      <% if @book.available_for == Book::AVAILABLE_FOR[:rent] %>
-        <%= link_to "Borrow this Book", new_exchange_path(:id => @book.id),:class => 'btn btn-primary'  %>
-      <% elsif @book.available_for == Book::AVAILABLE_FOR[:both] %>
-        <%= link_to "Borrow this Book", new_exchange_path(:id => @book.id),:class => 'btn btn-primary'  %>
-        <br/>
-        <br/>
-        <a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal" id="continue">Buy This Book</a>
-      <% elsif @book.available_for == Book::AVAILABLE_FOR[:sell] %>
-        <a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal" id="continue">Buy This Book</a>
-      <% end %>
-
+  <% if current_user.present? %>
+    <% unless current_user.not_eligiable_to_borrow_or_buy(@book) %>
+      <%= link_to('Borrow this Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
+      <%= link_to('Buy This Book', "#myModal", :class => 'btn btn-primary', :role => "button", :"data-toggle" => "modal", :id => "continue") if @book.for_sell? %>
     <% end %>
-  <% elsif !current_user %>
-    <% unless @book.available_for == Book::AVAILABLE_FOR[:sell]  %>
-      <h5 style="color: red" >Rent this book now and save your money!</h5>
-    <% else %>
-      <h5 style="color: red" >Get this book now !</h5>
-    <% end %>
-    <%= link_to 'Sign Up!', new_user_path, :class => 'btn btn-primary' %>
+  <% else %>
+    <%= link_to('Borrow this Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
+    <%= link_to('Buy This Book', buy_book_path(@book), :class => 'btn btn-primary') if @book.for_sell? %>
   <% end %>
 </div>
+
 <% if current_user and @book.available == true and @book.user != current_user and current_user.billing_setting.present? %>
   <% unless @book.available_for == Book::AVAILABLE_FOR[:rent] %>
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -164,16 +140,24 @@
       </div>
       <div class="modal-body span5">
         <h4>Total amount to pay</h4>
-        <h1 class="total_amount_to_pay" style="color:red"><%= number_to_currency(@book.price.to_f, :prescision => 2) %></h1>
+        <h4 class="total_amount_to_pay" style="color:#23722E;">
+          <%= number_to_currency(@book.price.to_f, :prescision => 2) %>
+        </h4>
       </div>
-      <%= form_for @exchange = Exchange.new  do |f| %>
+      <%= form_for @exchange = Exchange.new, :url => buy_book_path(@book)  do |f| %>
         <div class="modal-body span5">
           <%= f.hidden_field :book_id, :value => @book.id  %>
           <%= f.hidden_field :package, :value => "buy"  %>
           <div class="control-group">
-            <%= f.label :counter_offer, "Counter offer (if any?)", :class => 'control-label' %>
+            <div class="counter-offer-notice">
+              You can offer your price here.<br/>
+              Your offering price must be greater than $1.00 and
+              less than
+              <%= number_to_currency(@book.price.to_f, :prescision => 2) %>
+            </div>
+            <br/>
             <div class="controls">
-              <%= f.text_field :counter_offer,:class => 'input-medium' %>
+              <%= f.text_field :counter_offer, :class => 'input-medium', :placeholder => "Your Price" %>
             </div>
           </div>
         </div>

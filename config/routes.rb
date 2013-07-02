@@ -7,6 +7,12 @@ Campuswise::Application.routes.draw do
   post 'stripe-webhook' => 'stripe_webhook#create'
 
   resources :books do
+    member do
+      get :buy
+      get :borrow
+      post :borrow
+      post :buy
+    end
     collection do
       get :available
       get :requested

@@ -15,14 +15,21 @@ class SessionsController < ApplicationController
   end
 
   def create
-    if @user = User.authenticate(params[:email],params[:password])
+    if @user = User.authenticate(params[:email], params[:password])
       if @user.phone.blank?
         session[:user_tmp_id] = @user.id
         redirect_to new_phone_user_path(@user), :notice => "Please give your mobile phone number."
       elsif @user.phone_verified == "verified"
         @school = @user.school
         auto_login(@user)
-        redirect_back_or_to dashboard_path, :notice => "Logged in"
+        if session[:referer].present?
+          puts "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+          puts session[:referer]
+          path = session.delete(:referer)
+        else
+          path = dashboard_path
+        end
+        redirect_back_or_to path, :notice => "Logged in"
       else
         session[:user_tmp_id] = @user.id
         redirect_to sms_verification_user_path(@user)

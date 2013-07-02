@@ -78,6 +78,17 @@ class User < ActiveRecord::Base
     end
   end
 
+  def not_eligiable_to_borrow_or_buy(book)
+    if self.already_borrowed_this_book(book) == true or
+        self.already_sent_request(book) == true or
+        book.available == false or
+        book.user.id == self.id
+      return true
+    else
+      return false
+    end
+  end
+
   def set_phone_verification
     token = generate_unique_token
     self.phone_verified = "pending"

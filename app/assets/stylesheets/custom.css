@@ -572,3 +572,35 @@ background: #808080; width: 5px;
 .form-horizontal .field_with_errors input{
     border-color: #B94A48;
 }
+
+div.field-notice{
+    color: #36AF36;
+    font-size: 11px;
+    line-height: 14px;
+    margin-top: 2px;
+    width: 200px;
+}
+
+input.input-small{
+    width: 100px;
+}
+
+div.price{
+    padding-top: 5px;
+}
+
+.controls.line input{
+    float: left;
+    margin-top: 8px;
+}
+
+.controls.line .price-rate{
+    float: left;
+    margin-left: 15px;
+    margin-top: 4px;
+}
+
+.controls .small{
+    width: 100px;
+}
+

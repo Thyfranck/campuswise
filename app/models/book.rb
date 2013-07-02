@@ -1,6 +1,6 @@
 class Book < ActiveRecord::Base
   attr_accessible :author, :available_from, :available, :image,:isbn,
-    :loan_price, :purchase_price, :publisher, :returning_date,
+    :loan_price, :publisher, :returning_date,
     :title, :user_id, :requested, :loan_daily, :loan_weekly,
     :loan_monthly, :loan_semester, :price, :available_for
 
@@ -10,14 +10,12 @@ class Book < ActiveRecord::Base
     :both => "BOTH"
   }
   
-
   attr_accessor :remote_image
   validates :author, :presence => true
   validates :isbn, :presence => true
   validates :title, :presence => true
-  validates :purchase_price, :numericality => true, :unless => Proc.new{|b| b.requested == true}
   validates :available_for, :inclusion => {:in => ["RENT", "SELL", "BOTH"]}, :if => Proc.new{|b| b.available == true}
-  validates :price, :presence => true, :numericality => {:greater_than_or_equal_to => 0}, :unless => Proc.new{|b| b.requested == true or b.available == false or b.available_for == Book::AVAILABLE_FOR[:rent]}
+  validates :price, :presence => true, :numericality => {:greater_than_or_equal_to => 0}, :unless => Proc.new{|b| b.requested == true or b.available == false}
   validates :loan_daily, :allow_nil => true ,:numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_weekly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
   validates :loan_monthly, :allow_nil => true , :numericality => {:greater_than_or_equal_to => 0, :less_than => 100}, :unless => Proc.new{|b| b.requested == true}
@@ -26,10 +24,10 @@ class Book < ActiveRecord::Base
   belongs_to :user
   has_many :exchanges
 
-  before_save :atleast_one_loan_rate_exsists, 
+  after_validation :atleast_one_loan_rate_exsists,
     :update_availability_options,
-    :update_loan_and_purchase_prices,
-    :set_google_image, :check_available_date_range,
+    :update_loan, :set_google_image,
+    :check_available_date_range,
     :update_availability_dates
 
   mount_uploader :image, ImageUploader
@@ -38,6 +36,15 @@ class Book < ActiveRecord::Base
   scope :available_now, :conditions => {:available => true}
   scope :date_not_expired, lambda { where(["available_for = ? or returning_date > ?",Book::AVAILABLE_FOR[:sell],Time.now.to_date])}
   scope :not_my_book, lambda { |current_user| where(["user_id != ?",current_user])}
+
+  def for_sell?
+    self.available_for != Book::AVAILABLE_FOR[:rent] ? true : false
+  end
+
+  def for_rent?
+    self.available_for != Book::AVAILABLE_FOR[:sell] ? true : false
+  end
+
 
   def update_availability_dates
     if self.available == false
@@ -73,22 +80,16 @@ class Book < ActiveRecord::Base
     self.available = false if self.requested == true
   end
   
-  def update_loan_and_purchase_prices
-    unless self.requested == true
-      if self.available == true
-        if self.available_for == Book::AVAILABLE_FOR[:sell]
-          self.available_from = nil
-          self.returning_date = nil
-          self.loan_daily = nil
-          self.loan_monthly = nil
-          self.loan_semester = nil
-          self.loan_weekly = nil
-        end
-      end
+  def update_loan
+    if !self.requested and self.available and self.available_for == Book::AVAILABLE_FOR[:sell]
+      self.available_from = nil
+      self.returning_date = nil
+      self.loan_daily = nil
+      self.loan_monthly = nil
+      self.loan_semester = nil
+      self.loan_weekly = nil
     end
   end
-
-
 
   def set_google(book_id)
     google_book = GoogleBooks.search(book_id, {}, "4.2.2.1").first

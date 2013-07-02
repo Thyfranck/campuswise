@@ -1,6 +1,8 @@
 class BooksController < ApplicationController
-  before_filter :require_login, :except => [:show, :available, :campus_bookshelf]
-  load_and_authorize_resource :except => [:show, :available, :campus_bookshelf]
+  before_filter :require_login, :except => [:show, :available, :campus_bookshelf, :borrow, :buy]
+  load_and_authorize_resource :except => [:show, :available, :campus_bookshelf, :borrow, :buy ]
+  before_filter :require_login_to_buy_or_borrow, :only => [:borrow, :buy]
+
 
   layout "dashboard"
 
@@ -130,19 +132,19 @@ class BooksController < ApplicationController
     if params[:value]
       @google_books  = GoogleBooks.search(params[:value], {:count => 15, :page => session[:book_page] }, "4.2.2.1")
       @google_books = prepare(@google_books)
-    elsif params[:book_isbn_for_price]
-      res = Amazon::Ecs.item_search(params[:book_isbn_for_price], {:response_group => "Medium", :search_index => 'Books'})
-      unless res.has_error?
-        book = res.items.first
-        if book.get_element('ItemAttributes').get_element('ListPrice').present?
-          book_price = book.get_element('ItemAttributes').get_element('ListPrice').get('Amount').to_f
-        elsif book.get_element('OfferSummary').get_element('LowestNewPrice').present?
-          book_price = book.get_element('OfferSummary').get_element('LowestNewPrice').get('Amount').to_f
-        elsif book.get_element('OfferSummary').get_element('LowestUsedPrice').present?
-          book_price = book.get_element('OfferSummary').get_element('LowestUsedPrice').get('Amount').to_f
-        end
-        @book_price_from_amazon = book_price/100
-      end
+      #    elsif params[:book_isbn_for_price]
+      #      res = Amazon::Ecs.item_search(params[:book_isbn_for_price], {:response_group => "Medium", :search_index => 'Books'})
+      #      unless res.has_error?
+      #        book = res.items.first
+      #        if book.get_element('ItemAttributes').get_element('ListPrice').present?
+      #          book_price = book.get_element('ItemAttributes').get_element('ListPrice').get('Amount').to_f
+      #        elsif book.get_element('OfferSummary').get_element('LowestNewPrice').present?
+      #          book_price = book.get_element('OfferSummary').get_element('LowestNewPrice').get('Amount').to_f
+      #        elsif book.get_element('OfferSummary').get_element('LowestUsedPrice').present?
+      #          book_price = book.get_element('OfferSummary').get_element('LowestUsedPrice').get('Amount').to_f
+      #        end
+      #        @book_price_from_amazon = book_price/100
+      #      end
     end
     respond_to do |format|
       if params[:next] or params[:page]
@@ -172,5 +174,50 @@ class BooksController < ApplicationController
     @books = current_school.books.available_now.date_not_expired.paginate(:page => params[:page], :per_page => 6)
     render :action => 'available' if current_user.present?
     render :layout => "application", :template => "books/public_search" if current_user.blank?
+  end
+
+  def buy
+    @book = Book.find(params[:id])
+
+    if params[:exchange].present?
+      @exchange = current_user.exchanges.new(params[:exchange])
+      @exchange.book_id = @book.id
+
+      if @exchange.save
+        redirect_to user_path(current_user), :notice => "Request sent to owner for approval."
+      end
+    else
+      @exchange = Exchange.new
+    end
+  end
+
+  def borrow
+    @book = Book.find(params[:id])
+
+    if params[:exchange].present?
+      @exchange = current_user.exchanges.new(params[:exchange])
+      @exchange.book_id = @book.id
+      
+      if @exchange.save
+        redirect_to user_path(current_user), :notice => "Request sent to owner for approval."
+      end
+    else
+      @exchange = Exchange.new
+    end
+  end
+
+
+  private
+  def require_login_to_buy_or_borrow
+    @book = Book.find(params[:id])
+    if current_user.blank?
+      session[:referer] = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
+      redirect_to login_path, :notice => "You must login to book or buy a book!"
+    elsif current_user.not_eligiable_to_borrow_or_buy(@book)
+      redirect_to current_user, :notice => "You are not allowed to borrow this book."
+    elsif current_user.billing_setting.blank?
+      session[:referer] = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
+      redirect_to new_billing_setting_path, :notice => "Please add your billing information! Your card will not be charged before your confirmation."
+    end
   end
 end

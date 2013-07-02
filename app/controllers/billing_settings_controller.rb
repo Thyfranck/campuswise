@@ -17,26 +17,27 @@ class BillingSettingsController < ApplicationController
   end
 
   def create
-    if params[:stripe_token].present?
-      begin
-        if current_user.billing_setting.present?     
-          current_user.billing_setting.stripe_token = params[:stripe_token]
-          current_user.billing_setting.save
+    if current_user.billing_setting.present?
+      @billing_setting = current_user.billing_setting
+      @billing_setting.stripe_token = params[:stripe_token]
+    else
+      @billing_setting = current_user.build_billing_setting(:stripe_token => params[:stripe_token])
+    end
+      
+    begin
+      if @billing_setting.save
+        if session[:referer].present?
+          path = session.delete(:referer)
         else
-          BillingSetting.create(:user_id => current_user.id, :stripe_token => params[:stripe_token])
+          path = dashboard_path
         end
-      rescue Stripe::CardError => e
-        @error = "#{e.message}"
+        redirect_to path, :notice => "Successfully added your billing information."
+      else
+        render :action => :new, :alert => "Something went wrong! Please try again"
       end
-      respond_to do |format|
-        if session[:wanted_to_exchange_book]
-          format.html { redirect_to new_exchange_path(:id => session[:wanted_to_exchange_book])}
-        elsif @error
-          format.html { redirect_to request.referrer, :alert => @error }
-        else
-          format.html { redirect_to current_user, :notice => "Request completed"}
-        end
-      end
+    rescue Stripe::CardError => e
+      logger.info "#{e.message}"
+      render :action => :new, :alert => "Something went wrong! Please try again"
     end
   end
 

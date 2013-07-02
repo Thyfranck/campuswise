@@ -42,8 +42,7 @@ ActiveAdmin.register Book do
       row :author
       row :isbn
       row :publisher
-      row "Price(for selling feature)" do book.price end
-      row "Selling price" do book.purchase_price end
+      row :price
       row :loan_daily
       row :loan_weekly
       row :loan_monthly

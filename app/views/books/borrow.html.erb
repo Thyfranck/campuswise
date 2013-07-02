@@ -1,0 +1,164 @@
+<fieldset>
+  <legend>
+    <h4>How you want to borrow this book?</h4>
+  </legend>
+
+  <%= form_for @exchange, :url => borrow_book_path(@book), :html => {:class => 'form-horizontal'} do |f| %>
+    <%= hidden_field_tag :day_rate, @book.loan_daily %>
+    <%= hidden_field_tag :week_rate, @book.loan_weekly %>
+    <%= hidden_field_tag :month_rate, @book.loan_monthly %>
+    <%= hidden_field_tag :semester_rate, @book.loan_semester %>
+
+    <% if @exchange.errors.any? %>
+      <div id="error_explanation" class="alert alert-error">
+        <h4>
+          Please fill correctly following <%= pluralize(@exchange.errors.count, "field") %>.
+        </h4>
+        <ul>
+          <% @exchange.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="row span12">
+      <% if @book.loan_daily.present? %>
+        <div class="control-group">
+          <%= f.label :package, "Daily", :class => 'control-label' %>
+          <div class="controls line">
+            <%= f.radio_button :package , 'day', :class => 'radio' %>
+            <div class="price-rate">
+              <%= "$#{number_with_precision(@book.loan_daily.to_f, :precision => 2)}/ day" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @book.loan_weekly.present? %>
+        <div class="control-group">
+          <%= f.label :package, "Weekly", :class => 'control-label' %>
+          <div class="controls line">
+            <%= f.radio_button :package ,'week' ,:class => 'radio'%>
+            <div class="price-rate">
+              <%= "$#{number_with_precision(@book.loan_weekly, :precision => 2)}/ week" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @book.loan_monthly.present? %>
+        <div class="control-group">
+          <%= f.label :package, "Monthly", :class => 'control-label' %>
+          <div class="controls line">
+            <%= f.radio_button :package ,'month' ,:class => 'radio' %>
+            <div class="price-rate">
+              <%= "$#{number_with_precision(@book.loan_monthly, :precision => 2)}/ month" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @book.loan_semester.present? %>
+        <div class="control-group">
+          <%= f.label :package, "Full semester", :class => 'control-label' %>
+          <div class="controls line">
+            <%= f.radio_button :package ,'semester'%>
+            <div class="price-rate">
+              <%= "$#{number_with_precision(@book.loan_semester, :precision => 2)}/ semester" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="row span12 exchange_amount" style="display:none">
+      <legend>
+        <h5>Please Specify the duration</h5>
+      </legend>
+      <h5 style="color:#fd492a">This book is available from <%= @book.available_from.to_date %> to <%= @book.returning_date.to_date %>.</h5>
+      <br/>
+      <br/>
+      <div class="control-group">
+        <%= f.label :duration, "I want to borrow this book from date", :class => 'control-label' %>
+        <div class="controls">
+          <%= f.date_select :starting_date, {}, :class => 'span3 selectpicker small' %>
+          for
+          <%= f.number_field :duration,:class => 'input-small number_field'%>
+          <span class="amount_text"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row span12">
+      <div class="alert alert-error span10">
+        You will be charged
+        <%= "$#{@book.price}," %>
+        if you don't return this book.
+      </div>
+    </div>
+
+    <div class="exchange_submit_section" style="display:none">
+      <a href="#myModal" role="button" class="btn" data-toggle="modal" id="continue">Continue</a>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Take a review</h3>
+      </div>
+      <div class="modal-body">
+        <div class="row-fluid">
+          <div class="span6">
+            <h4>Your credit card information</h4>
+            <p>
+              <b>Name :</b>
+              <%= current_user.billing_setting.card_holder_name %>
+            </p>
+
+            <p>
+              <b>Card Number :</b>
+              <%= "*********#{current_user.billing_setting.card_last_four_digits}" %>
+            </p>
+
+            <p>
+              <b>Card Type :</b>
+              <%= current_user.billing_setting.card_type %>
+            </p>
+
+            <p>
+              <b>Card Expiry Date :</b>
+              <%= current_user.billing_setting.card_expiry_date.to_date %>
+            </p>
+          </div>
+          <div class="span6">
+            <h4>Total amount to pay</h4>
+            <h4 id="total_amount_to_pay" style="color:#23722E;"></h4>
+            <div class="counter-offer-notice">
+              You can offer your price here.<br/>
+              Your offering price must be greater than $1.00 and
+              less than 
+              <span id="counter-offer-price"></span>
+            </div>
+            <br/>
+            <div class="control-group">
+              <%= f.text_field :counter_offer, :class => 'number_field input-small', :placeholder => "Your Price" %>
+              <span id="counter-offer-type"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <%= f.submit "Submit", :class => 'btn btn-primary' %>
+        <div class="amount_error" style="color:red"></div>
+      </div>
+    </div>
+
+  <% end %>
+</fieldset>
+
+
+
