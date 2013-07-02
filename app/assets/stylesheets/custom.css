@@ -580,3 +580,23 @@ div.field-notice{
     margin-top: 2px;
     width: 200px;
 }
+
+div.price{
+    padding-top: 5px;
+}
+
+.controls.line input{
+    float: left;
+    margin-top: 8px;
+}
+
+.controls.line .price-rate{
+    float: left;
+    margin-left: 15px;
+    margin-top: 4px;
+}
+
+.controls .small{
+    width: 100px;
+}
+

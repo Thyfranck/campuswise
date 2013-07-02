@@ -1,6 +1,8 @@
 class BooksController < ApplicationController
-  before_filter :require_login, :except => [:show, :available, :campus_bookshelf]
-  load_and_authorize_resource :except => [:show, :available, :campus_bookshelf]
+  before_filter :require_login, :except => [:show, :available, :campus_bookshelf, :borrow, :buy]
+  load_and_authorize_resource :except => [:show, :available, :campus_bookshelf, :borrow, :buy ]
+  before_filter :require_login_to_buy_or_borrow, :only => [:borrow, :buy]
+
 
   layout "dashboard"
 
@@ -172,5 +174,33 @@ class BooksController < ApplicationController
     @books = current_school.books.available_now.date_not_expired.paginate(:page => params[:page], :per_page => 6)
     render :action => 'available' if current_user.present?
     render :layout => "application", :template => "books/public_search" if current_user.blank?
+  end
+
+  def buy
+    
+  end
+
+  def borrow
+    @book = Book.find(params[:id])
+    @exchange = Exchange.new
+  end
+
+  def borrow_submit
+    
+  end
+
+
+  private
+  def require_login_to_buy_or_borrow
+    @book = Book.find(params[:id])
+    if current_user.blank?
+      session[:referer] = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
+      redirect_to login_path, :notice => "You must login to book or buy a book!"
+    elsif current_user.not_eligiable_to_borrow(@book)
+      redirect_to current_user, :notice => "You are not allowed to borrow this book."
+    elsif current_user.billing_setting.blank?
+      session[:referer] = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
+      redirect_to new_billing_setting_path, :notice => "Please add your billing information! Your card will not be charged before your confirmation."
+    end
   end
 end

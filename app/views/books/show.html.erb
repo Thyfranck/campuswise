@@ -2,7 +2,7 @@
   <h1>Book Details</h1>
 </div>
 
-<div class="span4 ">
+<div class="span5">
   <p>
     <b> Title:</b>
     <%= @book.title %>
@@ -85,7 +85,7 @@
   </div>
 <% end %>
 </div>
-<div class="span3 offset1">
+<div class="span5 offset1">
   <p>
     <%  if @book.image.present?  %>
       <%= image_tag @book.image_url%>
@@ -123,12 +123,8 @@
 
     <% end %>
   <% elsif !current_user %>
-    <% unless @book.available_for == Book::AVAILABLE_FOR[:sell]  %>
-      <h5 style="color: red" >Rent this book now and save your money!</h5>
-    <% else %>
-      <h5 style="color: red" >Get this book now !</h5>
-    <% end %>
-    <%= link_to 'Sign Up!', new_user_path, :class => 'btn btn-primary' %>
+    <%= link_to('Buy This Book', buy_book_path(@book), :class => 'btn btn-primary') if @book.for_sell? %>
+    <%= link_to('Borrow this Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
   <% end %>
 </div>
 <% if current_user and @book.available == true and @book.user != current_user and current_user.billing_setting.present? %>

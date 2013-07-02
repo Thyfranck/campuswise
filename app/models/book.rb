@@ -37,6 +37,15 @@ class Book < ActiveRecord::Base
   scope :date_not_expired, lambda { where(["available_for = ? or returning_date > ?",Book::AVAILABLE_FOR[:sell],Time.now.to_date])}
   scope :not_my_book, lambda { |current_user| where(["user_id != ?",current_user])}
 
+  def for_sell?
+    self.available_for != Book::AVAILABLE_FOR[:rent] ? true : false
+  end
+
+  def for_rent?
+    self.available_for != Book::AVAILABLE_FOR[:sell] ? true : false
+  end
+
+
   def update_availability_dates
     if self.available == false
       self.available_from = nil

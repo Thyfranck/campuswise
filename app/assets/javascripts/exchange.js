@@ -61,11 +61,11 @@ $(document).ready(function(){
 
     $('#continue').click(function(){
         var myRegEx = new RegExp('[0-9]+');       
-        var rate1 = ($('#day_rate').html());
-        var rate3 = ($('#month_rate').html());
-        var rate2 = ($('#week_rate').html());
-        var rate4 = ($('#semester_rate').html());
-        var rate5 = ($('#purchase_rate').html());
+        var rate1 = parseFloat($('input#day_rate').val());
+        var rate2 = parseFloat($('input#week_rate').val());
+        var rate3 = parseFloat($('input#month_rate').val());
+        var rate4 = parseFloat($('input#semester_rate').val());
+        
         var amount = $.trim($('#exchange_duration').val());          
         
         if($('#exchange_package_day').is(':checked')){
@@ -92,9 +92,6 @@ $(document).ready(function(){
         if($('#exchange_package_semester').is(':checked')){
             $('.total_amount_to_pay').html('$'+rate4);
         }
-        if($('#exchange_package_buy').is(':checked')){
-            $('.total_amount_to_pay').html('$'+rate5);
-        }
     });
 
     $('#new_exchange').submit(function(e){
@@ -104,8 +101,8 @@ $(document).ready(function(){
 
             if(amount.length < 1 || amount != myRegEx.exec(amount)){
                 e.preventDefault();
-                $('.amount_error').html('You must provide a number.').delay(500).fadeIn(500);
-                $('.amount_error').html('You must provide a number.').delay(4000).fadeOut(1500);
+                $('.amount_error').html('You must set duration.').delay(500).fadeIn(500);
+                $('.amount_error').delay(4000).fadeOut(1500);
                 return false;
             }
         }
