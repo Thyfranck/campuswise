@@ -59,39 +59,43 @@ $(document).ready(function(){
         }
     })
 
-    $('#continue').click(function(){
-        var myRegEx = new RegExp('[0-9]+');       
-        var rate1 = parseFloat($('input#day_rate').val());
-        var rate2 = parseFloat($('input#week_rate').val());
-        var rate3 = parseFloat($('input#month_rate').val());
-        var rate4 = parseFloat($('input#semester_rate').val());
-        
-        var amount = $.trim($('#exchange_duration').val());          
-        
-        if($('#exchange_package_day').is(':checked')){
-            if(amount.length >= 1 && amount == myRegEx.exec(amount)){
-                $('.total_amount_to_pay').html('$'+rate1*amount);
-            }else{
-                $('.total_amount_to_pay').html('Invalid');
-            }              
-        }
-        if($('#exchange_package_week').is(':checked')){
-            if(amount.length >= 1 && amount == myRegEx.exec(amount)){
-                $('.total_amount_to_pay').html('$'+rate2*amount);
-            }else{
-                $('.total_amount_to_pay').html('Invalid');
+    $('#continue').click(function(){     
+        var day_rate = parseFloat($('input#day_rate').val());
+        var week_rate = parseFloat($('input#week_rate').val());
+        var month_rate = parseFloat($('input#month_rate').val());
+        var semester_rate = parseFloat($('input#semester_rate').val());
+        var duration = parseFloat($('input#exchange_duration').val());
+        var total_amount = 'Invalid';
+        var counter_offer_price = '';
+        var counter_offer_type = '';
+
+        if(duration >= 1){
+            if($('#exchange_package_day').is(':checked')){
+                total_amount = '$' + day_rate + ' * ' + duration + ' day(s) = ' + '$' + (day_rate * duration);
+                counter_offer_price = '$' + day_rate + '/ day';
+                counter_offer_type = '/ day';
+            }
+            else if($('#exchange_package_week').is(':checked')){
+                total_amount = '$' + week_rate + ' * ' + duration + ' week(s) = ' + '$' + (week_rate * duration);
+                counter_offer_price = '$' + week_rate + '/ week';
+                counter_offer_type = '/ week';
+            }
+            else if($('#exchange_package_month').is(':checked')){
+                total_amount = '$' + month_rate + ' * ' + duration + ' month(s) = ' + '$' + (month_rate * duration);
+                counter_offer_price = '$' + month_rate + '/ month';
+                counter_offer_type = '/ month';
             }
         }
-        if($('#exchange_package_month').is(':checked')){
-            if(amount.length >= 1 && amount == myRegEx.exec(amount)){
-                $('.total_amount_to_pay').html('$'+rate3*amount);
-            }else{
-                $('.total_amount_to_pay').html('Invalid');
-            }
-        }
+
         if($('#exchange_package_semester').is(':checked')){
-            $('.total_amount_to_pay').html('$'+rate4);
+            total_amount = '$' + semester_rate;
+            counter_offer_price = '$' + semester_rate + '/ semester';
+            counter_offer_type = '/ semester';
         }
+
+        $('#total_amount_to_pay').html(total_amount);
+        $('#counter-offer-price').html(counter_offer_price);
+        $('#counter-offer-type').html(counter_offer_type);
     });
 
     $('#new_exchange').submit(function(e){

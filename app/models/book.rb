@@ -1,6 +1,6 @@
 class Book < ActiveRecord::Base
   attr_accessible :author, :available_from, :available, :image,:isbn,
-    :loan_price, :purchase_price, :publisher, :returning_date,
+    :loan_price, :publisher, :returning_date,
     :title, :user_id, :requested, :loan_daily, :loan_weekly,
     :loan_monthly, :loan_semester, :price, :available_for
 
@@ -26,8 +26,8 @@ class Book < ActiveRecord::Base
 
   after_validation :atleast_one_loan_rate_exsists,
     :update_availability_options,
-    :update_loan_and_purchase_prices,
-    :set_google_image, :check_available_date_range,
+    :update_loan, :set_google_image,
+    :check_available_date_range,
     :update_availability_dates
 
   mount_uploader :image, ImageUploader
@@ -80,7 +80,7 @@ class Book < ActiveRecord::Base
     self.available = false if self.requested == true
   end
   
-  def update_loan_and_purchase_prices
+  def update_loan
     if !self.requested and self.available and self.available_for == Book::AVAILABLE_FOR[:sell]
       self.available_from = nil
       self.returning_date = nil

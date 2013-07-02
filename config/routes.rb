@@ -11,6 +11,7 @@ Campuswise::Application.routes.draw do
       get :buy
       get :borrow
       post :borrow
+      post :buy
     end
     collection do
       get :available

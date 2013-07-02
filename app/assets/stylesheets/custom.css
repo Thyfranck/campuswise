@@ -581,6 +581,10 @@ div.field-notice{
     width: 200px;
 }
 
+input.input-small{
+    width: 100px;
+}
+
 div.price{
     padding-top: 5px;
 }

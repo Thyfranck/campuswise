@@ -177,16 +177,33 @@ class BooksController < ApplicationController
   end
 
   def buy
-    
+    @book = Book.find(params[:id])
+
+    if params[:exchange].present?
+      @exchange = current_user.exchanges.new(params[:exchange])
+      @exchange.book_id = @book.id
+
+      if @exchange.save
+        redirect_to user_path(current_user), :notice => "Request sent to owner for approval."
+      end
+    else
+      @exchange = Exchange.new
+    end
   end
 
   def borrow
     @book = Book.find(params[:id])
-    @exchange = Exchange.new
-  end
 
-  def borrow_submit
-    
+    if params[:exchange].present?
+      @exchange = current_user.exchanges.new(params[:exchange])
+      @exchange.book_id = @book.id
+      
+      if @exchange.save
+        redirect_to user_path(current_user), :notice => "Request sent to owner for approval."
+      end
+    else
+      @exchange = Exchange.new
+    end
   end
 
 
@@ -196,7 +213,7 @@ class BooksController < ApplicationController
     if current_user.blank?
       session[:referer] = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
       redirect_to login_path, :notice => "You must login to book or buy a book!"
-    elsif current_user.not_eligiable_to_borrow(@book)
+    elsif current_user.not_eligiable_to_borrow_or_buy(@book)
       redirect_to current_user, :notice => "You are not allowed to borrow this book."
     elsif current_user.billing_setting.blank?
       session[:referer] = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"

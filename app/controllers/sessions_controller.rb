@@ -23,6 +23,8 @@ class SessionsController < ApplicationController
         @school = @user.school
         auto_login(@user)
         if session[:referer].present?
+          puts "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+          puts session[:referer]
           path = session.delete(:referer)
         else
           path = dashboard_path

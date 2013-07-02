@@ -3,7 +3,7 @@
     <h4>How you want to borrow this book?</h4>
   </legend>
 
-  <%= form_for @exchange, :html => {:class => 'form-horizontal'} do |f| %>
+  <%= form_for @exchange, :url => borrow_book_path(@book), :html => {:class => 'form-horizontal'} do |f| %>
     <%= hidden_field_tag :day_rate, @book.loan_daily %>
     <%= hidden_field_tag :week_rate, @book.loan_weekly %>
     <%= hidden_field_tag :month_rate, @book.loan_monthly %>
@@ -21,8 +21,6 @@
         </ul>
       </div>
     <% end %>
-
-    <%= f.hidden_field :book_id, :value => @book.id %>
 
     <div class="row span12">
       <% if @book.loan_daily.present? %>
@@ -136,11 +134,17 @@
           </div>
           <div class="span6">
             <h4>Total amount to pay</h4>
-            <h1 class="total_amount_to_pay" style="color:red"></h1>
+            <h4 id="total_amount_to_pay" style="color:#23722E;"></h4>
+            <div class="counter-offer-notice">
+              You can offer your price here.<br/>
+              Your offering price must be greater than $1.00 and
+              less than 
+              <span id="counter-offer-price"></span>
+            </div>
+            <br/>
             <div class="control-group">
-              <%= f.label :counter_offer, "Counter offer (if any?)", :class => 'control-label' %>
-              <br/>
-              <%= f.text_field :counter_offer, :class => 'number_field input-medium' %>
+              <%= f.text_field :counter_offer, :class => 'number_field input-small', :placeholder => "Your Price" %>
+              <span id="counter-offer-type"></span>
             </div>
           </div>
         </div>

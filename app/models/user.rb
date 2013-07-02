@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  def not_eligiable_to_borrow(book)
+  def not_eligiable_to_borrow_or_buy(book)
     if self.already_borrowed_this_book(book) == true or
         self.already_sent_request(book) == true or
         book.available == false or
