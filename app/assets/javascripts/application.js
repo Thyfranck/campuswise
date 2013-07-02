@@ -23,7 +23,6 @@
 //= require stripe
 //= require exchange
 //= require book
-//= require book_price
 //= require payment_method
 //= require facebook
 //= require notifications

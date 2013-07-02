@@ -53,13 +53,11 @@
     </p>
   <% end %>
   <p>
-    <b>Book Purchase Price: <%= number_to_currency(@book.purchase_price.to_f, :prescision => 2) %></b>
+    <b>
+      <%= @book.available_for == Book::AVAILABLE_FOR[:rent] ? "Buy Back Price:" : "Book Selling Price:" %>
+    </b>
+    <%= number_to_currency(@book.price.to_f, :prescision => 2) %>
   </p>
-  <% unless @book.available_for == Book::AVAILABLE_FOR[:rent] %>
-    <p>
-      <b>Book Selling Price: <%= number_to_currency(@book.price.to_f, :prescision => 2) %></b>
-    </p>
-  <% end %>
 
   <% unless @book.available_for == Book::AVAILABLE_FOR[:sell] %>
     <p>

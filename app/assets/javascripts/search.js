@@ -18,13 +18,13 @@ function author(message){
 
 function isbn(message){
     $('#book_isbn').val(message);
-    $.ajax({
-        url: "/search",
-        dataType: "script",
-        data: {
-            book_isbn_for_price : $('#book_isbn').val()
-        }
-    });
+//    $.ajax({
+//        url: "/search",
+//        dataType: "script",
+//        data: {
+//            book_isbn_for_price : $('#book_isbn').val()
+//        }
+//    });
 }
 
 function publisher(message){

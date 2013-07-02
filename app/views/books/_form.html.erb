@@ -30,6 +30,7 @@
         </div>
       <% end %>
     <% end %>
+
     <div class="book_info" style="<%= "display:none" if @book.title.blank? %>">
       <legend>Book Info</legend>
       <div class="control-group">
@@ -76,31 +77,25 @@
           <%= f.text_field :publisher, :class => 'text_field'%>
         </div>
       </div>
-      <% unless @book.requested == true or @requested_book == true %>
-        <div class="control-group">
-          <%= f.label :purchase_price,"Book Purchase Price", :class => 'control-label' %>
-          <div class="controls">
-            <%= f.text_field :purchase_price, :class => 'text_field'%><span> (If the borrower fails to return your book, this price will be credited to your account.)</span>
-          </div>
-        </div>
-      <% end %>
     </div>
 
     <% unless @book.requested == true or @requested_book == true %>
 
-      <legend>Availability</legend>
-      <div class="control-group">
-        <%= f.label :available, "Available Now", :class => 'control-label' %>
-        <div class="controls">
-          <%= f.check_box :available, :class => 'check_box' %>
+      <div class="hide book_info">
+        <legend>Availability</legend>
+        <div class="control-group">
+          <%= f.label :available, "Available Now", :class => 'control-label' %>
+          <div class="controls">
+            <%= f.check_box :available, :class => 'check_box' %>
+          </div>
         </div>
       </div>
 
-      <div class="control-group available_for" style="display:none">
+      <div class="control-group available_for hide">
         <%= f.label :available_for, :class => 'control-label' %>
         <div class="controls">
           <div class="span3">
-            <%= f.radio_button :available_for,Book::AVAILABLE_FOR[:rent], :class => 'radio available_type' %><span class="available_type_text">Rent Only</span><div class="clear"></div>
+            <%= f.radio_button :available_for,Book::AVAILABLE_FOR[:rent], :class => 'radio available_type' %><span class="available_type_text">Lend Only</span><div class="clear"></div>
           </div>
           <div class="span3">
             <%= f.radio_button :available_for,Book::AVAILABLE_FOR[:sell], :class => 'radio available_type' %><span class="available_type_text">Sell Only</span><div class="clear"></div>
@@ -111,58 +106,66 @@
         </div>
       </div>
 
-      <div class="available_dates" style="display:none">
-        <div class="control-group">
+      <div id="books-dynamic-container">
+
+        <div class="control-group hide rent both">
           <%= f.label :available_from, :class => 'control-label' %>
           <div class="controls">
             <%= f.date_select :available_from, {:default => Date.tomorrow}, :class => 'span3 selectpicker' %>
           </div>
         </div>
-        <div class="control-group">
+
+        <div class="control-group hide rent both">
           <%= f.label :returning_date, "Available Till", :class => 'control-label' %>
           <div class="controls">
             <%= f.date_select :returning_date, {:default => Date.tomorrow}, :class => 'span3 selectpicker' %>
           </div>
         </div>
-      </div>
 
-      <div class="purchase_price" style="display:none">
-        <legend>Book Selling Price</legend>
-        <div class="control-group">
-          <%= f.label :price, "What's your price?", :class => 'control-label' %>
-          <div class="controls">
-            <%= f.text_field :price, :class => 'text_field' %>
+        <div class="hide rent sell both">
+          <legend class="sell both hide">Book Selling Price</legend>
+          <legend class="rent hide">Buy Back Price</legend>
+          <div class="control-group">
+            <%= f.label :price, "What's your price?", :class => 'control-label sell both hide' %>
+            <%= f.label :price, "Buy Back Price", :class => 'control-label rent hide' %>
+            <div class="controls">
+              <%= f.text_field :price, :class => 'text_field' %>
+              <div class="field-notice both rent hide">
+                If the borrower fails to return your book, this price will be credited to your account.
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="loan_rates" style="display:none">
-        <legend>Loan Rates (in USD)</legend>
-        <div class="loan_error" style="color:red"></div>
-        <div class="control-group">
-          <h5><%= f.label :loan_daily, "Daily", :class => 'control-label' %></h5>
-          <div class="controls">
-            <%= f.text_field :loan_daily, :class => 'number_field' %>
+        <div class="hide rent both">
+          <legend>Loan Rates</legend>
+          <div class="loan_error" style="color:red"></div>
+          <div class="control-group">
+            <h5><%= f.label :loan_daily, "Daily", :class => 'control-label' %></h5>
+            <div class="controls">
+              <%= f.text_field :loan_daily, :class => 'number_field' %>
+            </div>
+          </div>
+          <div class="control-group">
+            <%= f.label :loan_weekly, "Weekly", :class => 'control-label' %>
+            <div class="controls">
+              <%= f.text_field :loan_weekly, :class => 'number_field'%>
+            </div>
+          </div>
+          <div class="control-group">
+            <%= f.label :loan_monthly, "Monthly", :class => 'control-label' %>
+            <div class="controls">
+              <%= f.text_field :loan_monthly, :class => 'number_field' %>
+            </div>
+          </div>
+          <div class="control-group">
+            <%= f.label :loan_semester, "Full Semester", :class => 'control-label' %>
+            <div class="controls">
+              <%= f.text_field :loan_semester, :class => 'number_field' %>
+            </div>
           </div>
         </div>
-        <div class="control-group">
-          <%= f.label :loan_weekly, "Weekly", :class => 'control-label' %>
-          <div class="controls">
-            <%= f.text_field :loan_weekly, :class => 'number_field'%>
-          </div>
-        </div>
-        <div class="control-group">
-          <%= f.label :loan_monthly, "Monthly", :class => 'control-label' %>
-          <div class="controls">
-            <%= f.text_field :loan_monthly, :class => 'number_field' %>
-          </div>
-        </div>
-        <div class="control-group">
-          <%= f.label :loan_semester, "Full Semester", :class => 'control-label' %>
-          <div class="controls">
-            <%= f.text_field :loan_semester, :class => 'number_field' %>
-          </div>
-        </div>
+
       </div>
 
     <% else @requested_book == true %>

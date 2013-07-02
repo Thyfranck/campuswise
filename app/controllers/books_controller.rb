@@ -130,19 +130,19 @@ class BooksController < ApplicationController
     if params[:value]
       @google_books  = GoogleBooks.search(params[:value], {:count => 15, :page => session[:book_page] }, "4.2.2.1")
       @google_books = prepare(@google_books)
-    elsif params[:book_isbn_for_price]
-      res = Amazon::Ecs.item_search(params[:book_isbn_for_price], {:response_group => "Medium", :search_index => 'Books'})
-      unless res.has_error?
-        book = res.items.first
-        if book.get_element('ItemAttributes').get_element('ListPrice').present?
-          book_price = book.get_element('ItemAttributes').get_element('ListPrice').get('Amount').to_f
-        elsif book.get_element('OfferSummary').get_element('LowestNewPrice').present?
-          book_price = book.get_element('OfferSummary').get_element('LowestNewPrice').get('Amount').to_f
-        elsif book.get_element('OfferSummary').get_element('LowestUsedPrice').present?
-          book_price = book.get_element('OfferSummary').get_element('LowestUsedPrice').get('Amount').to_f
-        end
-        @book_price_from_amazon = book_price/100
-      end
+      #    elsif params[:book_isbn_for_price]
+      #      res = Amazon::Ecs.item_search(params[:book_isbn_for_price], {:response_group => "Medium", :search_index => 'Books'})
+      #      unless res.has_error?
+      #        book = res.items.first
+      #        if book.get_element('ItemAttributes').get_element('ListPrice').present?
+      #          book_price = book.get_element('ItemAttributes').get_element('ListPrice').get('Amount').to_f
+      #        elsif book.get_element('OfferSummary').get_element('LowestNewPrice').present?
+      #          book_price = book.get_element('OfferSummary').get_element('LowestNewPrice').get('Amount').to_f
+      #        elsif book.get_element('OfferSummary').get_element('LowestUsedPrice').present?
+      #          book_price = book.get_element('OfferSummary').get_element('LowestUsedPrice').get('Amount').to_f
+      #        end
+      #        @book_price_from_amazon = book_price/100
+      #      end
     end
     respond_to do |format|
       if params[:next] or params[:page]
