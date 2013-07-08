@@ -72,24 +72,24 @@ $(document).ready(function(){
         if(duration >= 1){
             if($('#exchange_package_day').is(':checked')){
                 total_amount = '$' + day_rate + ' * ' + duration + ' day(s) = ' + '$' + (day_rate * duration);
-                counter_offer_price = '$' + day_rate + '/ day';
+                counter_offer_price = '$' + (day_rate * duration);
                 counter_offer_type = '/ day';
             }
             else if($('#exchange_package_week').is(':checked')){
                 total_amount = '$' + week_rate + ' * ' + duration + ' week(s) = ' + '$' + (week_rate * duration);
-                counter_offer_price = '$' + week_rate + '/ week';
+                counter_offer_price = '$' + (week_rate * duration);
                 counter_offer_type = '/ week';
             }
             else if($('#exchange_package_month').is(':checked')){
                 total_amount = '$' + month_rate + ' * ' + duration + ' month(s) = ' + '$' + (month_rate * duration);
-                counter_offer_price = '$' + month_rate + '/ month';
+                counter_offer_price = '$' + (month_rate * duration);
                 counter_offer_type = '/ month';
             }
         }
 
         if($('#exchange_package_semester').is(':checked')){
             total_amount = '$' + semester_rate;
-            counter_offer_price = '$' + semester_rate + '/ semester';
+            counter_offer_price = '$' + semester_rate;
             counter_offer_type = '/ semester';
         }
 

@@ -29,10 +29,10 @@ ActiveAdmin.register School do
       row :name
       row :email_postfix
       row :spring_semester do |school|
-        school.spring_semester.strftime("%B #{school.spring_semester.day.ordinalize}")
+        school.spring_semester.strftime("%B #{school.spring_semester.day.ordinalize}") if school.spring_semester.present?
       end
       row :fall_semester do |school|
-        school.fall_semester.strftime("%B #{school.fall_semester.day.ordinalize}")
+        school.fall_semester.strftime("%B #{school.fall_semester.day.ordinalize}") if school.fall_semester.present?
       end
     end
   end
