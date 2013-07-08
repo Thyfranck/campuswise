@@ -63,7 +63,7 @@ class Notify
       if record.package == 'buy'
         @body = "Someone wants to buy '#{@requested_book.title.truncate(20)}'at the price #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}' -Campuswise -Campuswise"
       else
-        @body = "Someone wants to borrow '#{@requested_book.title.truncate(20)}' from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},at the price #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}' -Campuswise"
+        @body = "Someone wants to borrow'#{@requested_book.title.truncate(20)}'from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},at the price #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}'-Campuswise"
       end   
     end
     TwilioRequest.send_sms(@body, @to)

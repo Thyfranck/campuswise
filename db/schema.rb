@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130630214341) do
+ActiveRecord::Schema.define(:version => 20130708105043) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -140,8 +140,8 @@ ActiveRecord::Schema.define(:version => 20130630214341) do
     t.string   "card_number"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
-    t.string   "bank_branch"
     t.string   "paypal"
+    t.string   "bank_branch"
   end
 
   create_table "payments", :force => true do |t|

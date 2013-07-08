@@ -82,7 +82,7 @@
       <div class="control-group">
         <%= f.label :duration, "I want to borrow this book from date", :class => 'control-label' %>
         <div class="controls">
-          <%= f.date_select :starting_date, {}, :class => 'span3 selectpicker small' %>
+          <%= f.date_select :starting_date, {:default => Date.tomorrow}, :class => 'span3 selectpicker small' %>
           for
           <%= f.number_field :duration,:class => 'input-small number_field'%>
           <span class="amount_text"></span>
@@ -144,7 +144,6 @@
             <br/>
             <div class="control-group">
               <%= f.text_field :counter_offer, :class => 'number_field input-small', :placeholder => "Your Price" %>
-              <span id="counter-offer-type"></span>
             </div>
           </div>
         </div>

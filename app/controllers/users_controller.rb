@@ -114,6 +114,7 @@ class UsersController < ApplicationController
   end
 
   def create_phone
+    @school = current_school
     @user = User.find(session[:user_tmp_id])
     
     if @user.update_attributes(params[:user]) and @user.phone.present?
@@ -124,7 +125,7 @@ class UsersController < ApplicationController
         redirect_to sms_verification_user_path(@user), :notice => "Verification sms sent! Please check your mobile phone."
       rescue Twilio::REST::RequestError
         @user.errors.add(:phone, "number you entered #{@user.phone} is not a valid phone number")
-        render action: "new"
+        render action: "new_phone"
       end
     else
       render action: "new_phone"

@@ -1,6 +1,6 @@
 <ul class="nav nav-pills well">
   <li class="<%= "active" if current_page?(dashboard_path) %>">
-    <%= link_to "Dashboard", dashboard_path %>
+    <%= link_to "Notifications", dashboard_path %>
   </li>
   <li class="dropdown <%= "active" if current_page?(user_path(current_user)) || current_page?(edit_user_path(current_user)) || current_page?(change_password_user_path(current_user)) %>">
     <a class="dropdown-toggle" href="#" data-toggle="dropdown">
@@ -86,6 +86,15 @@
           <%= link_to "Payment Settings", new_billing_setting_path %>
         </li>
       <% end %>
+    </ul>
+  </li>
+
+  <li class="dropdown <%= "active" if current_page?(payment_methods_path) || current_page?(new_withdraw_request_path) || current_page?(wallet_user_path(current_user)) || current_page?(new_payment_method_path) %>">
+    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+      Withdraw Funds
+      <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
       <li>
         <%= link_to "My Wallet", wallet_user_path(current_user) %>
       </li>
@@ -98,3 +107,5 @@
     </ul>
   </li>
 </ul>
+
+
