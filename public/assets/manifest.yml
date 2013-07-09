@@ -51,8 +51,8 @@ uniform/sprite-aristo.png: uniform/sprite-aristo-42715402efe1dd5e2e6298b6349db77
 uniform/sprite-aristo/index.png: uniform/sprite-aristo-42715402efe1dd5e2e6298b6349db771.png
 active_admin.js: active_admin-da1bfe85a1d3d3bee66acfbb6e4e19ea.js
 active_admin/index.js: active_admin-da1bfe85a1d3d3bee66acfbb6e4e19ea.js
-application.js: application-3483ab9fb5e0e3be4c110ed18a0c4f72.js
-application/index.js: application-3483ab9fb5e0e3be4c110ed18a0c4f72.js
+application.js: application-f655aab0d8886a35cf5b6670f83390f3.js
+application/index.js: application-f655aab0d8886a35cf5b6670f83390f3.js
 active_admin.css: active_admin-f6eab3903eabe26e294bb5e070593cb6.css
 active_admin/index.css: active_admin-f6eab3903eabe26e294bb5e070593cb6.css
 application.css: application-67a626986a0e8d5c5e0a037c616ce978.css
