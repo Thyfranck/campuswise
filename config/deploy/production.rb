@@ -2,7 +2,7 @@ set(:ruby_version)      { '1.9.3-p286' }
 set(:rvm_ruby_string)   { "1.9.3-p286" }
 
 set :application, "ec2-54-225-97-117.compute-1.amazonaws.com"
-set :deploy_to, "/vol/apps/campuswise-staging"
+set :deploy_to, "/vol/apps/campuswise"
 set :rails_env, "production"
 set :ruby_path, "/usr/local/rvm/rubies/ruby-1.9.3-p286/bin/ruby"
 set :branch, 'master'

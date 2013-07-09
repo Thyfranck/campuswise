@@ -36,7 +36,7 @@ ssh_options[:forward_agent] = true
 after "deploy:setup", :"deploy:create_shared_directories"
 
 after "deploy:create_symlink", :"deploy:link_shared_files"
-#after "deploy:symlink", :"deploy:install_bundle"
+
 after "deploy", "deploy:cleanup"
 
 #If you are using Passenger mod_rails uncomment this:
