@@ -54,7 +54,7 @@ ActiveAdmin.register Exchange do
       @payment = @exchange.payments.new(:payment_amount => @price, :charge_id => response.id, :status => Payment::STATUS[:pending])
       if @payment.save
         @exchange.update_attributes(:status => Exchange::STATUS[:charge_pending])
-        redirect_to admin_exchange_path(@exchange), :notice => "Request Completed"
+        redirect_to admin_exchange_path(@exchange), :notice => "Request is in process"
       end
     rescue => e
       logger.error e.message
