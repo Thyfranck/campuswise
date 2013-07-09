@@ -1,6 +1,6 @@
 class PaymentMethod < ActiveRecord::Base
   attr_accessible :user_id, :account_holder_name,
-    :account_number, :bank_name,:bank_branch ,
+    :account_number, :bank_name,:bank_branch,
     :credit_card_type, :card_number, :payment_method_type,
     :paypal
   belongs_to :user

@@ -95,86 +95,29 @@
   </p>
 
   <% if current_user and @book.user_id == current_user.id and @book.lended == true %>
-    <h5 style="color: red">This book is already borrowed or in a borrow process. You can't edit this book now.</h5>
+    <h5 style="color: red">This book is already sold or borrowed or in a borrow process. You can't edit this book now.</h5>
   <% end %>
 
   <% if current_user.present? %>
     <% unless current_user.not_eligiable_to_borrow_or_buy(@book) %>
       <%= link_to('Borrow this Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
-      <%= link_to('Buy This Book', "#myModal", :class => 'btn btn-primary', :role => "button", :"data-toggle" => "modal", :id => "continue") if @book.for_sell? %>
+      <br/><br/>
+      <%= link_to('Buy This Book', buy_book_path(@book), :class => 'btn btn-primary') if @book.for_sell? %>
     <% end %>
   <% else %>
     <%= link_to('Borrow this Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
+    <br/><br/>
     <%= link_to('Buy This Book', buy_book_path(@book), :class => 'btn btn-primary') if @book.for_sell? %>
   <% end %>
 </div>
 
-<% if current_user and @book.available == true and @book.user != current_user and current_user.billing_setting.present? %>
-  <% unless @book.available_for == Book::AVAILABLE_FOR[:rent] %>
-    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Take a review</h3>
-      </div>
-      <div class="modal-body span6">
-        <h4>Your credit card information</h4>
-        <p>
-          <b>Card Holder Name :</b>
-          <%= current_user.billing_setting.card_holder_name %>
-        </p>
 
-        <p>
-          <b>Card Number :</b>
-          <%= "*********#{current_user.billing_setting.card_last_four_digits}" %>
-        </p>
 
-        <p>
-          <b>Card Type :</b>
-          <%= current_user.billing_setting.card_type %>
-        </p>
-
-        <p>
-          <b>Card Expiry Date :</b>
-          <%= current_user.billing_setting.card_expiry_date.to_date %>
-        </p>
-      </div>
-      <div class="modal-body span5">
-        <h4>Total amount to pay</h4>
-        <h4 class="total_amount_to_pay" style="color:#23722E;">
-          <%= number_to_currency(@book.price.to_f, :prescision => 2) %>
-        </h4>
-      </div>
-      <%= form_for @exchange = Exchange.new, :url => buy_book_path(@book)  do |f| %>
-        <div class="modal-body span5">
-          <%= f.hidden_field :book_id, :value => @book.id  %>
-          <%= f.hidden_field :package, :value => "buy"  %>
-          <div class="control-group">
-            <div class="counter-offer-notice">
-              You can offer your price here.<br/>
-              Your offering price must be greater than $1.00 and
-              less than
-              <%= number_to_currency(@book.price.to_f, :prescision => 2) %>
-            </div>
-            <br/>
-            <div class="controls">
-              <%= f.text_field :counter_offer, :class => 'input-medium', :placeholder => "Your Price" %>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-          <%= f.submit "Submit", :class => 'btn btn-primary' %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-<% end %>
-
-<% if current_user and @book.user != current_user and current_user.billing_setting.blank? and @book.available == true %>
-  <div class="span3 offset1">
-    <h4 style="color:red">Please provide your payment info in payment settings to borrow/buy this book.</h4>
-  </div>
-<% end %>
+<%# if current_user and @book.user != current_user and current_user.billing_setting.blank? and @book.available == true %>
+  <%#*<div class="span3 offset1">%>
+    <%#*<h4 style="color:red">Please provide your payment info in payment settings to borrow/buy this book.</h4>%>
+  <%#*</div>%>
+<%# end %>
 
 
 

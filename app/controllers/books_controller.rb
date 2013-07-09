@@ -53,7 +53,14 @@ class BooksController < ApplicationController
 
   def show
     @book = Book.find(params[:id])
-    render :layout => "application", :template => "books/public_view" if current_user.blank?
+    if current_user
+    else
+      if @book.unavailable?
+        redirect_to root_path, :notice => "Unautorized!"
+      else
+        render :layout => "application", :template => "books/public_view" if current_user.blank?
+      end
+    end   
   end
 
   def edit
@@ -172,6 +179,7 @@ class BooksController < ApplicationController
 
   def campus_bookshelf
     @books = current_school.books.available_now.date_not_expired.paginate(:page => params[:page], :per_page => 6)
+    @recent_books = current_school.books.available_now.date_not_expired.order("created_at desc").limit(10)
     render :action => 'available' if current_user.present?
     render :layout => "application", :template => "books/public_search" if current_user.blank?
   end
