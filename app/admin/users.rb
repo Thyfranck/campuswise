@@ -61,7 +61,7 @@ ActiveAdmin.register User do
   member_action :pay, :method => :post do
     @user = User.find(params[:id])
     if @request = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).present?
-      if params[:amount].present? and @user.credit.to_f > params[:amount].to_f
+      if params[:amount].present? and @user.credit.to_f >= params[:amount].to_f
         @new_credit = @user.credit.to_f - (@user.debit.to_f + params[:amount].to_f)
         if @new_credit.to_f > 0
           @new_debit = (@user.debit.to_f or 0.0) + params[:amount].to_f
