@@ -1,7 +1,7 @@
 <div class="pull-left">
-  <% if current_user.credit.to_f > 0.0 %>
-    <%= link_to "Withdraw Balance", new_withdraw_request_path, :class => "btn btn-large btn-primary" %>
-  <% end %>
+  <%# if current_user.credit.to_f > 0.0 %>
+    <%#= link_to "Withdraw Balance", new_withdraw_request_path, :class => "btn btn-large btn-primary" %>
+  <%# end %>
 </div>
 <div class="pull-right">
   <h4 style="color:green">Your balance is now <%= number_to_currency(current_user.balance.to_f, :prescision => 2) %></h4>

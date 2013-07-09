@@ -6,6 +6,7 @@ You can manage your borrow requests Here.
     <li><a href="#tab2" data-toggle="tab">Waiting for Owner's Approval (<%= "#{@pending_for_owner.count}" %>)</a></li>
     <li><a href="#tab3" data-toggle="tab">Waiting for Your Approval (<%= "#{@pending_for_me.count}" %>)</a></li>
     <li><a href="#tab4" data-toggle="tab">Lend / Sold (<%= "#{@lended.count}" %>)</a></li>
+    <li><a href="#tab5" data-toggle="tab">Not returned and not paid (<%= "#{@not_returned.count}" %>)</a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="tab1">
@@ -145,13 +146,55 @@ You can manage your borrow requests Here.
                   </ul>
                 </td>
                 <% unless exchange.package == "buy"  %>
-                <td>
-                  <%= link_to "Returned", returned_exchange_path(exchange.id, :returned => true), :class => "btn btn-mini btn-primary"  %>
-                  <%= link_to "Not Returned", returned_exchange_path(exchange.id,:returned => false), :class => "btn btn-mini btn-primary"  %>
-                </td>
+                  <td>
+                    <% if Time.now.to_date > exchange.ending_date.to_date %>
+                      <%= link_to "Returned", returned_exchange_path(exchange.id, :returned => true), :class => "btn btn-mini btn-primary"  %>
+                      <%= link_to "Not Returned", returned_exchange_path(exchange.id,:returned => false), :class => "btn btn-mini btn-primary"  %>
+                    <% end %>
+                  </td>
                 <% else %>
-                <td>N/A</td>
-                <% end %>              
+                  <td>N/A</td>
+                <% end %>
+              </tr>
+            </tbody>
+          <% end %>
+        </table>
+      <% else %>
+        Currently Empty.
+      <% end %>
+    </div>
+
+    <div class="tab-pane" id="tab5">
+      <% if @not_returned.any? %>
+        <%= will_paginate @not_returned %>
+        <table class="table table-hover table-bordered">
+          <thead>
+          <th>Title</th>
+          <th>Lend / Sold</th>
+          <th>Borrowed Date</th>
+          <th>Returning Time</th>
+          <th>Borrower / Buyer info</th>
+          </thead>
+          <% @not_returned.each do |exchange| %>
+            <% @book = Book.find(exchange.book_id) %>
+            <tbody>
+              <tr>
+                <td><%= @book.title %></td>
+                <td><%= exchange.package == "buy" ? "Sold" : "Lend"  %></td>
+                <% unless exchange.package == "buy"  %>
+                  <td><%= exchange.created_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= exchange.ending_date.strftime("%m/%d/%Y") %></td>
+                <% else %>
+                  <td>N/A</td>
+                  <td>N/A</td>
+                <% end %>
+                <td>
+                  <ul>
+                    <li>Name : <%= User.find(exchange.user_id).name %></li>
+                    <li>Email: <%= User.find(exchange.user_id).email %></li>
+                    <li>Phone: <%= User.find(exchange.user_id).phone %></li>
+                  </ul>
+                </td>
               </tr>
             </tbody>
           <% end %>

@@ -161,7 +161,7 @@ class Notify
     @dashboard.save
     Notification.borrower_about_owner_doesnt_want_to_negotiate(record, requested_price).deliver
     @to = record.user.phone
-    @body = "Lender of the book titled '#{record.book.title.truncate(30)}' doesn't want to negotiate below #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)}.Login to our site to accept or reject.- Campuswise"
+    @body = "#{record.package == 'buy' ? 'Seller' : 'Lender'} of the book titled '#{record.book.title.truncate(30)}' doesn't want to negotiate below #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)}.Login to our site to accept or reject.- Campuswise"
     TwilioRequest.send_sms(@body, @to)
   end
 
@@ -173,7 +173,7 @@ class Notify
     @dashboard.save
     Notification.borrower_about_owner_want_to_negotiate(record).deliver
     @to = record.user.phone
-    @body = "Lender of the book titled '#{record.book.title.truncate(30)}' wants to #{record.package == 'buy' ? 'sell' : 'lend'} the book at price #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)}.To negotiate goto our site."
+    @body = "#{record.package == 'buy' ? 'Seller' : 'Lender'} of the book titled '#{record.book.title.truncate(30)}' wants to #{record.package == 'buy' ? 'sell' : 'lend'} the book at price #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)}.To negotiate goto our site."
     TwilioRequest.send_sms(@body, @to)
   end
 
@@ -212,8 +212,38 @@ class Notify
   def self.admin_for_book_not_returned(record) #exchange
     @admin_notification = record.dashboard_notifications.new(
       :admin_user_id => AdminUser.first.id,
-      :content => "User: #{record.book.user.name}, email:#{record.book.user.email} says that didn't got back the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \" "
+      :content => "User: #{record.book.user.name}, email:#{record.book.user.email} says that didn't got back the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \" , <a href='/admin/exchanges/#{record.id}'>Charge The User</a>"
     )
     @admin_notification.save
+  end
+
+  def self.owner_full_price_charged(record) #exchange
+    @dashboard = record.dashboard_notifications.new(
+      :user_id => record.book.user.id,
+      :content => "The full price of the book <a href='/books/#{record.book.id}'>#{record.book.title}</a>,amount of $#{record.book.price.to_f} is paid to you.Please check your balance"
+    )
+    @dashboard.save
+    Notification.owner_full_price_charged(record).deliver
+    @to = record.book.user.phone
+    @body = "The full price of the book '#{record.book.title.truncate(30)}',amount of $#{record.book.price.to_f} was paid to you. Please check your balance -Campuswise"
+    TwilioRequest.send_sms(@body, @to)    
+  end
+
+  def self.borrower_full_price_charged(record) #exchange
+    @admin_notification = record.dashboard_notifications.new(
+      :admin_user_id => AdminUser.first.id,
+      :content => "User: #{record.user.name} with email:#{record.user.email}, was charged $#{record.book.price.to_f} successfully for not returning the book <a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a>"
+    )
+    @admin_notification.save
+
+    @dashboard = record.dashboard_notifications.new(
+      :user_id => record.user.id,
+      :content => "We charged the full price of the book <a href='/books/#{record.book.id}'>#{record.book.title}</a>,amount of $#{record.book.price.to_f} from you, as you didn't return the book timely"
+    )
+    @dashboard.save
+    Notification.borrower_full_price_charged(record).deliver
+    @to = record.user.phone
+    @body = "We charged the full price of the book '#{record.book.title.truncate(30)}',amount of $#{record.book.price.to_f} from you, as you didn't return the book timely - Campuswise"
+    TwilioRequest.send_sms(@body, @to)  
   end
 end

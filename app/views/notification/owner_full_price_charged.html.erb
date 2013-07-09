@@ -1,0 +1,13 @@
+Dear <%= @user.name %>,
+<br/>
+<br/>
+As you complained that your book titled "<%= @book.title %>" was not returned to you in time.
+<br/>
+<br/>
+So as our rules and regulations we paid you the price amount of $<%= @book.price.to_f %>.
+<br/>
+<br/>
+Please <%= link_to "login", @url %> our site and check your balance.
+<br/>
+<br/>
+Thank you for using campuswise! Have a nice day.

@@ -178,4 +178,22 @@ class Notification < ActionMailer::Base
     mail(:to => @user.email,
       :subject => "Congratulation your withraw request is complete. -Campuswise")
   end
+
+  def owner_full_price_charged(exchange)
+    @book = exchange.book
+    @user = @book.user
+    @url = login_url
+    headers['X-SMTPAPI'] = "{\"category\" : \"Full book price charge\"}"
+    mail(:to => @user.email,
+      :subject => "Payment complete for you non-returned book -Campuswise")
+  end
+
+  def borrower_full_price_charged(exchange)
+    @book = exchange.book
+    @exchange = exchange
+    @user = exchange.user
+    headers['X-SMTPAPI'] = "{\"category\" : \"Full book price charge\"}"
+    mail(:to => @user.email,
+      :subject => "We charged you for not returning a book -Campuswise")
+  end
 end
