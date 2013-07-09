@@ -1,6 +1,6 @@
 <br/>
 <br/>
-You can browse all the available books in your campus
+You can browse all the available books on your campus
 <%= link_to "here", available_books_path, :class => "btn btn-small btn-info"  %>
 <br/>
 <br/>
@@ -12,6 +12,6 @@ Or you can search for a Specific Book below
   <%= submit_tag "Search", :class => "btn btn-primary search_button" %>
 <% end %>
 Or if you don't find your desired books in our site you can post it
-&nbsp;
+
 <%= link_to "Here", new_book_path(:requested => true) %>
 so that other users can see it.

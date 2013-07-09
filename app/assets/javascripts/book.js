@@ -31,7 +31,10 @@ $(document).ready(function(){
 
     $('.add_manually').click(function(){
         $('.book_info').show();
-        $('.book_info input').val("");
+        $("#book_title").val("");
+        $("#book_isbn").val("");
+        $("#book_author").val("");
+        $("#book_publisher").val("");
         $('#uniform-book_image').parent().parent().show();
         $(".hidden_image img").attr("src", "");
         $(".hidden_image").hide();
