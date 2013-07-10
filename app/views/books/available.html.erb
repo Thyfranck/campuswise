@@ -50,31 +50,32 @@
           <legend>
             <b><h3>Currently not available or empty keyword.</h3></b>
           </legend>
-          <b><h5>Recently added books.</h5></b>
-          <% @recent_books.each do |book| %>
-            <div class="searched_books span5">
+          <% if @recent_books.any? %>
+            <b><h5>Recently added books.</h5></b>
+            <% @recent_books.each do |book| %>
+              <div class="searched_books span5">
 
-              <div class="search_book_image span4">
-                <% if book.image.present?  %>
-                  <td><%= image_tag book.image_url %></td>
-                <% else %>
-                  <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
-                <% end %>
-              </div>
-
-              <div class="search_book_text span7">
-                <div class="book_title span12">
-                  <b><%= book.title.truncate(50) %></b><br/>
+                <div class="search_book_image span4">
+                  <% if book.image.present?  %>
+                    <td><%= image_tag book.image_url %></td>
+                  <% else %>
+                    <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
+                  <% end %>
                 </div>
-                by <i><%= book.author.truncate(50) %></i><br/>
-                ISBN : <%= book.isbn %><br/>
-                Publisher : <%= book.publisher %><br/>
-                Available : <%= book.available == true ? "Yes" : "No" %><br/>
-                <%= link_to "Show Details", book, :class => 'btn btn-mini btn-info' %>
-              </div>
-            </div>
-          <% end %>
 
+                <div class="search_book_text span7">
+                  <div class="book_title span12">
+                    <b><%= book.title.truncate(50) %></b><br/>
+                  </div>
+                  by <i><%= book.author.truncate(50) %></i><br/>
+                  ISBN : <%= book.isbn %><br/>
+                  Publisher : <%= book.publisher %><br/>
+                  Available : <%= book.available == true ? "Yes" : "No" %><br/>
+                  <%= link_to "Show Details", book, :class => 'btn btn-mini btn-info' %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
         <% end %>
       </div>
       <% if @needed_books %>
@@ -107,31 +108,31 @@
             <legend>
               <b><h4>Currently not available or empty keyword.</h4></b>
             </legend>
+            <% if @recent_needed_books %>
+              <b><h4>Recently requested books.</h4></b>
+              <% @recent_needed_books.each do |book| %>
+                <div class="searched_books span5">
 
-            <b><h4>Recently requested books.</h4></b>
-            <% @recent_needed_books.each do |book| %>
-              <div class="searched_books span5">
-
-                <div class="search_book_image span4">
-                  <% if book.image.present?  %>
-                    <td><%= image_tag book.image_url %></td>
-                  <% else %>
-                    <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
-                  <% end %>
-                </div>
-
-                <div class="search_book_text span7">
-                  <div class="book_title span12">
-                    <b><%= book.title.truncate(50) %></b><br/>
+                  <div class="search_book_image span4">
+                    <% if book.image.present?  %>
+                      <td><%= image_tag book.image_url %></td>
+                    <% else %>
+                      <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
+                    <% end %>
                   </div>
-                  by <i><%= book.author.truncate(50) %></i><br/>
-                  ISBN : <%= book.isbn %><br/>
-                  Publisher : <%= book.publisher %><br/>
-                  <%= link_to "Show Details", book, :class => 'btn btn-mini btn-info' %>
-                </div>
-              </div>
-            <% end %>
 
+                  <div class="search_book_text span7">
+                    <div class="book_title span12">
+                      <b><%= book.title.truncate(50) %></b><br/>
+                    </div>
+                    by <i><%= book.author.truncate(50) %></i><br/>
+                    ISBN : <%= book.isbn %><br/>
+                    Publisher : <%= book.publisher %><br/>
+                    <%= link_to "Show Details", book, :class => 'btn btn-mini btn-info' %>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
           <% end %>
 
         </div>
