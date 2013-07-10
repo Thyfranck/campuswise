@@ -65,6 +65,7 @@ class ExchangesController < ApplicationController
           elsif @exchange.user == current_user
             @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
             @dashboard.destroy if @dashboard.present?
+            Notify.owner_about_negotiation_failed(@exchange)
             @exchange.destroy
           end
           format.html { redirect_to dashboard_path, :notice => "Request is in process."}
@@ -123,14 +124,12 @@ class ExchangesController < ApplicationController
   def destroy
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
-      DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id).destroy
-      if @exchange.counter_offer.present?
-        if @exchange.user == current_user
-          Notify.owner_about_negotiation_failed(record)
-        elsif @exchange.book.user == current_user
-          Notify.borrower_about_rejected_by_owner(record)
-        end  
-      end
+      DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id).destroy      
+      if @exchange.user == current_user and @exchange.counter_offer.present?
+        Notify.owner_about_negotiation_failed(@exchange)
+      elsif @exchange.book.user == current_user
+        Notify.borrower_about_rejected_by_owner(@exchange)
+      end    
       @exchange.destroy
       format.html {redirect_to request.referrer, :notice => "You Rejected the request"}
     end

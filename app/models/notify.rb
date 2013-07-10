@@ -42,7 +42,7 @@ class Notify
       else
         @dashboard = record.dashboard_notifications.new(
           :user_id => @request_receiver.id,
-          :content => "Someone wants to purchase the book titled '<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)}</a>'.")
+          :content => "Someone wants to purchase the book titled '<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)}</a>' at you given price $#{record.book.price.to_f}.")
         @dashboard.save
       end     
     else
@@ -153,18 +153,6 @@ class Notify
     TwilioRequest.send_sms(@body, @to)
   end
 
-  def self.borrower_about_owner_doesnt_want_to_negotiate(record, requested_price) #exchange
-    @dashboard = record.dashboard_notifications.new(
-      :user_id => record.user.id,
-      :content => "You wanted to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book titled '#{record.book.title}' at the price #{Notify.helpers.number_to_currency(requested_price, :prescision => 2)}. But #{record.package == 'buy' ? 'seller' : 'lender'} of the book doesn't want to #{record.package == 'buy' ? 'sell' : 'lend'} below the price #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)}."
-    )
-    @dashboard.save
-    Notification.borrower_about_owner_doesnt_want_to_negotiate(record, requested_price).deliver
-    @to = record.user.phone
-    @body = "#{record.package == 'buy' ? 'Seller' : 'Lender'} of the book titled '#{record.book.title.truncate(30)}' doesn't want to negotiate below #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)}.Login to our site to accept or reject.- Campuswise"
-    TwilioRequest.send_sms(@body, @to)
-  end
-
   def self.borrower_about_owner_want_to_negotiate(record) #exchange
     @dashboard = record.dashboard_notifications.new(
       :user_id => record.user.id,
@@ -174,6 +162,18 @@ class Notify
     Notification.borrower_about_owner_want_to_negotiate(record).deliver
     @to = record.user.phone
     @body = "#{record.package == 'buy' ? 'Seller' : 'Lender'} of the book titled '#{record.book.title.truncate(30)}' wants to #{record.package == 'buy' ? 'sell' : 'lend'} the book at price #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)}.To negotiate goto our site."
+    TwilioRequest.send_sms(@body, @to)
+  end
+
+  def self.owner_about_borrower_want_to_negotiate(record) #exchange
+    @dashboard = record.dashboard_notifications.new(
+      :user_id => record.book.user.id,
+      :content => "You wanted to #{record.package == 'buy' ? 'sell' : 'lend'} the book titled '#{record.book.title}' at the price of #{Notify.helpers.number_to_currency(record.amount.to_f,:prescision => 2)}.But the #{record.package == 'buy' ? 'buyer' : 'borrower'} wants to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book at the price #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)}."
+    )
+    @dashboard.save
+    Notification.owner_about_borrower_want_to_negotiate(record).deliver
+    @to = record.book.user.phone
+    @body = "#{record.package == 'buy' ? 'Buyer' : 'Borrower'}  the book titled '#{record.book.title.truncate(30)}' wants to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book at the price #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)}."
     TwilioRequest.send_sms(@body, @to)
   end
 
@@ -189,15 +189,15 @@ class Notify
     TwilioRequest.send_sms(@body, @to)
   end
 
-  def self.owner_about_borrower_want_to_negotiate(record) #exchange
+  def self.borrower_about_owner_doesnt_want_to_negotiate(record, requested_price) #exchange
     @dashboard = record.dashboard_notifications.new(
-      :user_id => record.book.user.id,
-      :content => "You wanted to #{record.package == 'buy' ? 'sell' : 'lend'} the book titled '#{record.book.title}' at the price of #{Notify.helpers.number_to_currency(record.amount.to_f,:prescision => 2)}.But the #{record.package == 'buy' ? 'buyer' : 'borrower'} wants to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book at the price #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)}."
+      :user_id => record.user.id,
+      :content => "You wanted to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book titled '#{record.book.title}' at the price #{Notify.helpers.number_to_currency(requested_price, :prescision => 2)}. But #{record.package == 'buy' ? 'seller' : 'lender'} of the book doesn't want to #{record.package == 'buy' ? 'sell' : 'lend'} below the price #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)}."
     )
     @dashboard.save
-    Notification.owner_about_borrower_want_to_negotiate(record).deliver
-    @to = record.book.user.phone
-    @body = "#{record.package == 'buy' ? 'Buyer' : 'Borrower'}  the book titled '#{record.book.title.truncate(30)}' wants to #{record.package == 'buy' ? 'purchase' : 'borrow'} the book at the price #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)}."
+    Notification.borrower_about_owner_doesnt_want_to_negotiate(record, requested_price).deliver
+    @to = record.user.phone
+    @body = "#{record.package == 'buy' ? 'Seller' : 'Lender'} of the book titled '#{record.book.title.truncate(30)}' doesn't want to negotiate below #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)}.Login to our site to accept or reject.- Campuswise"
     TwilioRequest.send_sms(@body, @to)
   end
 

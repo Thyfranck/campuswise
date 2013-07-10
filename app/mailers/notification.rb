@@ -52,7 +52,7 @@ class Notification < ActionMailer::Base
     @book = exchange.book
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
     mail(:to => @user.email,
-      :subject => "Your #{@exchange.package == "buy" ? "purchase" : "borrow"} request has been accepted by the book owner - CampusWise")
+      :subject => "Your #{@exchange.package == "buy" ? "purchase" : "borrow"} request has been accepted by the book #{@exchange.package == "buy" ? "seller" : "lender"} - CampusWise")
   end
 
   def notify_book_borrower_reject_by_user(exchange)
@@ -62,7 +62,7 @@ class Notification < ActionMailer::Base
     @book = exchange.book
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert\"}"
     mail(:to => @user.email,
-      :subject => "Your book #{@exchange.package == "buy" ? "purchase" : "borrow"}  request was rejected by the owner - CampusWise")
+      :subject => "Your book #{@exchange.package == "buy" ? "purchase" : "borrow"}  request was rejected by the #{@exchange.package == "buy" ? "seller" : "lender"} - CampusWise")
   end
 
   def borrower_about_owner_doesnt_want_to_negotiate(exchange, requested_price)

@@ -3,11 +3,7 @@
 <h4>Requested amount <%= number_to_currency(@requested_amount, :prescision => 2) %></h4>
 <br/>
 <%= form_tag(pay_admin_user_path(@user)) do %>
-
-  <%= label_tag :amount %>
-  <div style="width:200px;">
-    <%= text_field_tag :amount%>
-  </div>
+  <%= hidden_field_tag :amount, @requested_amount%>
   <br/>
   <%= submit_tag "Pay"  %>
 <% end %>

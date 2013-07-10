@@ -125,11 +125,9 @@ class ExchangeObserver < ActiveRecord::Observer
       if record.status == Exchange::STATUS[:accepted]
         return false
       else
-        if record.payment.blank? and record.declined.present?
+        if record.payments.blank? and record.declined.present?
           Notify.borrower_about_card_rejected(record)
-        elsif record.payment.blank?
-          Notify.borrower_about_rejected_by_owner(record)
-        elsif record.payment.status == Payment::STATUS[:failed]
+        elsif record.payments.present? and record.payments.first.status == Payment::STATUS[:failed]
           if record.book.available == true
             Notify.borrower_about_card_problem(record)
           end

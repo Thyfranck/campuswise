@@ -72,6 +72,8 @@ ActiveAdmin.register User do
             Notify.delay.user_for_withdraw(@request)
             redirect_to admin_user_path(@user)
             flash[:notice] = "Request Completed"
+          else
+            redirect_to admin_user_path(@user), :notice => "Error Occured"
           end
         else
            redirect_to admin_user_path(@user), :notice => "Insufficient fund"
