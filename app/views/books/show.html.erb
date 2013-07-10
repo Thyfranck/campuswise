@@ -22,7 +22,7 @@
     <b> ISBN:</b>
     <%= @book.isbn %>
   </p>
-  <% if @book.available.present? %>
+  <% if @book.available.present?  %>
     <p>
       <b> Available Now:</b>
       <%= @book.available == false ? "No" : "Yes" %>
@@ -93,30 +93,31 @@
       <%= image_tag 'no_book_image.jpeg', :class => "no_book_image"  %>
     <% end %>
   </p>
+  <% unless @book.requested == true %>
+    <% if current_user and @book.user_id == current_user.id and @book.lended == true %>
+      <h5 style="color: red">This book is already sold or borrowed or in a borrow process. You can't edit this book now.</h5>
+    <% end %>
 
-  <% if current_user and @book.user_id == current_user.id and @book.lended == true %>
-    <h5 style="color: red">This book is already sold or borrowed or in a borrow process. You can't edit this book now.</h5>
-  <% end %>
-
-  <% if current_user.present? %>
-    <% unless current_user.not_eligiable_to_borrow_or_buy(@book) %>
+    <% if current_user.present? %>
+      <% unless current_user.not_eligiable_to_borrow_or_buy(@book) %>
+        <%= link_to('Borrow this Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
+        <br/><br/>
+        <%= link_to('Buy This Book', buy_book_path(@book), :class => 'btn btn-primary') if @book.for_sell? %>
+      <% end %>
+    <% else %>
       <%= link_to('Borrow this Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
       <br/><br/>
       <%= link_to('Buy This Book', buy_book_path(@book), :class => 'btn btn-primary') if @book.for_sell? %>
     <% end %>
-  <% else %>
-    <%= link_to('Borrow this Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
-    <br/><br/>
-    <%= link_to('Buy This Book', buy_book_path(@book), :class => 'btn btn-primary') if @book.for_sell? %>
   <% end %>
 </div>
 
 
 
 <%# if current_user and @book.user != current_user and current_user.billing_setting.blank? and @book.available == true %>
-  <%#*<div class="span3 offset1">%>
-    <%#*<h4 style="color:red">Please provide your payment info in payment settings to borrow/buy this book.</h4>%>
-  <%#*</div>%>
+<%#*<div class="span3 offset1">%>
+<%#*<h4 style="color:red">Please provide your payment info in payment settings to borrow/buy this book.</h4>%>
+<%#*</div>%>
 <%# end %>
 
 

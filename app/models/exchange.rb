@@ -11,7 +11,7 @@ class Exchange < ActiveRecord::Base
   belongs_to :user
   has_many :dashboard_notifications, :as => :dashboardable
   has_one :transaction, :as => :transactable
-  has_one :payment
+  has_many :payments
 
   validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semester" or "buy"}
   validates :package, :inclusion => {:in => ["day", "week", "month", "semester", "buy"]}
@@ -21,7 +21,10 @@ class Exchange < ActiveRecord::Base
     :accepted => "ACCEPTED",
     :returned => "RETURNED",
     :pending => "PENDING",
-    :not_returned => "NOT-RETURNED"
+    :not_returned => "NOT-RETURNED",
+    :charged => "FULL-PRICE-CHARGED",
+    :charge_pending => "PENDING-FULL-PRICE-CHARGE",
+    :full_charge_failed => "FAILED-FULL-PRICE-CHARGE"
   }
 
   before_create :compute_amount, :avilable_in_date?, :set_status, :set_counter_offer_maker, :valid_duration?
@@ -67,6 +70,10 @@ class Exchange < ActiveRecord::Base
 
   def set_status
     self.status = Exchange::STATUS[:pending]
+  end
+
+  def not_returned?
+    self.status == Exchange::STATUS[:not_returned]
   end
 
   def set_ending_date
@@ -141,12 +148,12 @@ class Exchange < ActiveRecord::Base
   def charge
     begin
       response = self.user.billing_setting.charge(self.amount.to_f, "Book renting charge - #{self.amount.to_f}")
-      if self.payment.present?
-        payment = self.payment
+      if self.payments.present?
+        payment = self.payments.first
         payment.charge_id = response.id
         payment.status = Payment::STATUS[:pending]
       else
-        payment = self.build_payment(:payment_amount => self.amount.to_f, :charge_id => response.id, :status => Payment::STATUS[:pending])
+        payment = self.payments.new(:payment_amount => self.amount.to_f, :charge_id => response.id, :status => Payment::STATUS[:pending])
       end      
       if payment.save
         if self.counter_offer.present?

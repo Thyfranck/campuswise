@@ -21,13 +21,6 @@ class ExchangeObserver < ActiveRecord::Observer
 
   def before_update(record)
     if record.class == Exchange
-      if record.payment.present?
-        if record.payment.status == Payment::STATUS[:paid]
-          return true
-        else
-          return false
-        end
-      end
       if record.counter_offer.present? and record.counter_offer_last_made_by.present?
         if record.amount_was < record.amount.to_f
           return false
@@ -43,7 +36,7 @@ class ExchangeObserver < ActiveRecord::Observer
     end
 
     if record.class == Payment
-      if record.status == Payment::STATUS[:paid] and record.status_was == Payment::STATUS[:pending]
+      if record.status == Payment::STATUS[:paid] and record.status_was == Payment::STATUS[:pending] and record.exchange.payments.count == 1
         Notify.delay.borrower_about_payment_received(record)
       end
     end
@@ -84,9 +77,28 @@ class ExchangeObserver < ActiveRecord::Observer
             @sending_date = @returning_date.days.from_now
             Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , @sending_date, :queue => "book_return_reminder"
           end
+        else
+          if @exchange.status == Exchange::STATUS[:charge_pending]
+            @exchange.update_attributes(:status => Exchange::STATUS[:charged])
+            @payment_receiver = @exchange.book.user
+            @old_credit = @payment_receiver.credit.to_f or 0.0
+            @new_credit = @old_credit + @exchange.book.price.to_f
+            if @payment_receiver.update_attribute(:credit, @new_credit)
+              @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
+                :description => "Received amount of #{helpers.number_to_currency(@exchange.book.price.to_f, :prescision => 2)} for not receiving the book titled '#{@exchange.book.title.truncate(40)}' in time.",
+                :amount => @exchange.book.price.to_f)
+              @transaction.save
+              Notify.delay.owner_full_price_charged(@exchange)
+            end
+            Notify.delay.borrower_full_price_charged(@exchange)
+          end
         end
       elsif record.status == Payment::STATUS[:failed]
-        record.exchange.destroy
+        if record.exchange.book.available == true
+          record.exchange.destroy
+        elsif record.exchange.book.available == false
+          record.exchange.update_attribute(:status, Exchange::STATUS[:full_charge_failed])
+        end    
       end
     end
     
@@ -95,7 +107,7 @@ class ExchangeObserver < ActiveRecord::Observer
         Notify.delay.admin_for_book_returned(record)
       elsif record.status == Exchange::STATUS[:not_returned]
         Notify.delay.admin_for_book_not_returned(record)
-      elsif record.counter_offer.present?
+      elsif record.counter_offer.present? and record.status == Exchange::STATUS[:pending]
         if record.counter_offer_last_made_by == record.book.user.id and record.amount_was > record.amount.to_f and record.counter_offer_count > 0
           @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(record.id, record.book.user.id)
           @dashboard.destroy if @dashboard.present?

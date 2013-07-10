@@ -15,6 +15,7 @@ Campuswise::Application.routes.draw do
     end
     collection do
       get :available
+      get :all
       get :requested
       get :campus_bookshelf
     end

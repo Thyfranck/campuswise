@@ -1,0 +1,13 @@
+Dear <%= @user.name %>,
+<br/>
+<br/>
+You borrowed book titled "<%= @book.title %>" at date <%= @exchange.starting_date.to_date %> to <%= @exchange.ending_date.to_date %>, but after receiving the book you didn't returned the book in timely.
+<br/>
+<br/>
+So as our rules and regulations we charged you the price amount of $<%= @book.price.to_f %>.
+<br/>
+<br/>
+If you have any complaints please don't hesitate to contact us.
+<br/>
+<br/>
+Thank you for using campuswise! Have a nice day.

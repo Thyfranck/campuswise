@@ -116,7 +116,14 @@ class BooksController < ApplicationController
     @books = @books.not_my_book(current_user.id) if current_user
     @books = @books.search_for(params[:search]) if params[:search].present?
     @books = @books.paginate(:page => params[:page], :per_page => 6)
+
+    @needed_books = current_school.books.needed
+    @needed_books = @needed_books.search_for(params[:search]) if params[:search].present?
+    @needed_books = @needed_books.paginate(:page => params[:page], :per_page => 6)
+
     @recent_books = current_school.books.available_now.date_not_expired.order("created_at desc").limit(10)
+    @recent_needed_books = current_school.books.needed.order("created_at desc").limit(10)
+    
     render :layout => "application", :template => "books/public_search" if current_user.blank?
   end
 
@@ -180,8 +187,18 @@ class BooksController < ApplicationController
   def campus_bookshelf
     @books = current_school.books.available_now.date_not_expired.paginate(:page => params[:page], :per_page => 6)
     @recent_books = current_school.books.available_now.date_not_expired.order("created_at desc").limit(10)
+    @needed_books = current_school.books.needed.paginate(:page => params[:page], :per_page => 6)
     render :action => 'available' if current_user.present?
     render :layout => "application", :template => "books/public_search" if current_user.blank?
+  end
+
+  def all
+    @books = current_school.books.available_now.date_not_expired
+    @books = @books.not_my_book(current_user.id) if current_user
+    @books = @books.search_for(params[:search]) if params[:search].present?
+    @books = @books.paginate(:page => params[:page], :per_page => 6)
+
+    @recent_books = current_school.books.available_now.date_not_expired.order("created_at desc").limit(10)
   end
 
   def buy

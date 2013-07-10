@@ -1,13 +1,13 @@
 <br/>
 <br/>
 You can browse all the available books on your campus
-<%= link_to "here", available_books_path, :class => "btn btn-small btn-info"  %>
+<%= link_to "here", all_books_path, :class => "btn btn-small btn-info"  %>
 <br/>
 <br/>
 Or you can search for a Specific Book below
 <br/>
 <br/>
-<%= form_tag available_books_path, :class => "form-horizontal search_borrow", :method => :get do %>
+<%= form_tag all_books_path, :class => "form-horizontal search_borrow", :method => :get do %>
   <%= text_field_tag :search, nil ,:placeholder => "Enter Title, Author, Publisher or ISBN number", :class => "span6" %>
   <%= submit_tag "Search", :class => "btn btn-primary search_button" %>
 <% end %>

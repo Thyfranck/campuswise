@@ -44,14 +44,19 @@
       <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
-      <li class="<%= "active" if current_page?(search_exchanges_path) %>">
-        <%= link_to "Borrow a Book", search_exchanges_path %>
+      <li class="dropdown-submenu">
+        <a tabindex="-1" href="#">Borrow a Book</a>
+        <ul class="dropdown-menu">
+          <li class="<%= "active" if current_page?(search_exchanges_path) %>">
+            <%= link_to "Borrow a Book", search_exchanges_path %>
+          </li>
+          <li class="<%= "active" if current_page?(new_book_path) and params[:requested].present? %>">
+            <%= link_to "Request a Book", new_book_path(:requested => true) %>
+          </li>
+        </ul>
       </li>
       <li class="<%= "active" if current_page?(borrow_requests_path) %>">
         <%= link_to "Manage Borrow Requests", borrow_requests_path %>
-      </li>
-      <li class="<%= "active" if current_page?(new_book_path) and params[:requested].present? %>">
-        <%= link_to "Request a Book", new_book_path(:requested => true) %>
       </li>
     </ul>
   </li>

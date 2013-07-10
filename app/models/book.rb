@@ -32,6 +32,7 @@ class Book < ActiveRecord::Base
 
   mount_uploader :image, ImageUploader
 
+  scope :needed, :conditions => {:requested => true}
   scoped_search :on => [:author, :isbn, :publisher, :title]
   scope :available_now, :conditions => {:available => true}
   scope :date_not_expired, lambda { where(["available_for = ? or returning_date > ?",Book::AVAILABLE_FOR[:sell],Time.now.to_date])}

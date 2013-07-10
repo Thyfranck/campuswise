@@ -18,7 +18,8 @@ class User < ActiveRecord::Base
   def pending_exchanges
     self.exchanges.where(:status => Exchange::STATUS[:pending])
   end
-
+  
+  has_many :not_returned_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:not_returned]}'" ,:source => :exchanges #for request receiver(book owner)
   has_many :pending_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:pending]}'" ,:source => :exchanges #for request receiver(book owner)
   has_many :accepted_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:accepted]}'" ,:source => :exchanges #for request receiver(book owner)
 
