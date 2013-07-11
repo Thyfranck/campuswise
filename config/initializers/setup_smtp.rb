@@ -1,9 +1,9 @@
- ActionMailer::Base.smtp_settings = {
-    :address              => "smtp.gmail.com",
-    :port                 => 587,
-    :domain               => "campuswise.com",
-    :user_name            => "contact@mhbweb.com",
-    :password             => "qwerty$123",
-    :authentication       => "plain",
-    :enable_starttls_auto => true
-  }
+ActionMailer::Base.delivery_method = :smtp
+ActionMailer::Base.smtp_settings = {
+  :address => 'smtpout.secureserver.net',
+  :domain  => 'campuswise.com',
+  :port      => 3535,
+  :user_name => 'info@campuswise.com',
+  :password => 'virginia10',
+  :authentication => :plain
+}

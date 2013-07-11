@@ -111,8 +111,9 @@ class User < ActiveRecord::Base
   end
 
   def check_if_phone_changed
-    if self.phone_changed?
+    if self.phone_changed? and self.phone_verified == "verified"
       self.set_phone_verification
+      self.send_sms_verification
       return true
     else
       return true

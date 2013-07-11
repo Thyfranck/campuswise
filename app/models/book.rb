@@ -23,6 +23,8 @@ class Book < ActiveRecord::Base
   
   belongs_to :user
   has_many :exchanges
+  has_many :dashboard_notifications, :through => :exchanges
+  
 
   after_validation :atleast_one_loan_rate_exsists,
     :update_availability_options,
@@ -31,6 +33,16 @@ class Book < ActiveRecord::Base
     :update_availability_dates
 
   mount_uploader :image, ImageUploader
+  before_destroy :delete_connections
+
+  def delete_connections
+    self.dashboard_notifications.each do |d|
+      d.destroy
+    end
+    self.exchanges.each do |d|
+      d.destroy if d.status == Exchange::STATUS[:pending]
+    end
+  end
 
   scope :needed, :conditions => {:requested => true}
   scoped_search :on => [:author, :isbn, :publisher, :title]
