@@ -85,6 +85,9 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     erubis (2.7.0)
     eventmachine (1.0.3)
+    exception_notification (4.0.0)
+      actionmailer (>= 3.0.4)
+      activesupport (>= 3.0.4)
     execjs (1.4.0)
       multi_json (~> 1.0)
     fancybox-rails (0.2.1)
@@ -271,6 +274,7 @@ DEPENDENCIES
   carrierwave (= 0.5.8)
   coffee-rails (~> 3.2.1)
   delayed_job_active_record
+  exception_notification
   execjs
   fancybox-rails
   googlebooks
