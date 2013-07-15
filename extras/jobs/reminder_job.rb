@@ -11,15 +11,14 @@ class Jobs::ReminderJob < Struct.new(:payment)
   private
 
   def send_dashboard_notifications
-    @borrower_dashboard_notification =  DashboardNotification.new(
-      :user_id => payment.exchange.user,
-      :exchange_id => payment.exchange.id,
+    @exchange = payment.exchange
+    @borrower_dashboard_notification =  @exchange.dashboard_notifications.new(
+      :user_id => payment.exchange.user.id,
       :content => "Lending date for the book titled \"<a href='/books/#{payment.exchange.book.id}' target='_blank'> #{payment.exchange.book.title.truncate(25)} is over. Please return the book to the owner.")
     @borrower_dashboard_notification.save
 
-    @lender_dashboard_notification =  DashboardNotification.new(
-      :user_id => payment.exchange.book.user,
-      :exchange_id => payment.exchange.id,
+    @lender_dashboard_notification =  @exchange.dashboard_notifications.new(
+      :user_id => payment.exchange.book.user.id,
       :content => "Please inform us when and wheather the book titled \"<a href='/books/#{payment.exchange.book.id}' target='_blank'> #{payment.exchange.book.title.truncate(25)} </a> \" is returned. You can inform us \"<a href='/borrow_requests' target='_blank'> here </a> \"")
     @lender_dashboard_notification.save
   end
