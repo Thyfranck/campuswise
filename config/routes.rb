@@ -40,7 +40,7 @@ Campuswise::Application.routes.draw do
   match '/smsresponse' => 'exchanges#process_sms'
 
   match 'contact-us' => 'static#contact_us',          :as => :contact_us
-  match 'terms-and-conditions' => 'static#terms',     :as => :terms
+  match 'terms-of-use' => 'static#terms',     :as => :terms
   match 'privacy-policy' => 'static#privacy_policy',  :as => :privacy_policy
   match 'school-home' => 'static#school_home',        :as => :school_home
 

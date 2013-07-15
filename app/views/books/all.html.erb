@@ -16,10 +16,12 @@
       <div class="searched_books span5">
 
         <div class="search_book_image span4">
-          <% if book.image.present?  %>
-            <td><%= image_tag book.image_url %></td>
-          <% else %>
-            <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
+          <%= link_to book do %>
+            <% if book.image.present?  %>
+              <td><%= image_tag book.image_url %></td>
+            <% else %>
+              <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
+            <% end %>
           <% end %>
         </div>
 
@@ -50,10 +52,12 @@
       <div class="searched_books span5">
 
         <div class="search_book_image span4">
-          <% if book.image.present?  %>
-            <td><%= image_tag book.image_url %></td>
-          <% else %>
-            <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
+          <%= link_to book do %>
+            <% if book.image.present?  %>
+              <td><%= image_tag book.image_url %></td>
+            <% else %>
+              <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
+            <% end %>
           <% end %>
         </div>
 

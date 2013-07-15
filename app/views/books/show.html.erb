@@ -100,12 +100,12 @@
 
     <% if current_user.present? %>
       <% unless current_user.not_eligiable_to_borrow_or_buy(@book) %>
-        <%= link_to('Borrow this Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
+        <%= link_to('Borrow This Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
         <br/><br/>
         <%= link_to('Buy This Book', buy_book_path(@book), :class => 'btn btn-primary') if @book.for_sell? %>
       <% end %>
     <% else %>
-      <%= link_to('Borrow this Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
+      <%= link_to('Borrow This Book', borrow_book_path(@book), :class => 'btn btn-primary') if @book.for_rent? %>
       <br/><br/>
       <%= link_to('Buy This Book', buy_book_path(@book), :class => 'btn btn-primary') if @book.for_sell? %>
     <% end %>

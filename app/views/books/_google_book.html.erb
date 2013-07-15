@@ -1,10 +1,12 @@
 <% @google_books.each_with_index do |google_book, index| %>
   <div class="searched_books span5" <%= "style=margin-left:2.5641%" if(index == 0) %> >
     <div class="search_book_image span4">
-      <% unless google_book.image_url.blank? %>
-        <%= image_tag google_book.image_url %>
-      <% else %>
-        <%= image_tag 'no_book_image.jpeg'%>
+      <%= link_to show_search_path(:google_book_id => google_book.id) do %>
+        <% unless google_book.image_url.blank? %>
+          <%= image_tag google_book.image_url %>
+        <% else %>
+          <%= image_tag 'no_book_image.jpeg'%>
+        <% end %>
       <% end %>
     </div>
 
