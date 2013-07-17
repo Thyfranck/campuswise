@@ -1,14 +1,11 @@
 class StaticController < ApplicationController
 
+  before_filter :redirect_if_one_school_present, :only => [:home]
+
   def home
     session.delete(:school_id) unless current_user
     @recent_books = Book.order("created_at DESC")
-    
     @school_images = SchoolImage.order("created_at desc")
-
-    respond_to do |format|
-      format.html
-    end
   end
 
   def school_home
@@ -43,4 +40,12 @@ class StaticController < ApplicationController
   def contact_us
     
   end
+
+  private
+
+  def redirect_if_one_school_present
+    redirect_to school_home_path(:school_id => School.first.id) if School.count == 1
+  end
+
+
 end

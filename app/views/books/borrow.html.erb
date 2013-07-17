@@ -135,16 +135,22 @@
           <div class="span6">
             <h4>Total amount to pay</h4>
             <h4 id="total_amount_to_pay" style="color:#23722E;"></h4>
-            <div class="counter-offer-notice">
-              You can offer your price here.<br/>
-              Your offering price must be greater than $1.00 and
-              less than 
-              <span id="counter-offer-price"></span>
+            <div class="counter-price-container">
+              <div class="counter-offer-notice">
+                You can offer your price here.<br/>
+                Your offering price must be greater than $1.00 and
+                less than
+                <span id="counter-offer-price"></span>
+              </div>
+              <br/>
+              <div class="control-group">
+                <%= f.text_field :counter_offer, :class => 'number_field input-small', :placeholder => "Your Price" %>
+                (optional)
+              </div>
             </div>
-            <br/>
-            <div class="control-group">
-              <%= f.text_field :counter_offer, :class => 'number_field input-small', :placeholder => "Your Price" %>
-            </div>
+
+            <button class="btn btn-success counter-price-btn">Counter Price (optional)</button>
+
           </div>
         </div>
       </div>

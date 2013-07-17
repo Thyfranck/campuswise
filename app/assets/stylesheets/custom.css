@@ -604,3 +604,6 @@ div.price{
     width: 100px;
 }
 
+.counter-price-container {
+    display: none;
+}
