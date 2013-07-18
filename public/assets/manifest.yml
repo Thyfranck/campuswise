@@ -39,6 +39,10 @@ phn.jpg: phn-aac5a627cdfce53ea115bbca1fc90c23.jpg
 phn/index.jpg: phn-aac5a627cdfce53ea115bbca1fc90c23.jpg
 renting_txt.png: renting_txt-042e90058f96e590f23fe156fe3f0d3f.png
 renting_txt/index.png: renting_txt-042e90058f96e590f23fe156fe3f0d3f.png
+text2.png: text2-9ced625f3d24e8782a28a7805790be0f.png
+text2/index.png: text2-9ced625f3d24e8782a28a7805790be0f.png
+text3.png: text3-4de492f7a86720b03c413697912dfe76.png
+text3/index.png: text3-4de492f7a86720b03c413697912dfe76.png
 tw.jpg: tw-7e6adb4a9de112b66a93f1790d852dff.jpg
 tw/index.jpg: tw-7e6adb4a9de112b66a93f1790d852dff.jpg
 ui-anim_basic_16x16.gif: ui-anim_basic_16x16-54cf179aee5c85bb2128b8912e240fa6.gif
@@ -51,12 +55,12 @@ uniform/sprite-aristo.png: uniform/sprite-aristo-42715402efe1dd5e2e6298b6349db77
 uniform/sprite-aristo/index.png: uniform/sprite-aristo-42715402efe1dd5e2e6298b6349db771.png
 active_admin.js: active_admin-da1bfe85a1d3d3bee66acfbb6e4e19ea.js
 active_admin/index.js: active_admin-da1bfe85a1d3d3bee66acfbb6e4e19ea.js
-application.js: application-4759624f15e11f608461b085c24a549d.js
-application/index.js: application-4759624f15e11f608461b085c24a549d.js
+application.js: application-7beacf773e6e151a616faac32e793ae4.js
+application/index.js: application-7beacf773e6e151a616faac32e793ae4.js
 active_admin.css: active_admin-f6eab3903eabe26e294bb5e070593cb6.css
 active_admin/index.css: active_admin-f6eab3903eabe26e294bb5e070593cb6.css
-application.css: application-67a626986a0e8d5c5e0a037c616ce978.css
-application/index.css: application-67a626986a0e8d5c5e0a037c616ce978.css
+application.css: application-8bcf6bb0abd0099ab298c4c7c6ddff86.css
+application/index.css: application-8bcf6bb0abd0099ab298c4c7c6ddff86.css
 fancy_close.png: fancy_close-cdfd15cebb2c9f1f355f7b4be974f632.png
 fancy_close/index.png: fancy_close-cdfd15cebb2c9f1f355f7b4be974f632.png
 fancy_loading.png: fancy_loading-0fb4f9df86551410f174813354439f30.png
