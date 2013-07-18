@@ -23,31 +23,10 @@
 
       <div class="tab-pane active" id="tab1">
         <% if @books.any? %>
-          <%= will_paginate @books %>
-          <% @books.each do |book| %>
-            <div class="searched_books span5">
-              <div class="search_book_image span4">
-                <%= link_to book do %>
-                  <% if book.image.present?  %>
-                    <td><%= image_tag book.image_url %></td>
-                  <% else %>
-                    <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
-                  <% end %>
-                <% end %>
-              </div>
-
-              <div class="search_book_text span7">
-                <div class="book_title span12">
-                  <b><%= book.title.truncate(50) %></b><br/>
-                </div>
-                by <i><%= book.author.truncate(50) %></i><br/>
-                ISBN : <%= book.isbn %><br/>
-                Publisher : <%= book.publisher %><br/>
-                Available : <%= book.available == true ? "Yes" : "No" %><br/>
-                <%= link_to "Show Details", book, :class => 'btn btn-mini btn-info' %>
-              </div>
-            </div>
-          <% end %>
+          <div style="display:none;">
+            <%= will_paginate @books %>
+          </div>
+          <%= render 'available_books'  %>
         <% else %>
           <legend>
             <b><h4>Currently not available or empty keyword.</h4></b>
@@ -85,32 +64,11 @@
       <% if @needed_books %>
         <div class="tab-pane" id="tab2">
           <% if @needed_books.any? %>
-            <%= will_paginate @needed_books %>
-            <% @needed_books.each do |book| %>
-              <div class="searched_books span5">
-                <div class="search_book_image span4">
-                  <%= link_to book do %>
-                    <% if book.image.present?  %>
-                      <td><%= image_tag book.image_url %></td>
-                    <% else %>
-                      <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
-                    <% end %>
-                  <% end %>
-                </div>
-                <div class="search_book_text span7">
-                  <div class="book_title span12">
-                    <b><%= book.title.truncate(50) %></b><br/>
-                  </div>
-                  by <i><%= book.author.truncate(50) %></i><br/>
-                  ISBN : <%= book.isbn %><br/>
-                  Publisher : <%= book.publisher %><br/>
-                  <%= link_to "Show Details", book, :class => 'btn btn-mini btn-info' %>
-                </div>
-              </div>
-            <% end %>
-
+            <div style="display:none;">
+              <%= will_paginate @needed_books %>
+            </div>
+            <%= render 'needed_books' %>
           <% else %>
-
             <legend>
               <b><h4>Currently not available or empty keyword.</h4></b>
             </legend>
@@ -149,6 +107,45 @@
   </div>
 
 </div>
+
+
+<script type="text/javascript">
+  $(window).scroll(function(){
+
+    if ($('#tab1').hasClass('active')){
+      if(window.pagination_loading){
+        return
+      }
+
+      google_url = $('#tab1 .next_page').attr('href');
+      if(google_url && ($(window).scrollTop() > $(document).height() - $(window).height() - 300)){
+        window.pagination_loading = true
+        $.getScript(google_url).always(function(){
+          window.pagination_loading = false
+        });
+      };
+    };
+
+
+    if ($('#tab2').hasClass('active')){
+      if(window.pagination_loading){
+        return
+      };
+      db_url = $('#tab2 .pagination .next_page').attr('href');
+      if(db_url && ($(window).scrollTop() > $(document).height() - $(window).height() - 300)){
+        window.pagination_loading = true
+        $.getScript(db_url).always(function(){
+          window.pagination_loading = false
+        });
+      };
+    };
+
+
+
+
+
+  });
+</script>
 
 
 

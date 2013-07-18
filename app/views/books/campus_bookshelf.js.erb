@@ -1,0 +1,9 @@
+if ($('#tab1').hasClass('active')){
+  $('#tab1').append('<%= escape_javascript(render :partial => 'available_books')%>');
+  $('#tab1 .pagination').replaceWith('<%= j will_paginate(@books) %>');
+}
+
+if ($('#tab2').hasClass('active')){
+  $('#tab2').append('<%= escape_javascript(render :partial => 'needed_books')%>');
+  $('#tab2 .pagination').replaceWith('<%= j will_paginate(@needed_books) %>');
+}

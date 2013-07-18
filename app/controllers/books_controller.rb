@@ -188,8 +188,13 @@ class BooksController < ApplicationController
     @books = current_school.books.available_now.date_not_expired.paginate(:page => params[:page], :per_page => 6)
     @recent_books = current_school.books.available_now.date_not_expired.order("created_at desc").limit(10)
     @needed_books = current_school.books.needed.paginate(:page => params[:page], :per_page => 6)
-    render :action => 'available' if current_user.present?
-    render :layout => "application", :template => "books/public_search" if current_user.blank?
+    respond_to do |format|
+      format.html do
+        render :action => 'available' if current_user.present?
+        render :layout => "application", :template => "books/public_search" if current_user.blank?
+      end
+      format.js {render :action => 'campus_bookshelf'}
+    end
   end
 
   def all
