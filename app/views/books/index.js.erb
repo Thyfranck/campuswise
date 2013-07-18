@@ -1,0 +1,2 @@
+$('.book-container').append('<%= escape_javascript(render :partial => 'my_books')%>');
+$('.book-container .pagination').replaceWith('<%= j will_paginate(@books) %>');
