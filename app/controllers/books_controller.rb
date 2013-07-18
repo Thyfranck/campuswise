@@ -8,6 +8,10 @@ class BooksController < ApplicationController
 
   def index
     @books = current_user.books.where(:requested => false).paginate(:page => params[:page], :per_page => 6)
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   def new

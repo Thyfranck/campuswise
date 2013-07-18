@@ -1,35 +1,28 @@
 <legend>
   <h3>My Bookshelf</h3>
 </legend>
-<% if @books.any? %>
-  <%= will_paginate @books %>
-  <% @books.each do |book| %>
-    <div class="searched_books span5">
-
-      <div class="search_book_image span4">
-        <%= link_to book_path(book.id) do  %>
-          <% if book.image.present?  %>
-            <td><%= image_tag book.image_url %></td>
-          <% else %>
-            <td><%= image_tag 'no_book_image.jpeg', :style => "width: 100%; height: 100%;"%></td>
-          <% end %>
-        <% end %>
-      </div>
-
-      <div class="search_book_text span7">
-        <div class="book_title span12">
-          <b><%= book.title.truncate(50) %></b><br/>
-        </div>
-        by <i><%= book.author.truncate(50) %></i><br/>
-        ISBN : <%= book.isbn %><br/>
-        Publisher : <%= book.publisher %><br/>
-        Available : <%= book.available == true ? "Yes" : "No" %><br/>
-        <%= link_to "Show Details", book_path(book.id), :class => 'btn btn-mini btn-info' %>
-      </div>
-
+<div class="book-container">
+  <% if @books.any? %>
+    <div style="display:none;">
+      <%= will_paginate @books %>
     </div>
+    <%= render 'my_books' %>
+  <% else %>
+    <b><h3>Currently you have no books</h3></b>
   <% end %>
+</div>
 
-<% else %>
-  <b><h3>Currently you have no books</h3></b>
-<% end %>
+<script type="text/javascript">
+  $(window).scroll(function(){
+      if(window.pagination_loading){
+        return
+      }
+      google_url = $('.next_page').attr('href');
+      if(google_url && ($(window).scrollTop() > $(document).height() - $(window).height() - 300)){
+        window.pagination_loading = true
+        $.getScript(google_url).always(function(){
+          window.pagination_loading = false
+        });
+      };
+  });
+</script>
