@@ -37,7 +37,7 @@ class ExchangeObserver < ActiveRecord::Observer
 
     if record.class == Payment
       if record.status == Payment::STATUS[:paid] and record.status_was == Payment::STATUS[:pending] and record.exchange.payments.count == 1
-        Notify.delay.borrower_about_payment_received(record)
+      #  Notify.delay.borrower_about_payment_received(record)
       end
     end
   end

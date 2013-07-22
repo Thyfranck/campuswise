@@ -158,12 +158,12 @@ class Exchange < ActiveRecord::Base
       if payment.save
         if self.counter_offer.present?
           if self.counter_offer_last_made_by != self.user.id
-            Notify.delay.borrower_proposal_accept(self)
+            #Notify.delay.borrower_proposal_accept(self)
           else
             return true
           end
         else
-          Notify.delay.borrower_proposal_accept(self)
+          #Notify.delay.borrower_proposal_accept(self)
         end 
       end
     rescue => e
