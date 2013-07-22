@@ -7,6 +7,13 @@ $(document).ready(function(){
     $(".uniform").uniform();
     $('.selectpicker').selectpicker();
     slideShow();
+
+    $('.counter-price-btn').click(function(){
+        $('.counter-price-container').css('display', 'inline-block');
+        $(this).css('display', 'none');
+        return false;
+    });
+
 });
 
 

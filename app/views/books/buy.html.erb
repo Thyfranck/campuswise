@@ -47,7 +47,7 @@
   <div class="modal-body span5">
     <%= f.hidden_field :book_id, :value => @book.id  %>
     <%= f.hidden_field :package, :value => "buy"  %>
-    <div class="control-group">
+    <div class="control-group counter-price-container">
       <div class="counter-offer-notice">
         You can offer your price here.<br/>
         Your offering price must be greater than $1.00 and
@@ -57,9 +57,10 @@
       <br/>
       <div class="controls">
         <%= f.text_field :counter_offer, :class => 'input-medium', :placeholder => "Your Price" %>
+        (optional)
       </div>
     </div>
-  </div>
+    <button class="btn btn-success counter-price-btn">Counter Price (optional)</button>
   <div class="modal-footer">
     <%= f.submit "Submit", :class => 'btn btn-primary' %>
   </div>

@@ -70,6 +70,7 @@ Campuswise::Application.routes.draw do
   resources :password_resets, :only => [:create, :edit, :update, :new]
 
   root :to => "static#home"
+#  root :to => "static#school_home"
 
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
