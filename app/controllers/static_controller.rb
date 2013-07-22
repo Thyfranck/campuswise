@@ -44,7 +44,7 @@ class StaticController < ApplicationController
   private
 
   def redirect_if_one_school_present
-    redirect_to school_home_path(:school_id => School.first.id) if School.count == 1
+    redirect_to school_home_path if School.count == 1
   end
 
 
