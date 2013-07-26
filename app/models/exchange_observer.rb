@@ -110,10 +110,10 @@ class ExchangeObserver < ActiveRecord::Observer
       elsif record.counter_offer.present? and record.status == Exchange::STATUS[:pending]
         if record.counter_offer_last_made_by == record.book.user.id and record.amount_was > record.amount.to_f and record.counter_offer_count > 0
           @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(record.id, record.book.user.id)
-          @dashboard.destroy if @dashboard.present?
+          @dashboard.update_attribute(:seen, true) if @dashboard.present?
         elsif record.counter_offer_last_made_by == record.user.id  and record.counter_offer_was < record.counter_offer.to_f
           @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(record.id, record.user.id)
-          @dashboard.destroy if @dashboard.present?
+          @dashboard.update_attribute(:seen, true) if @dashboard.present?
         end
       end
     end

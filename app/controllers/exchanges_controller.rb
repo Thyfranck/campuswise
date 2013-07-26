@@ -57,16 +57,20 @@ class ExchangesController < ApplicationController
           start(@exchange, format)
         elsif @status == "disagree"
           if @exchange.book.user == current_user
-            @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
-            @dashboard.destroy if @dashboard.present?
             counter_offer = @exchange.counter_offer.to_f
             Notify.delay.borrower_about_owner_doesnt_want_to_negotiate(@exchange, counter_offer )
             @exchange.update_attributes(:counter_offer => @exchange.amount.to_f, :counter_offer_last_made_by => current_user.id)
+            @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
+            @dashboards.each do |dashboard|
+              dashboard.update_attribute(:seen, true)
+            end if @dashboards.any?
           elsif @exchange.user == current_user
-            @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
-            @dashboard.destroy if @dashboard.present?
             Notify.owner_about_negotiation_failed(@exchange)
             @exchange.destroy
+            @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
+            @dashboards.each do |dashboard|
+              dashboard.update_attribute(:seen, true)
+            end if @dashboards.any?
           end
           format.html { redirect_to dashboard_path, :notice => "Request is in process."}
         elsif @status == "negotiate"
@@ -77,6 +81,10 @@ class ExchangesController < ApplicationController
             else
               if @exchange.update_attributes(:amount => @amount, :counter_offer_last_made_by => current_user.id, :counter_offer_count => @exchange.counter_offer_count + 1)
                 Notify.delay.borrower_about_owner_want_to_negotiate(@exchange)
+                @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
+                @dashboards.each do |dashboard|
+                  dashboard.update_attribute(:seen, true)
+                end if @dashboards.any?
                 format.html { redirect_to dashboard_path, :notice => "Request is in process."}
               else
                 format.html { redirect_to dashboard_path, :alert => "Invalid negotiation."}
@@ -86,6 +94,10 @@ class ExchangesController < ApplicationController
           elsif @exchange.user == current_user
             if @exchange.update_attributes(:counter_offer => @amount, :counter_offer_last_made_by => current_user.id)
               Notify.delay.owner_about_borrower_want_to_negotiate(@exchange)
+              @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
+              @dashboards.each do |dashboard|
+                dashboard.update_attribute(:seen, true)
+              end if @dashboards.any?
               format.html { redirect_to dashboard_path, :notice => "Request is in process."}
             else
               format.html { redirect_to dashboard_path, :alert => "Invalid negotiation."}
@@ -107,12 +119,16 @@ class ExchangesController < ApplicationController
     if @exchange.book.available == true
       unless @exchange.other_pending_payment_present?
         if @exchange.delay.charge
-          @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
-          @dashboard.destroy if @dashboard.present?
+          @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
+          @dashboards.each do |dashboard|
+            dashboard.update_attribute(:seen, true)
+          end if @dashboards.any?
           format.html {redirect_to dashboard_path, :notice => "Request is in process."}
         elsif @exchange.errors.any?
-          @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id)
-          @dashboard.destroy if @dashboard.present?
+          @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
+          @dashboards.each do |dashboard|
+            dashboard.update_attribute(:seen, true)
+          end if @dashboards.any?
           format.html { redirect_to dashboard_path, :alert => @exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
         end
       else
@@ -124,7 +140,10 @@ class ExchangesController < ApplicationController
   def destroy
     @exchange = Exchange.find(params[:id])
     respond_to do |format|
-      DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, current_user.id).destroy      
+      @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
+      @dashboards.each do |dashboard|
+        dashboard.update_attribute(:seen, true)
+      end if @dashboards.any?
       if @exchange.user == current_user and @exchange.counter_offer.present?
         Notify.owner_about_negotiation_failed(@exchange)
       elsif @exchange.book.user == current_user
@@ -154,8 +173,10 @@ class ExchangesController < ApplicationController
       if @body.match(/accept\s*/).present?
         @id = @body.gsub /\D/, ""
         if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
-          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, @user.id)
-          @old_dashboard_notification.destroy
+          @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, @user.id, false)
+          @dashboards.each do |dashboard|
+            dashboard.update_attribute(:seen, true)
+          end if @dashboards.any?
           @exchange.delay.charge
           render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
         else
@@ -164,8 +185,10 @@ class ExchangesController < ApplicationController
       elsif @body.match(/reject\s*/).present?
         @id = @body.gsub /\D/, ""
         if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
-          @old_dashboard_notification = DashboardNotification.find_by_dashboardable_id_and_user_id(@exchange.id, @user.id)
-          @old_dashboard_notification.destroy
+          @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, @user.id, false)
+          @dashboards.each do |dashboard|
+            dashboard.update_attribute(:seen, true)
+          end if @dashboards.any?
           @exchange.destroy
           render 'exchanges/sms/no.xml.erb', :content_type => 'text/xml'
         else

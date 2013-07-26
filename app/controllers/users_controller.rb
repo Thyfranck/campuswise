@@ -178,7 +178,7 @@ class UsersController < ApplicationController
   def remove_notification
     @notification = DashboardNotification.find(params[:id])
     respond_to do |format|
-      if @notification.destroy
+      if @notification.update_attribute(:seen, true)
         format.html { redirect_to dashboard_path}
       else
         format.html { redirect_to dashboard_path, :alert => 'Error Occured'}

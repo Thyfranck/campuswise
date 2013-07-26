@@ -3,7 +3,7 @@
     <%= will_paginate @notifications %>
     <tbody>
       <% @notifications.each do |notification| %>
-        <tr>
+        <tr style="<%= "background-color: wheat" if notification.seen == false %>">
           <td>
             <%= notification.content.html_safe %>
           </td>
@@ -11,21 +11,29 @@
             <% if notification.dashboardable.class == Exchange %>
               <% if notification.dashboardable.counter_offer.present? and notification.dashboardable.status == Exchange::STATUS[:pending] %>
                 <% if notification.dashboardable.counter_offer_last_made_by == current_user.id %>
-                  <%= link_to "Hide", remove_notification_path(:id => notification.id), :method => :delete, :class => "btn btn-mini" %>
+          <%#= link_to "Hide", remove_notification_path(:id => notification.id), :method => :delete, :class => "btn btn-mini" %>
                 <% else %>
-                  <%= link_to "View", before_exchange_path(notification.dashboardable), :class => "btn btn-mini btn-primary fancybox fancybox.ajax" %>
-                  <%= link_to "Deny", exchange_path(notification.dashboardable), :method => :delete, :class => "btn btn-mini btn-primary" %>
+                  <% if notification.seen == false %>
+                    <%= link_to "View", before_exchange_path(notification.dashboardable), :class => "btn btn-mini btn-primary fancybox fancybox.ajax" %>
+                    <%= link_to "Deny", exchange_path(notification.dashboardable), :method => :delete, :class => "btn btn-mini btn-primary" %>
+                  <% end %>
                 <% end %>
               <% else %>
                 <% if notification.dashboardable.book.user == current_user and notification.dashboardable.status == Exchange::STATUS[:pending]  %>
-                  <%= link_to "Approve", exchange_path(notification.dashboardable), :method => :put, :class => "btn btn-mini btn-primary" %>
-                  <%= link_to "Deny", exchange_path(notification.dashboardable), :method => :delete, :class => "btn btn-mini btn-primary" %>
+                  <% if notification.seen == false %>
+                    <%= link_to "Approve", exchange_path(notification.dashboardable), :method => :put, :class => "btn btn-mini btn-primary" %>
+                    <%= link_to "Deny", exchange_path(notification.dashboardable), :method => :delete, :class => "btn btn-mini btn-primary" %>
+                  <% end %>
                 <% else %>
-                  <%= link_to "Hide", remove_notification_path(:id => notification.id), :method => :delete, :class => "btn btn-mini" %>
+                  <% if notification.seen == false %>
+                    <%= link_to "Seen", remove_notification_path(:id => notification.id), :method => :delete, :class => "btn btn-mini" %>
+                  <% end %>
                 <% end %>
               <% end %>
             <% else %>
-              <%= link_to "Hide", remove_notification_path(:id => notification.id), :method => :delete, :class => "btn btn-mini" %>
+              <% if notification.seen == false %>
+                <%= link_to "Seen", remove_notification_path(:id => notification.id), :method => :delete, :class => "btn btn-mini" %>
+              <% end %>
             <% end %>
           </td>
         </tr>
