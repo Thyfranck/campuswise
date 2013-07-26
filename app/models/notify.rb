@@ -55,16 +55,16 @@ class Notify
     @to = @request_receiver.phone
     if record.counter_offer.present?
       if record.package == 'buy'
-        @body = "Someone wants to buy '#{@requested_book.title.truncate(20)}' at the price #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)} to negotiate goto our site -Campuswise"
+        @body = "Someone wants to buy '#{@requested_book.title.truncate(20)}' at the price #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)}to negotiate goto our site-Campuswise"
       else
-        @body = "Someone wants to borrow '#{@requested_book.title.truncate(20)}' at the price #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)} from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},to negotiate goto our site -Campuswise"
-      end     
+        @body = "Someone wants to borrow '#{@requested_book.title.truncate(20)}' at the price #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)} from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},to negotiate goto our site-Campuswise"
+      end
     else
       if record.package == 'buy'
         @body = "Someone wants to buy '#{@requested_book.title.truncate(20)}'at the price #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}'-Campuswise"
       else
-        @body = "Someone wants to borrow'#{@requested_book.title.truncate(20)}'from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},at the price #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)},to accept reply 'ACCEPT #{record.id}',to ignore reply 'REJECT #{record.id}'-Campuswise"
-      end   
+        @body = "Someone wants to borrow'#{@requested_book.title.truncate(20)}from #{record.starting_date.to_date} to #{record.package == "semester" ? "full semester" : record.ending_date.to_date},at price #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)},to accept reply'ACCEPT #{record.id}',to ignore reply'REJECT #{record.id}'-Campuswise"
+      end
     end
     TwilioRequest.send_sms(@body, @to)
   end
