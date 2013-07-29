@@ -1,13 +1,13 @@
 <% if @notifications.any? %>
-  <table class="table table-hover table-bordered">
+  <table class="table table-bordered">
     <%= will_paginate @notifications %>
     <tbody>
       <% @notifications.each do |notification| %>
         <tr style="<%= "background-color: wheat" if notification.seen == false %>">
-          <td>
+          <td style="border-bottom:1pt solid gray;">
             <%= notification.content.html_safe %>
           </td>
-          <td id="notification_buttons">
+          <td style="border-bottom:1pt solid gray;" id="notification_buttons">
             <% if notification.dashboardable.class == Exchange %>
               <% if notification.dashboardable.counter_offer.present? and notification.dashboardable.status == Exchange::STATUS[:pending] %>
                 <% if notification.dashboardable.counter_offer_last_made_by == current_user.id %>

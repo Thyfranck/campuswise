@@ -23,7 +23,7 @@ Campuswise::Application.routes.draw do
 
   resources :exchanges, :only => [:new, :create, :update, :destroy] do
     member do
-      get :returned
+      get :status
       get :before
     end
     collection do
@@ -51,14 +51,15 @@ Campuswise::Application.routes.draw do
       get  :activate
       get  :change_password
       get  :new_password
-      put :create_password
+      put  :create_password
       get  :new_phone
-      put :create_phone
+      put  :create_phone
       get  :sms_verification
       post :verify_code
       get  :send_verification_sms
       get  :payment
       get  :wallet
+      get  :history
     end
   end
 

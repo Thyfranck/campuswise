@@ -37,6 +37,10 @@ ActiveAdmin.register Exchange do
       row :starting_date
       row :ending_date
       row :created_at
+      row :dropped_off
+      row :dropped_off_at
+      row :received
+      row :received_at
       row :status
       if exchange.status == Exchange::STATUS[:not_returned]
         row "Charge Book Borrower" do

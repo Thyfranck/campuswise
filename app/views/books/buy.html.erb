@@ -61,7 +61,13 @@
       </div>
     </div>
     <button class="btn btn-success counter-price-btn">Counter Price (optional)</button>
-  <div class="modal-footer">
-    <%= f.submit "Submit", :class => 'btn btn-primary' %>
+    <div class="modal-footer">
+      <div class="controls pull-left">
+        <%= check_box_tag :agree %> I agree with the <%= link_to "terms and conditions", terms_path, :target => "_blank" %>
+      </div>
+      <br/>
+      <br/>
+      <%= f.submit "Submit", :class => 'btn btn-primary exchange_button' %>
+    </div>
   </div>
 <% end %>

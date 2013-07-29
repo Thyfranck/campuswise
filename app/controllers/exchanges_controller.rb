@@ -4,43 +4,53 @@ class ExchangesController < ApplicationController
 
   layout "dashboard"
 
-  def new
-    @book = Book.find(params[:id])
-    if params[:buy] == 'yes'
-      @buy = true
-    else
-      @buy = false
-    end if params[:buy].present?
+  #  def new
+  #    @book = Book.find(params[:id])
+  #    if params[:buy] == 'yes'
+  #      @buy = true
+  #    else
+  #      @buy = false
+  #    end if params[:buy].present?
+  #
+  #    if session[:wanted_to_exchange_book]
+  #      session[:wanted_to_exchange_book] = nil
+  #    end
+  #    #    if current_user.billing_setting.present?
+  #    respond_to do |format|
+  #      if current_user.eligiable_to_borrow(@book)
+  #        @exchange = Exchange.new
+  #        format.html
+  #      else
+  #        format.html { redirect_to current_user, :notice => "You are not allowed to borrow this book."}
+  #      end
+  #    end
+  #    else
+  #      session[:wanted_to_exchange_book] = @book.id
+  #      redirect_to new_billing_setting_path, :notice => "Please setup your payment settings first"
+  #    end
+  #  end
 
-    if session[:wanted_to_exchange_book]
-      session[:wanted_to_exchange_book] = nil
-    end
-    if current_user.billing_setting.present?
-      respond_to do |format|
-        if current_user.eligiable_to_borrow(@book)
-          @exchange = Exchange.new
-          format.html
-        else
-          format.html { redirect_to current_user, :notice => "You are not allowed to borrow this book."}
-        end
-      end
-    else
-      session[:wanted_to_exchange_book] = @book.id
-      redirect_to new_billing_setting_path, :notice => "Please setup your payment settings first"
-    end
-  end
-
-  def create
-    @book = Book.find(params[:exchange][:book_id])
-    @exchange = current_user.exchanges.new(params[:exchange])
-    respond_to do |format|
-      if @exchange.save
-        format.html {redirect_to user_path(current_user), :notice => "Request sent to owner for approval."}
-      else
-        format.html {render :action => 'new'}
-      end
-    end
-  end
+  #  def create
+  #    @book = Book.find(params[:exchange][:book_id])
+  #    respond_to do |format|
+  #      if current_user.billing_setting.blank?
+  #        session[:exchange] = params[:exchange]
+  #        redirect_to new_billing_setting_path, :notice => "Please setup your payment settings first"
+  #      else
+  #        if session[:exchange]
+  #          @exchange = current_user.exchanges.new(session[:exchange])
+  #        else
+  #          @exchange = current_user.exchanges.new(params[:exchange])
+  #        end
+  #        if @exchange.save
+  #          session[:exchange] = nil if session[:exchange].present?
+  #          format.html {redirect_to user_path(current_user), :notice => "Request sent to owner for approval."}
+  #        else
+  #          format.html {render :action => 'new'}
+  #        end
+  #      end
+  #    end
+  #  end
 
   def update
     @exchange = Exchange.find(params[:id])
@@ -125,10 +135,6 @@ class ExchangesController < ApplicationController
           end if @dashboards.any?
           format.html {redirect_to dashboard_path, :notice => "Request is in process."}
         elsif @exchange.errors.any?
-          @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
-          @dashboards.each do |dashboard|
-            dashboard.update_attribute(:seen, true)
-          end if @dashboards.any?
           format.html { redirect_to dashboard_path, :alert => @exchange.errors.full_messages.to_sentence.gsub("Your","The Users")}
         end
       else
@@ -154,14 +160,29 @@ class ExchangesController < ApplicationController
     end
   end
 
-  def returned
+  def status
     @exchange = Exchange.find(params[:id])
-    if params[:returned] == "true"
-      @exchange.update_attribute(:status, Exchange::STATUS[:returned])
-    elsif params[:returned] == "false"
-      @exchange.update_attribute(:status, Exchange::STATUS[:not_returned])
+    if params[:status] == "returned" and @exchange.book.user == current_user
+      Notify.delay.admin_for_book_returned(@exchange) if @exchange.update_attributes(:status => Exchange::STATUS[:returned],:owner_id => @exchange.book.user.id, :book_title => @exchange.book.title)
+    elsif params[:status] == "not_returned" and @exchange.book.user == current_user
+      Notify.delay.admin_for_book_not_returned(@exchange) if @exchange.update_attribute(:status, Exchange::STATUS[:not_returned])
+    elsif params[:status] == "dropped_off" and @exchange.book.user == current_user
+      Notify.delay.admin_for_book_dropped_off(@exchange) if @exchange.update_attributes(:dropped_off => Exchange::STATUS[:dropped_off], :dropped_off_at => Time.now)
+    elsif params[:status] == "received" and @exchange.user == current_user
+      if @exchange.package == "buy"
+        Notify.delay.admin_for_book_received(@exchange) if @exchange.update_attributes(:received => Exchange::STATUS[:received], :received_at => Time.now, :status =>  Exchange::STATUS[:received])
+      else
+        Notify.delay.admin_for_book_received(@exchange) if @exchange.update_attributes(:received => Exchange::STATUS[:received], :received_at => Time.now)
+      end
+      @exchange.update_attributes(:dropped_off => Exchange::STATUS[:dropped_off]) if @exchange.dropped_off.blank?
+    else
+      @msg = "Unauthorized"
     end
-    redirect_to request.referrer
+    @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
+    @dashboards.each do |dashboard|
+      dashboard.update_attribute(:seen, true)
+    end if @dashboards.any?
+    redirect_to request.referrer, :notice => @msg or "Request Completed"
   end
 
   def process_sms
@@ -223,6 +244,8 @@ class ExchangesController < ApplicationController
   end
 
   def search
+    @book = current_user.books.new
+    @requested_book = true
     respond_to do |format|
       format.html
     end

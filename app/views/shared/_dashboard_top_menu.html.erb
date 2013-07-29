@@ -20,46 +20,35 @@
     </ul>
   </li>
 
-  <li class="dropdown <%= "active" if (current_page?(new_book_path) and params[:requested].blank?) ||  current_page?(requested_books_path) %>">
-    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-      Lend
-      <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
-      <li class="<%= "active" if current_page?(new_book_path) and params[:requested].blank? %>">
-        <%= link_to "Add a New Book", new_book_path %>
-      </li>
+  <li class="<%= "active" if current_page?(new_book_path) and params[:requested].blank? %>">
+    <%= link_to "Lend", new_book_path %>
+  </li>
 <%#*<li class="<%= "active" if current_page?(books_path) %>
 <%#= link_to "My books", books_path %>
 <%#*</li>%>
-      <li class="<%= "active" if current_page?(requested_books_path) %>">
-        <%= link_to "Book Requests", requested_books_path %>
-      </li>
-    </ul>
-  </li>
+<%#*<li class="<%= "active" if current_page?(requested_books_path) %>
+<%#= link_to "Requested Books", requested_books_path %>
+<%#*</li>%>
 
-  <li class="dropdown <%= "active" if current_page?(search_exchanges_path) || current_page?(borrow_requests_path) || current_page?(new_book_path(:requested => true)) %>">
-    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-      Borrow
-      <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
-      <li class="dropdown-submenu">
-        <a tabindex="-1" href="#">Borrow a Book</a>
-        <ul class="dropdown-menu">
-          <li class="<%= "active" if current_page?(search_exchanges_path) %>">
-            <%= link_to "Borrow a Book", search_exchanges_path %>
-          </li>
-          <li class="<%= "active" if current_page?(new_book_path) and params[:requested].present? %>">
-            <%= link_to "Request a Book", new_book_path(:requested => true) %>
-          </li>
-        </ul>
-      </li>
-      <li class="<%= "active" if current_page?(borrow_requests_path) %>">
-        <%= link_to "Manage Borrow Requests", borrow_requests_path %>
-      </li>
-    </ul>
+<%#*<li class="dropdown <%= "active" if current_page?(search_exchanges_path) || current_page?(borrow_requests_path) || current_page?(new_book_path(:requested => true)) %>
+<%#*<a class="dropdown-toggle" href="#" data-toggle="dropdown">
+<%#*Borrow%>
+<%#*<b class="caret"></b>
+<%#*</a>%>
+<%#*<ul class="dropdown-menu">
+<%#*<li class="dropdown-submenu">
+<%#*<a tabindex="-1" href="#">Borrow a Book</a>
+<%#*<ul class="dropdown-menu">%>
+  <li class="<%= "active" if current_page?(search_exchanges_path) %>">
+    <%= link_to "Borrow", search_exchanges_path %>
   </li>
+<%#*<li class="<%= "active" if current_page?(new_book_path) and params[:requested].present? %>
+<%#= link_to "Request a Book", new_book_path(:requested => true) %>
+<%#*</li>%>
+<%#*</ul>%>
+<%#*</li>%>
+<%#*</ul>%>
+<%#*</li>%>
 
   <li class="dropdown <%= "active" if current_page?(books_path) || current_page?(campus_bookshelf_books_path) %>">
     <a class="dropdown-toggle" href="#" data-toggle="dropdown">
@@ -111,6 +100,19 @@
       </li>
     </ul>
   </li>
+
+  <li class="dropdown <%= "active" if current_page?(borrow_requests_path) or current_page?(history_user_path(current_user))%>">
+    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+      Manage Transactions
+      <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+      <li class="<%= "active" if current_page?(borrow_requests_path) %>">
+        <%= link_to "Borrow Requests", borrow_requests_path %>
+      </li>
+      <li class="<%= "active" if current_page?(history_user_path(current_user)) %>">
+        <%= link_to "History", history_user_path(current_user) %>
+      </li>
+    </ul>
+  </li>
 </ul>
-
-

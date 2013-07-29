@@ -607,3 +607,9 @@ div.price{
 .counter-price-container {
     display: none;
 }
+
+.renting_text_container img{
+    position: relative;
+    right: 91px;
+    max-width: none;
+}

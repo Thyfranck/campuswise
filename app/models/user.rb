@@ -12,17 +12,25 @@ class User < ActiveRecord::Base
   has_many :transactions
   
   def accepted_exchanges
-    self.exchanges.where(:status => Exchange::STATUS[:accepted])
+    self.exchanges.accepted
   end
 
   def pending_exchanges
     self.exchanges.where(:status => Exchange::STATUS[:pending])
   end
+
+  def completed_transactions
+    @exchanges = Exchange.where("user_id = ? OR owner_id = ?", self.id, self.id)
+    @exchanges = @exchanges.where("status = ? OR status = ? OR status = ?", Exchange::STATUS[:returned], Exchange::STATUS[:charged], Exchange::STATUS[:received])
+  end
   
   has_many :not_returned_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:not_returned]}'" ,:source => :exchanges #for request receiver(book owner)
-  has_many :pending_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:pending]}'" ,:source => :exchanges #for request receiver(book owner)
+  has_many :p_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:pending]}'" ,:source => :exchanges #for request receiver(book owner)
   has_many :accepted_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:accepted]}'" ,:source => :exchanges #for request receiver(book owner)
 
+  def pending_reverse_exchanges
+    self.p_reverse_exchanges.includes(:payments).reject{|ex| ex.payments.present?}
+  end
   attr_accessor :current_password
 
   attr_accessible :email, :password, :password_confirmation, :current_password,
@@ -64,11 +72,11 @@ class User < ActiveRecord::Base
   end
 
   def already_borrowed_this_book(book)
-    self.exchanges.find_by_book_id_and_user_id_and_status(book, self.id, Exchange::STATUS[:accepted])
+    self.exchanges.find_by_book_id_and_user_id_and_status(book, self.id, Exchange::STATUS[:accepted]).present?
   end
 
   def already_sent_request(book)
-    self.exchanges.find_by_book_id_and_user_id_and_status(book, self.id,  Exchange::STATUS[:pending])
+    self.exchanges.find_by_book_id_and_user_id_and_status(book, self.id,  Exchange::STATUS[:pending]).present?
   end
 
   def eligiable_to_borrow(book)

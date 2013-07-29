@@ -13,7 +13,7 @@
 
       <div class="search_book_text span7">
         <div class="book_title span12">
-          <b><%= book.title.truncate(50) %></b><br/>
+          <b><%= book.title.truncate(50) %></b><%= " (Requested)" if book.requested == true %><br/>
         </div>
         by <i><%= book.author.truncate(50) %></i><br/>
         ISBN : <%= book.isbn %><br/>
