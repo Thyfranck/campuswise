@@ -154,7 +154,7 @@ You can manage your borrow requests Here.
                 <td>
                   <% if exchange.dropped_off.blank? %>
                     <%= link_to "Dropped Off", status_exchange_path(exchange.id, :status => "dropped_off"), :class => "btn btn-mini btn-primary"  %>
-                  <% elsif exchange.package != "buy" and Time.now.to_date > exchange.ending_date.to_date %>
+                  <% elsif exchange.package != "buy"  %>
                     <%= link_to "Returned", status_exchange_path(exchange.id, :status => "returned"), :class => "btn btn-mini btn-primary"  %>
                     <%= link_to "Not Returned", status_exchange_path(exchange.id,:status => "not_returned"), :class => "btn btn-mini btn-primary"  %>
                   <% else %>

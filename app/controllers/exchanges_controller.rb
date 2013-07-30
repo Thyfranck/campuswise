@@ -245,7 +245,7 @@ class ExchangesController < ApplicationController
 
   def search
     @book = current_user.books.new
-    @requested_book = true
+    @requested_book = true and session[:requested] = 'yes'
     respond_to do |format|
       format.html
     end

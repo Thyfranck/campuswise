@@ -1,6 +1,12 @@
 $(document).ready(function(){
 
     accept_exchange_button();
+
+    if($('#exchange_counter_offer').is(':visible')){
+    }
+    else{
+        $('#exchange_counter_offer').val("");
+    }
     
     if($('#exchange_package_day').is(':checked')){
         $('.exchange_amount').show();

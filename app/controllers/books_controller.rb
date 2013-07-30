@@ -150,7 +150,8 @@ class BooksController < ApplicationController
     end
     if params[:value]
       @google_books  = GoogleBooks.search(params[:value], {:count => 15, :page => session[:book_page] }, "4.2.2.1")
-      @google_books = prepare(@google_books)
+      g = @google_books.to_a
+      @google_books = prepare(@google_books) if g.length > 0
       #    elsif params[:book_isbn_for_price]
       #      res = Amazon::Ecs.item_search(params[:book_isbn_for_price], {:response_group => "Medium", :search_index => 'Books'})
       #      unless res.has_error?
