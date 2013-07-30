@@ -221,8 +221,7 @@ class UsersController < ApplicationController
   end
 
   def history
-    @user = User.find(params[:id])
-    @completed_transactions = @user.completed_transactions.paginate(:page => params[:page], :per_page => 20)
+    @completed_transactions = current_user.completed_transactions.paginate(:page => params[:page], :per_page => 20)
     respond_to do |format|
       format.html {render layout: "dashboard"}
     end

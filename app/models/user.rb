@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
 
   def completed_transactions
     @exchanges = Exchange.where("user_id = ? OR owner_id = ?", self.id, self.id)
-    @exchanges = @exchanges.where("status = ? OR status = ? OR status = ?", Exchange::STATUS[:returned], Exchange::STATUS[:charged], Exchange::STATUS[:received])
+    @exchanges = @exchanges.where("status = ? OR status = ?", Exchange::STATUS[:returned], Exchange::STATUS[:received])
   end
   
   has_many :not_returned_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:not_returned]}'" ,:source => :exchanges #for request receiver(book owner)
