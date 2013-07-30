@@ -32,7 +32,8 @@ class Exchange < ActiveRecord::Base
     :received => "RECEIVED"
   }
 
-  after_validation :avilable_in_date?, :valid_duration?, :compute_amount,:check_counter_offer
+  after_validation :avilable_in_date?, :valid_duration?,:check_counter_offer
+  before_create :compute_amount
   before_create :set_ending_date, :if => Proc.new{|b| b.ending_date == nil}
   before_create :set_status, :set_counter_offer_maker
   before_update :check_if_sold_book_not_returned
