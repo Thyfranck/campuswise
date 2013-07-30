@@ -18,7 +18,7 @@ class Exchange < ActiveRecord::Base
 
   validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semester" or "buy"}
   validates :package, :inclusion => {:in => ["day", "week", "month", "semester", "buy"]}
-#  validates :counter_offer, :allow_nil => true
+  #  validates :counter_offer, :allow_nil => true
 
   STATUS = {
     :accepted => "ACCEPTED",
@@ -53,7 +53,9 @@ class Exchange < ActiveRecord::Base
   scope :bought_and_completed, where("package = ? AND received = ?", "buy", Exchange::STATUS[:received])
 
   def valid_duration?
-    unless self.package == "semester" or self.package == "buy"
+    if self.package == "semester" or self.package == "buy"
+      return true
+    else
       if self.duration < 1
         errors[:base] << "Invalid duration"
         return false 

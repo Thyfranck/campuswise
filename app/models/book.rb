@@ -147,7 +147,10 @@ class Book < ActiveRecord::Base
   end
 
   def lended
-    if self.exchanges.where(:status => Exchange::STATUS[:accepted]).any?
+    if self.exchanges.where(:status => Exchange::STATUS[:accepted]).any? or
+        self.payments.where(:status => Payment::STATUS[:pending]).any? or
+        self.exchanges.where(:status => Exchange::STATUS[:not_returned]).any? or
+        self.exchanges.where(:status => Exchange::STATUS[:charge_pending]).any?
       return true
     else
       return false
