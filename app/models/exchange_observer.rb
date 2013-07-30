@@ -80,7 +80,7 @@ class ExchangeObserver < ActiveRecord::Observer
           end
         else
           if @exchange.status == Exchange::STATUS[:charge_pending]
-            @exchange.update_attributes(:status => Exchange::STATUS[:charged])
+            @exchange.update_attributes(:status => Exchange::STATUS[:charged],:owner_id => @exchange.book.user.id, :book_title => @exchange.book.title)
             @payment_receiver = @exchange.book.user
             @old_credit = @payment_receiver.credit.to_f or 0.0
             @new_credit = @old_credit + @exchange.book.price.to_f
