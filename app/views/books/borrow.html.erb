@@ -8,6 +8,7 @@
     <%= hidden_field_tag :week_rate, @book.loan_weekly %>
     <%= hidden_field_tag :month_rate, @book.loan_monthly %>
     <%= hidden_field_tag :semester_rate, @book.loan_semester %>
+    <%= f.hidden_field :book_id, :value => @book.id %>
 
     <% if @exchange.errors.any? %>
       <div id="error_explanation" class="alert alert-error">
@@ -110,28 +111,30 @@
       </div>
       <div class="modal-body">
         <div class="row-fluid">
-          <div class="span6">
-            <h4>Your credit card information</h4>
-            <p>
-              <b>Name :</b>
-              <%= current_user.billing_setting.card_holder_name %>
-            </p>
+          <% if current_user.billing_setting.present? %>
+            <div class="span6">
+              <h4>Your credit card information</h4>
+              <p>
+                <b>Name :</b>
+                <%= current_user.billing_setting.card_holder_name %>
+              </p>
 
-            <p>
-              <b>Card Number :</b>
-              <%= "*********#{current_user.billing_setting.card_last_four_digits}" %>
-            </p>
+              <p>
+                <b>Card Number :</b>
+                <%= "*********#{current_user.billing_setting.card_last_four_digits}" %>
+              </p>
 
-            <p>
-              <b>Card Type :</b>
-              <%= current_user.billing_setting.card_type %>
-            </p>
+              <p>
+                <b>Card Type :</b>
+                <%= current_user.billing_setting.card_type %>
+              </p>
 
-            <p>
-              <b>Card Expiry Date :</b>
-              <%= current_user.billing_setting.card_expiry_date.to_date %>
-            </p>
-          </div>
+              <p>
+                <b>Card Expiry Date :</b>
+                <%= current_user.billing_setting.card_expiry_date.to_date %>
+              </p>
+            </div>
+          <% end %>
           <div class="span6">
             <h4>Total amount to pay</h4>
             <h4 id="total_amount_to_pay" style="color:#23722E;"></h4>
@@ -157,7 +160,12 @@
 
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <%= f.submit "Submit", :class => 'btn btn-primary' %>
+        <div class="controls pull-left">
+          <%= check_box_tag :agree, nil %> I agree with the <%= link_to "terms and conditions", terms_path, :target => "_blank" %>
+        </div>
+        <br/>
+        <br/>
+        <%= f.submit "Submit", :class => 'btn btn-primary exchange_button' %>
         <div class="amount_error" style="color:red"></div>
       </div>
     </div>

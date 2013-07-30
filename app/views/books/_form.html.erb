@@ -1,7 +1,13 @@
 <%= form_for @book, :html => { :class => "form-horizontal #{"edit_book" unless @book.new_record?}", :multipart => true } do |f| %>
   <fieldset>
     <legend>
-      <%= controller.action_name.capitalize %>
+      <% if controller.action_name == "new" %>
+        Add a New
+      <% elsif controller.action_name == "search" %>
+        Request a
+      <% else %>
+        <%= controller.action_name.capitalize %>
+      <% end %>
       Book
     </legend>
 
@@ -118,7 +124,7 @@
         <div class="control-group hide rent both">
           <%= f.label :returning_date, "Available Till", :class => 'control-label' %>
           <div class="controls">
-            <%= f.date_select :returning_date, {:default => Date.tomorrow}, :class => 'span3 selectpicker' %>
+            <%= f.date_select :returning_date, {:default => Date.tomorrow + 1.day}, :class => 'span3 selectpicker' %>
           </div>
         </div>
 

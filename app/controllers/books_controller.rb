@@ -1,13 +1,14 @@
 class BooksController < ApplicationController
   before_filter :require_login, :except => [:show, :available, :campus_bookshelf, :borrow, :buy]
   load_and_authorize_resource :except => [:show, :available, :campus_bookshelf, :borrow, :buy ]
-  before_filter :require_login_to_buy_or_borrow, :only => [:borrow, :buy]
+  before_filter :require_buy_prerequisites, :only => [:buy]
+  before_filter :require_borrow_prerequisites, :only => [:borrow]
 
 
   layout "dashboard"
 
   def index
-    @books = current_user.books.where(:requested => false).paginate(:page => params[:page], :per_page => 6)
+    @books = current_user.books.paginate(:page => params[:page], :per_page => 6)
     respond_to do |format|
       format.html
       format.js
@@ -99,7 +100,7 @@ class BooksController < ApplicationController
         flash[:notice] = "Request Completed"
       else
         format.html {redirect_to user_path(current_user)}
-        flash[:alert] = "Error Occured"
+        flash[:alert] = "The book can not be deleted now."
       end
     end
   end
@@ -149,7 +150,8 @@ class BooksController < ApplicationController
     end
     if params[:value]
       @google_books  = GoogleBooks.search(params[:value], {:count => 15, :page => session[:book_page] }, "4.2.2.1")
-      @google_books = prepare(@google_books)
+      g = @google_books.to_a
+      @google_books = prepare(@google_books) if g.length > 0
       #    elsif params[:book_isbn_for_price]
       #      res = Amazon::Ecs.item_search(params[:book_isbn_for_price], {:response_group => "Medium", :search_index => 'Books'})
       #      unless res.has_error?
@@ -226,14 +228,21 @@ class BooksController < ApplicationController
   end
 
   def borrow
-    @book = Book.find(params[:id])
-
+    @book = Book.find(params[:id]) or Book.find(params[:exchange][:book_id])
     if params[:exchange].present?
       @exchange = current_user.exchanges.new(params[:exchange])
-      @exchange.book_id = @book.id
-      
-      if @exchange.save
-        redirect_to user_path(current_user), :notice => "Request sent to owner for approval."
+      if @exchange.valid?
+        if current_user.billing_setting.present?
+          if @exchange.save
+            session[:exchange] = nil
+            redirect_to user_path(current_user), :notice => "Request sent to owner for approval."
+          end
+        else
+          session[:exchange] = nil
+          session[:exchange] = params[:exchange]
+          redirect_to new_billing_setting_path, :notice => "Please add your billing information! Your card will not be charged before your confirmation."
+        end
+      else
       end
     else
       @exchange = Exchange.new
@@ -242,7 +251,8 @@ class BooksController < ApplicationController
 
 
   private
-  def require_login_to_buy_or_borrow
+  
+  def require_buy_prerequisites
     @book = Book.find(params[:id])
     if current_user.blank?
       session[:referer] = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
@@ -252,6 +262,16 @@ class BooksController < ApplicationController
     elsif current_user.billing_setting.blank?
       session[:referer] = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
       redirect_to new_billing_setting_path, :notice => "Please add your billing information! Your card will not be charged before your confirmation."
+    end
+  end
+
+  def require_borrow_prerequisites
+    @book = Book.find(params[:id])
+    if current_user.blank?
+      session[:referer] = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
+      redirect_to login_path, :notice => "You must login to book or buy a book!"
+    elsif current_user.not_eligiable_to_borrow_or_buy(@book)
+      redirect_to current_user, :notice => "You are not allowed to borrow this book."
     end
   end
 end

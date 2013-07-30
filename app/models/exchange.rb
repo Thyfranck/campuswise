@@ -3,9 +3,12 @@
 
 class Exchange < ActiveRecord::Base
   attr_accessible :book_id, :user_id, :status, :package, :duration,
-    :starting_date, :ending_date, :amount, :counter_offer, :counter_offer_last_made_by, :counter_offer_count
+    :starting_date, :ending_date, :amount, :counter_offer, 
+    :counter_offer_last_made_by, :counter_offer_count,
+    :dropped_off, :dropped_off_at, :received, :received_at,
+    :owner_id, :book_title
 
-  attr_accessor :declined, :declined_reason
+  attr_accessor :declined, :declined_reason, :agree
   
   belongs_to :book
   belongs_to :user
@@ -24,14 +27,16 @@ class Exchange < ActiveRecord::Base
     :not_returned => "NOT-RETURNED",
     :charged => "FULL-PRICE-CHARGED",
     :charge_pending => "PENDING-FULL-PRICE-CHARGE",
-    :full_charge_failed => "FAILED-FULL-PRICE-CHARGE"
+    :full_charge_failed => "FAILED-FULL-PRICE-CHARGE",
+    :dropped_off => "DROPPED-OFF",
+    :received => "RECEIVED"
   }
 
-  before_create :compute_amount, :avilable_in_date?, :set_status, :set_counter_offer_maker, :valid_duration?
+  after_validation :avilable_in_date?, :valid_duration?, :compute_amount,:check_counter_offer
   before_create :set_ending_date, :if => Proc.new{|b| b.ending_date == nil}
-  before_create :check_counter_offer
+  before_create :set_status, :set_counter_offer_maker
   before_update :check_if_sold_book_not_returned
-
+  
   def check_if_sold_book_not_returned
     return false if self.status == Exchange::STATUS[:returned] and self.package == "buy"
     return false if self.status == Exchange::STATUS[:not_returned] and self.package == "buy"
@@ -45,6 +50,7 @@ class Exchange < ActiveRecord::Base
   end
 
   scope :accepted, where(:status => STATUS[:accepted])
+  scope :bought_and_completed, where("package = ? AND received = ?", "buy", Exchange::STATUS[:received])
 
   def valid_duration?
     unless self.package == "semester" or self.package == "buy"

@@ -1,9 +1,13 @@
 <br/>
 <br/>
-You can browse all the available books on your campus
+You can browse all the available books on your campus here
 <%= link_to "here", all_books_path, :class => "btn btn-small btn-info"  %>
 <br/>
 <br/>
+Can't find your book on our site? Post it here, so that other students can see your request.
+<br/>
+<br/>
+<%= render :template => "books/_form.html.erb" %>
 Or you can search for a Specific Book below
 <br/>
 <br/>
@@ -11,7 +15,3 @@ Or you can search for a Specific Book below
   <%= text_field_tag :search, nil ,:placeholder => "Enter Title, Author, Publisher or ISBN number", :class => "span6" %>
   <%= submit_tag "Search", :class => "btn btn-primary search_button" %>
 <% end %>
-Can't find your book on our site?
-
-Post it <%= link_to "here", new_book_path(:requested => true) %>,
-so that other students can see your request.

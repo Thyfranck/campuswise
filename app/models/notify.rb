@@ -75,7 +75,7 @@ class Notify
     @request_receiver = @requested_book.user
     @dashboard = @exchange.dashboard_notifications.new(
       :user_id => @request_receiver.id,
-      :content => "Congratulation,the book titled \"<a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)} </a> \" #{record.exchange.package == "buy" ? "sold": "lend"} successfully,at the price #{Notify.helpers.number_to_currency(record.payment_amount.to_f, :prescision => 2)}.#{record.exchange.package == "buy" ? "": "Please inform us at admin@campuswise.com when the book is returned."}"
+      :content => "Congratulation,the book titled \"<a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)} </a> \" #{record.exchange.package == "buy" ? "sold": "lend"} successfully,at the price #{Notify.helpers.number_to_currency(record.payment_amount.to_f, :prescision => 2)}.#{record.exchange.package == "buy" ? "": "Please inform us when you dropped the book at <a href='/borrow_requests' target='_blank'>here</a>. when lending period is over inform us <a href='/borrow_requests' target='_blank'>here</a> or at admin@campuswise.com wheather the book is returned to you again."}"
     )
     @dashboard.save
     Notification.notify_book_owner_exchange_successfull(record).deliver
@@ -90,7 +90,7 @@ class Notify
     @request_sender = @exchange.user
     @dashboard = @exchange.dashboard_notifications.new(
       :user_id => @request_sender.id,
-      :content => "Congratulation, you have successfully #{record.exchange.package == "buy" ? "puchased":"borrowed"} the book titled <a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)}</a>. You can see this book's #{record.exchange.package == "buy" ? "seller's":"lender's"} contact information in your #{record.exchange.package == "buy" ? "sold": "borrowed"} books <a href='/borrow_requests' target='_blank'>list</a>"
+      :content => "Congratulation, you have successfully #{record.exchange.package == "buy" ? "puchased":"borrowed"} the book titled <a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)}</a>. Please inform us when you receive the book, in <a href='/borrow_requests' target='_blank'>here</a>. You can see this book's #{record.exchange.package == "buy" ? "seller's":"lender's"} contact information in your #{record.exchange.package == "buy" ? "sold": "borrowed"} books <a href='/borrow_requests' target='_blank'>list</a>"
     )
     @dashboard.save
     Notification.notify_book_borrower_exchange_successfull(record).deliver
@@ -213,6 +213,28 @@ class Notify
     @admin_notification = record.dashboard_notifications.new(
       :admin_user_id => AdminUser.first.id,
       :content => "User: #{record.book.user.name}, email:#{record.book.user.email} says that didn't got back the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \" , <a href='/admin/exchanges/#{record.id}'>Charge The User</a>"
+    )
+    @admin_notification.save
+  end
+
+  def self.admin_for_book_dropped_off(record) #exchange
+    @admin_notification = record.dashboard_notifications.new(
+      :admin_user_id => AdminUser.first.id,
+      :content => "User: #{record.book.user.name}, email:#{record.book.user.email} says that he/she dropped off the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \""
+    )
+    @admin_notification.save
+
+    @borrower_notification = record.dashboard_notifications.new(
+      :user_id => record.user.id,
+      :content => "Owner of the book titled '<a href='/books/#{record.book.id}'>#{record.book.title}</a>' says that gave you the book, please confirm us <a href='/borrow_requests' target='_blank'>here</a>"
+    )
+    @borrower_notification.save
+  end
+
+  def self.admin_for_book_received(record) #exchange
+    @admin_notification = record.dashboard_notifications.new(
+      :admin_user_id => AdminUser.first.id,
+      :content => "User: #{record.user.name}, email:#{record.user.email} says that he/she received the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \""
     )
     @admin_notification.save
   end

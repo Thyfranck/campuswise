@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130708105043) do
+ActiveRecord::Schema.define(:version => 20130729092408) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -90,12 +90,13 @@ ActiveRecord::Schema.define(:version => 20130708105043) do
 
   create_table "dashboard_notifications", :force => true do |t|
     t.integer  "user_id"
-    t.string   "content"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.text     "content"
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
     t.integer  "admin_user_id"
     t.integer  "dashboardable_id"
     t.string   "dashboardable_type"
+    t.boolean  "seen",               :default => false
   end
 
   create_table "delayed_jobs", :force => true do |t|
@@ -128,6 +129,12 @@ ActiveRecord::Schema.define(:version => 20130708105043) do
     t.decimal  "counter_offer",              :precision => 10, :scale => 2
     t.integer  "counter_offer_last_made_by"
     t.integer  "counter_offer_count",                                       :default => 0
+    t.string   "dropped_off"
+    t.datetime "dropped_off_at"
+    t.string   "received"
+    t.datetime "received_at"
+    t.integer  "owner_id"
+    t.text     "book_title"
   end
 
   create_table "payment_methods", :force => true do |t|

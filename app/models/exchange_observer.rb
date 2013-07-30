@@ -37,7 +37,7 @@ class ExchangeObserver < ActiveRecord::Observer
 
     if record.class == Payment
       if record.status == Payment::STATUS[:paid] and record.status_was == Payment::STATUS[:pending] and record.exchange.payments.count == 1
-      #  Notify.delay.borrower_about_payment_received(record)
+        #  Notify.delay.borrower_about_payment_received(record)
       end
     end
   end
@@ -63,6 +63,7 @@ class ExchangeObserver < ActiveRecord::Observer
               :description => "Sold book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} and received amount of #{helpers.number_to_currency(@will_be_paid_to_user, :prescision => 2)}",
               :amount => @will_be_paid_to_user)
             @transaction.save
+            @exchange.update_attributes(:owner_id => @payment_receiver.id, :book_title => @requested_book.title)
           else
             @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
               :description => "Lend the book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} for #{@exchange.package == 'semester' ? "full semester" : (@exchange.duration.to_s + " " + @exchange.package).pluralize(@exchange.duration)} and received amount of #{helpers.number_to_currency(@will_be_paid_to_user, :prescision => 2)}",
@@ -103,17 +104,13 @@ class ExchangeObserver < ActiveRecord::Observer
     end
     
     if record.class == Exchange
-      if record.status == Exchange::STATUS[:returned]
-        Notify.delay.admin_for_book_returned(record)
-      elsif record.status == Exchange::STATUS[:not_returned]
-        Notify.delay.admin_for_book_not_returned(record)
-      elsif record.counter_offer.present? and record.status == Exchange::STATUS[:pending]
+      if record.counter_offer.present? and record.status == Exchange::STATUS[:pending]
         if record.counter_offer_last_made_by == record.book.user.id and record.amount_was > record.amount.to_f and record.counter_offer_count > 0
           @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(record.id, record.book.user.id)
-          @dashboard.destroy if @dashboard.present?
+          @dashboard.update_attribute(:seen, true) if @dashboard.present?
         elsif record.counter_offer_last_made_by == record.user.id  and record.counter_offer_was < record.counter_offer.to_f
           @dashboard = DashboardNotification.find_by_dashboardable_id_and_user_id(record.id, record.user.id)
-          @dashboard.destroy if @dashboard.present?
+          @dashboard.update_attribute(:seen, true) if @dashboard.present?
         end
       end
     end
@@ -133,11 +130,6 @@ class ExchangeObserver < ActiveRecord::Observer
           end
         end
       end
-    end
-    if record.class == Book
-      return false if record.lended == true
-    end
-
-    
+    end 
   end
 end

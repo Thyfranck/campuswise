@@ -32,7 +32,7 @@ class WithdrawRequest < ActiveRecord::Base
   def make_transaction_history
     if self.status_was == WithdrawRequest::STATUS[:pending] and self.status == WithdrawRequest::STATUS[:paid]
       transaction = self.build_transaction(:user_id => self.user.id,
-        :description => "Withdrawed amount of #{helpers.number_to_currency(self.amount, :prescision => 2)} at #{self.updated_at.to_date} via your #{self.payment_method}",
+        :description => "Withdrawed amount of #{helpers.number_to_currency(self.amount, :prescision => 2)} at #{self.updated_at.to_date} via your #{self.payment_method}.",
         :amount => self.amount)
       transaction.save
     end

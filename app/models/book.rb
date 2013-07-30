@@ -24,6 +24,7 @@ class Book < ActiveRecord::Base
   belongs_to :user
   has_many :exchanges
   has_many :dashboard_notifications, :through => :exchanges
+  has_many :payments, :through => :exchanges
   
 
   after_validation :atleast_one_loan_rate_exsists,
@@ -33,7 +34,7 @@ class Book < ActiveRecord::Base
     :update_availability_dates
 
   mount_uploader :image, ImageUploader
-  before_destroy :delete_connections
+  before_destroy :notify_borrowers, :delete_connections
 
   def delete_connections
     self.dashboard_notifications.each do |d|
@@ -64,6 +65,9 @@ class Book < ActiveRecord::Base
       self.available_from = nil
       self.returning_date = nil
     end
+    if self.available_from.to_date == self.returning_date.to_date
+      self.returning_date = self.available_from + 1.day
+    end if self.available_from.present? and self.returning_date.present?
   end
 
   def update_availability_options
@@ -143,12 +147,10 @@ class Book < ActiveRecord::Base
   end
 
   def lended
-    unless self.requested == true
-      if self.exchanges.where(:status => Exchange::STATUS[:accepted]).any?
-        return true
-      else
-        return false
-      end
+    if self.exchanges.where(:status => Exchange::STATUS[:accepted]).any?
+      return true
+    else
+      return false
     end
   end
 
@@ -179,5 +181,17 @@ class Book < ActiveRecord::Base
   def make_unavailable
     self.available = false
     self.save
+  end
+
+  def notify_borrowers 
+    @pending_payments = self.payments.where(:status => Payment::STATUS[:pending])
+    if @pending_payments.present? or self.lended == true
+      return false
+    else
+      @exchanges = self.exchanges.where(:status => Exchange::STATUS[:pending])
+      @exchanges.each do |exchange|
+        Notify.borrower_about_rejected_by_owner(exchange)
+      end
+    end
   end
 end

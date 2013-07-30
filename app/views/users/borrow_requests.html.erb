@@ -3,10 +3,10 @@ You can manage your borrow requests Here.
 <div class="tabbable"> <!-- Only required for left/right tabs -->
   <ul class="nav nav-tabs">
     <li class="active"><a href="#tab1" data-toggle="tab">Borrowed / Purchased Books (<%= "#{@borrowed_books.count}" %>)</a></li>
+    <li><a href="#tab4" data-toggle="tab">Lend / Sold (<%= "#{@lended.count}" %>)</a></li>
     <li><a href="#tab2" data-toggle="tab">Waiting for Owner's Approval (<%= "#{@pending_for_owner.count}" %>)</a></li>
     <li><a href="#tab3" data-toggle="tab">Waiting for Your Approval (<%= "#{@pending_for_me.count}" %>)</a></li>
-    <li><a href="#tab4" data-toggle="tab">Lend / Sold (<%= "#{@lended.count}" %>)</a></li>
-    <li><a href="#tab5" data-toggle="tab">Not returned and not paid (<%= "#{@not_returned.count}" %>)</a></li>
+    <li><a href="#tab5" data-toggle="tab">Not returned / Not paid (<%= "#{@not_returned.count}" %>)</a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="tab1">
@@ -17,7 +17,7 @@ You can manage your borrow requests Here.
           <th>Book Title</th>
           <th>Borrowed / Purchased</th>
           <th>Borrowed Date</th>
-          <th>Returning Time</th>
+          <th>Returning Date</th>
           <th>Seller / Lender's contact info</th>
           <th>Book Action</th>
           </thead>
@@ -42,7 +42,13 @@ You can manage your borrow requests Here.
                     <li>Facebook: <%= User.find(@book.user_id).facebook %></li>
                   </ul>
                 </td>
-                <td style="text-align:center"><%= link_to "Show", book_path(@book), :class => "btn btn-mini btn-primary" %></td>
+                <td style="text-align:center">
+                  <% if exchange.received.blank? %>
+                    <%= link_to "Received", status_exchange_path(exchange.id, :status => "received"), :class => "btn btn-mini btn-primary"  %>
+                  <% else %>
+                    <%= exchange.status == Exchange::STATUS[:returned] ? exchange.status : exchange.status == Exchange::STATUS[:not_returned] ? exchange.status : exchange.received %>
+                  <% end %>
+                </td>
               </tr>
             </tbody>
           <% end %>
@@ -121,7 +127,7 @@ You can manage your borrow requests Here.
           <th>Title</th>
           <th>Lend / Sold</th>
           <th>Borrowed Date</th>
-          <th>Returning Time</th>
+          <th>Returning Date</th>
           <th>Borrower / Buyer info</th>
           <th>Action</th>
           </thead>
@@ -145,16 +151,16 @@ You can manage your borrow requests Here.
                     <li>Phone: <%= User.find(exchange.user_id).phone %></li>
                   </ul>
                 </td>
-                <% unless exchange.package == "buy"  %>
-                  <td>
-                    <% if Time.now.to_date > exchange.ending_date.to_date %>
-                      <%= link_to "Returned", returned_exchange_path(exchange.id, :returned => true), :class => "btn btn-mini btn-primary"  %>
-                      <%= link_to "Not Returned", returned_exchange_path(exchange.id,:returned => false), :class => "btn btn-mini btn-primary"  %>
-                    <% end %>
-                  </td>
-                <% else %>
-                  <td>N/A</td>
-                <% end %>
+                <td>
+                  <% if exchange.dropped_off.blank? %>
+                    <%= link_to "Dropped Off", status_exchange_path(exchange.id, :status => "dropped_off"), :class => "btn btn-mini btn-primary"  %>
+                  <% elsif exchange.package != "buy"  %>
+                    <%= link_to "Returned", status_exchange_path(exchange.id, :status => "returned"), :class => "btn btn-mini btn-primary"  %>
+                    <%= link_to "Not Returned", status_exchange_path(exchange.id,:status => "not_returned"), :class => "btn btn-mini btn-primary"  %>
+                  <% else %>
+
+                  <% end %>
+                </td>
               </tr>
             </tbody>
           <% end %>
@@ -172,7 +178,7 @@ You can manage your borrow requests Here.
           <th>Title</th>
           <th>Lend / Sold</th>
           <th>Borrowed Date</th>
-          <th>Returning Time</th>
+          <th>Returning Date</th>
           <th>Borrower / Buyer info</th>
           </thead>
           <% @not_returned.each do |exchange| %>

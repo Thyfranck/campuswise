@@ -2,12 +2,9 @@
   <div class="container">
     <div class="row span11 offset1">
       <div class="row" id="books-slider-head">
-        <div class="span2 nav-link active" style="width: 70px;float: left;margin-left: 5px;margin-right: 5px;">
-          
+        <div class="span3 nav-link active" style="width: 97px;float: left;margin-left: 5px;margin-right: 5px;">
+          <a href="javascript:;">Recently Added</a>
         </div>
-<%#*<div class="span2 nav-link" style="width: 70px;float: left;">%>
-<%#*<a href="javascript:;">POPULAR</a>%>
-<%#*</div>%>
       </div>
       <div class="row">
         <div class="carousel slide" id="myCarousel">
@@ -22,7 +19,7 @@
                           <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px">
                             <%= image_tag book.image_url(:book) %>
                           </div>
-                          <div class="slider_book_text" style="float: left;width:146px">
+                          <div class="slider_book_text" style="float: left;width:146px;">
                             <p class="title">
                               <%= book.title.truncate(50) %>
                             </p>

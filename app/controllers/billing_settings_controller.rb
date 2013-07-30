@@ -26,12 +26,23 @@ class BillingSettingsController < ApplicationController
       
     begin
       if @billing_setting.save
-        if session[:referer].present?
-          path = session.delete(:referer)
+        if session[:exchange]
+          @exchange = current_user.exchanges.new(session[:exchange])
+          @book = Book.find(@exchange.book_id)
+          if @exchange.save
+            session[:exchange] = nil
+            redirect_to user_path(current_user), :notice => "Request sent to owner for approval."
+          else
+            render "books/borrow"
+          end  
         else
-          path = dashboard_path
+          if session[:referer].present?
+            path = session.delete(:referer)
+          else
+            path = dashboard_path
+          end
+          redirect_to path, :notice => "Successfully added your billing information."
         end
-        redirect_to path, :notice => "Successfully added your billing information."
       else
         render :action => :new, :alert => "Something went wrong! Please try again"
       end

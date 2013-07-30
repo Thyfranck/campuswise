@@ -1,4 +1,12 @@
 $(document).ready(function(){
+
+    accept_exchange_button();
+
+    if($('#exchange_counter_offer').is(':visible')){
+    }
+    else{
+        $('#exchange_counter_offer').val("");
+    }
     
     if($('#exchange_package_day').is(':checked')){
         $('.exchange_amount').show();
@@ -111,8 +119,20 @@ $(document).ready(function(){
             }
         }
         else {
-            return true;
-        }        
+            return true
+        }
     });
+    
+    $("#agree").change(function(){
+        accept_exchange_button();
+    })
+
+    function accept_exchange_button(){
+        if($("#agree").is(':checked')) {
+            $('.exchange_button').attr("disabled", false);
+        } else {
+            $('.exchange_button').attr("disabled", true);
+        }
+    }
     
 })

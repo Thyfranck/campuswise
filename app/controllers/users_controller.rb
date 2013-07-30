@@ -178,7 +178,7 @@ class UsersController < ApplicationController
   def remove_notification
     @notification = DashboardNotification.find(params[:id])
     respond_to do |format|
-      if @notification.destroy
+      if @notification.update_attribute(:seen, true)
         format.html { redirect_to dashboard_path}
       else
         format.html { redirect_to dashboard_path, :alert => 'Error Occured'}
@@ -215,6 +215,14 @@ class UsersController < ApplicationController
     @transactions = @user.transactions.order("created_at DESC")
     @credit_transactions = @user.transactions.where(:transactable_type => Exchange).paginate(:page => params[:page], :per_page => 20)
     @debit_transactions = @user.transactions.where(:transactable_type => WithdrawRequest).paginate(:page => params[:page], :per_page => 20)
+    respond_to do |format|
+      format.html {render layout: "dashboard"}
+    end
+  end
+
+  def history
+    @user = User.find(params[:id])
+    @completed_transactions = @user.completed_transactions.paginate(:page => params[:page], :per_page => 20)
     respond_to do |format|
       format.html {render layout: "dashboard"}
     end

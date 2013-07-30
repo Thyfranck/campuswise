@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  
+  require 'will_paginate/array'
   def current_school
     @school = School.first if School.count == 1
     @school = current_user.school if current_user
