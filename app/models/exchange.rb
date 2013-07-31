@@ -62,7 +62,7 @@ class Exchange < ActiveRecord::Base
         total_amount = rate * self.duration
       end
       amount = total_amount
-      if amount.to_f <= self.counter_offer.to_f or self.counter_offer.to_f < 0
+      if amount.to_f <= self.counter_offer.to_f or self.counter_offer.to_f < 1
         errors[:base] << "Counter offer must be less than actual amount and must be greater than $1.00"
         return false
       end
