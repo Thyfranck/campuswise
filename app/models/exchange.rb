@@ -44,27 +44,29 @@ class Exchange < ActiveRecord::Base
   end
 
   def check_counter_offer
-    if self.package == "day"
-      rate = self.book.loan_daily
-    elsif self.package == "week"
-      rate = self.book.loan_weekly
-    elsif self.package == "month"
-      rate = self.book.loan_monthly
-    elsif self.package == "semester"
-      rate = self.book.loan_semester
-    elsif self.package == "buy"
-      rate = self.book.price
+    if self.new_record? and self.counter_offer.present?
+      if self.package == "day"
+        rate = self.book.loan_daily
+      elsif self.package == "week"
+        rate = self.book.loan_weekly
+      elsif self.package == "month"
+        rate = self.book.loan_monthly
+      elsif self.package == "semester"
+        rate = self.book.loan_semester
+      elsif self.package == "buy"
+        rate = self.book.price
+      end
+      if self.package == "semester" or self.package == "buy"
+        total_amount = rate
+      else
+        total_amount = rate * self.duration
+      end
+      amount = total_amount
+      if amount.to_f <= self.counter_offer.to_f or self.counter_offer.to_f < 0
+        errors[:base] << "Counter offer must be less than actual amount and must be greater than $1.00"
+        return false
+      end
     end
-    if self.package == "semester" or self.package == "buy"
-      total_amount = rate
-    else
-      total_amount = rate * self.duration
-    end
-    amount = total_amount
-    if amount.to_f <= self.counter_offer.to_f or self.counter_offer.to_f < 0
-      errors[:base] << "Counter offer must be less than actual amount and must be greater than $1.00"
-      return false 
-    end if self.counter_offer.present?
   end
 
   scope :accepted, where(:status => STATUS[:accepted])

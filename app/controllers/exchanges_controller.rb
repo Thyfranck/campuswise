@@ -59,30 +59,39 @@ class ExchangesController < ApplicationController
         @status = params[:agree]
         if @status == "agree"
           if @exchange.book.user == current_user
-            @exchange.update_attributes(:amount => @exchange.counter_offer.to_f, :counter_offer_last_made_by => current_user.id)
+            start(@exchange, format) if @exchange.update_attributes(:amount => @exchange.counter_offer.to_f, :counter_offer_last_made_by => current_user.id)
           end
+        
           if @exchange.user == current_user
-            @exchange.update_attributes(:counter_offer => @exchange.amount.to_f)
+            start(@exchange, format) if @exchange.update_attributes(:counter_offer => @exchange.amount.to_f)
           end
-          start(@exchange, format)
         elsif @status == "disagree"
           if @exchange.book.user == current_user
             counter_offer = @exchange.counter_offer.to_f
-            Notify.delay.borrower_about_owner_doesnt_want_to_negotiate(@exchange, counter_offer )
-            @exchange.update_attributes(:counter_offer => @exchange.amount.to_f, :counter_offer_last_made_by => current_user.id)
-            @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
-            @dashboards.each do |dashboard|
-              dashboard.update_attribute(:seen, true)
-            end if @dashboards.any?
+            @exchange.counter_offer = @exchange.amount.to_f
+            @exchange.counter_offer_last_made_by = current_user.id
+            if @exchange.save(:validate => false)
+              Notify.delay.borrower_about_owner_doesnt_want_to_negotiate(@exchange, counter_offer )
+              @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
+              @dashboards.each do |dashboard|
+                dashboard.update_attribute(:seen, true)
+              end if @dashboards.any?
+              format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+            else
+              format.html { redirect_to dashboard_path, :alert => "Error occured"}
+            end
           elsif @exchange.user == current_user
             Notify.owner_about_negotiation_failed(@exchange)
-            @exchange.destroy
-            @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
-            @dashboards.each do |dashboard|
-              dashboard.update_attribute(:seen, true)
-            end if @dashboards.any?
+            if @exchange.destroy
+              @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, current_user.id, false)
+              @dashboards.each do |dashboard|
+                dashboard.update_attribute(:seen, true)
+              end if @dashboards.any?
+              format.html { redirect_to dashboard_path, :notice => "Request is in process."}
+            else
+              format.html { redirect_to dashboard_path, :alert => "Error Occured."}
+            end
           end
-          format.html { redirect_to dashboard_path, :notice => "Request is in process."}
         elsif @status == "negotiate"
           @amount = params[:negotiate]
           if @exchange.book.user == current_user
@@ -100,7 +109,6 @@ class ExchangesController < ApplicationController
                 format.html { redirect_to dashboard_path, :alert => "Invalid negotiation."}
               end
             end
-            
           elsif @exchange.user == current_user
             if @exchange.update_attributes(:counter_offer => @amount, :counter_offer_last_made_by => current_user.id)
               Notify.delay.owner_about_borrower_want_to_negotiate(@exchange)
@@ -154,7 +162,7 @@ class ExchangesController < ApplicationController
         Notify.owner_about_negotiation_failed(@exchange)
       elsif @exchange.book.user == current_user
         Notify.borrower_about_rejected_by_owner(@exchange)
-      end    
+      end
       @exchange.destroy
       format.html {redirect_to request.referrer, :notice => "You Rejected the request"}
     end
@@ -188,55 +196,62 @@ class ExchangesController < ApplicationController
   def process_sms
     @from = params[:From]
     @user = User.find_by_phone(@from)
-    if @user
-      @body = params[:Body]
-      @body = @body.downcase
-      if @body.match(/accept\s*/).present?
-        @id = @body.gsub /\D/, ""
-        if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
-          @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, @user.id, false)
-          @dashboards.each do |dashboard|
-            dashboard.update_attribute(:seen, true)
-          end if @dashboards.any?
-          @exchange.delay.charge
-          render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
-        else
-          render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
-        end
-      elsif @body.match(/reject\s*/).present?
-        @id = @body.gsub /\D/, ""
-        if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
-          @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, @user.id, false)
-          @dashboards.each do |dashboard|
-            dashboard.update_attribute(:seen, true)
-          end if @dashboards.any?
-          @exchange.destroy
-          render 'exchanges/sms/no.xml.erb', :content_type => 'text/xml'
-        else
-          render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
-        end
-      elsif @body.match(/yes\s*/).present?
-        @id = @body.gsub /\D/, ""
-        if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id
-          if @exchange.status == Exchange::STATUS[:accepted]
-            @exchange.update_attribute(:status, Exchange::STATUS[:returned])
+    @body = params[:Body]
+    @id = @body.gsub /\D/, ""
+    @exchange = Exchange.find(@id)
+    unless @exchange.counter_offer.present?
+      if @user
+        @body = params[:Body]
+        @body = @body.downcase
+        if @body.match(/accept\s*/).present?
+          @id = @body.gsub /\D/, ""
+          if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
+            @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, @user.id, false)
+            @dashboards.each do |dashboard|
+              dashboard.update_attribute(:seen, true)
+            end if @dashboards.any?
+            @exchange.delay.charge
             render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
+          else
+            render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
+          end
+        elsif @body.match(/reject\s*/).present?
+          @id = @body.gsub /\D/, ""
+          if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id and @exchange.book.available == true
+            @dashboards = DashboardNotification.where("dashboardable_id = ? AND user_id = ? AND seen = ?", @exchange.id, @user.id, false)
+            @dashboards.each do |dashboard|
+              dashboard.update_attribute(:seen, true)
+            end if @dashboards.any?
+            @exchange.destroy
+            render 'exchanges/sms/no.xml.erb', :content_type => 'text/xml'
+          else
+            render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
+          end
+        elsif @body.match(/yes\s*/).present?
+          @id = @body.gsub /\D/, ""
+          if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id
+            if @exchange.status == Exchange::STATUS[:accepted]
+              @exchange.update_attribute(:status, Exchange::STATUS[:returned])
+              render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
+            end
+          else
+            render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
+          end
+        elsif @body.match(/no\s*/).present?
+          @id = @body.gsub /\D/, ""
+          if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id
+            if @exchange.status == Exchange::STATUS[:accepted]
+              @exchange.update_attribute(:status, Exchange::STATUS[:not_returned])
+              render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
+            end
+          else
+            render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
           end
         else
-          render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
-        end
-      elsif @body.match(/no\s*/).present?
-        @id = @body.gsub /\D/, ""
-        if @exchange = Exchange.find(@id) and @exchange.book.user.id == @user.id
-          if @exchange.status == Exchange::STATUS[:accepted]
-            @exchange.update_attribute(:status, Exchange::STATUS[:not_returned])
-            render 'exchanges/sms/processing.xml.erb', :content_type => 'text/xml'
-          end
-        else
-          render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
+          render 'exchanges/sms/invalid.xml.erb', :content_type => 'text/xml'
         end
       else
-        render 'exchanges/sms/invalid.xml.erb', :content_type => 'text/xml'
+        render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'
       end
     else
       render 'exchanges/sms/unauthorized.xml.erb', :content_type => 'text/xml'

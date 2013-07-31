@@ -4,6 +4,7 @@
     <thead>
     <th>Book Title</th>
     <th>Borrowed / Purchased</th>
+    <th>Paid Amount</th>
     <th>Borrowed Date</th>
     <th>Returning Date</th>
     <th>Book Owner's Info</th>
@@ -15,6 +16,7 @@
       <tr>
         <td><%= transaction.book_title %></td>
         <td><%= transaction.package == "buy" ? "Purchased" : "Borrowed" %></td>
+        <td><%= transaction.amount %></td>
         <% unless transaction.package == "buy"  %>
           <td><%= transaction.created_at.strftime("%m/%d/%Y") %></td>
           <td><%= transaction.ending_date.strftime("%m/%d/%Y") %></td>

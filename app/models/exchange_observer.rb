@@ -22,10 +22,10 @@ class ExchangeObserver < ActiveRecord::Observer
   def before_update(record)
     if record.class == Exchange
       if record.counter_offer.present? and record.counter_offer_last_made_by.present?
-        if record.amount_was < record.amount.to_f
+        if record.amount_was.to_f < record.amount.to_f
           return false
         end
-        if record.counter_offer_was > record.counter_offer.to_f
+        if record.counter_offer_was.to_f > record.counter_offer.to_f
           return false
         end
 

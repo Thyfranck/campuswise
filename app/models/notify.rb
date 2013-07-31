@@ -90,7 +90,7 @@ class Notify
     @request_sender = @exchange.user
     @dashboard = @exchange.dashboard_notifications.new(
       :user_id => @request_sender.id,
-      :content => "Congratulation, you have successfully #{record.exchange.package == "buy" ? "puchased":"borrowed"} the book titled <a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)}</a>. Please inform us when you receive the book, in <a href='/borrow_requests' target='_blank'>here</a>. You can see this book's #{record.exchange.package == "buy" ? "seller's":"lender's"} contact information in your #{record.exchange.package == "buy" ? "sold": "borrowed"} books <a href='/borrow_requests' target='_blank'>list</a>"
+      :content => "Congratulation, you have successfully #{record.exchange.package == "buy" ? "puchased":"borrowed"} the book titled <a href='/books/#{@requested_book.id}' target='_blank'> #{@requested_book.title.truncate(25)}</a> at the price #{Notify.helpers.number_to_currency(record.payment_amount.to_f, :prescision => 2)}. Please inform us when you receive the book, in <a href='/borrow_requests' target='_blank'>here</a>. You can see this book's #{record.exchange.package == "buy" ? "seller's":"lender's"} contact information in your #{record.exchange.package == "buy" ? "sold": "borrowed"} books <a href='/borrow_requests' target='_blank'>list</a>"
     )
     @dashboard.save
     Notification.notify_book_borrower_exchange_successfull(record).deliver
@@ -236,7 +236,11 @@ class Notify
       :admin_user_id => AdminUser.first.id,
       :content => "User: #{record.user.name}, email:#{record.user.email} says that he/she received the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \""
     )
-    @admin_notification.save
+    @owner_notification = record.dashboard_notifications.new(
+      :user_id => record.book.user.id,
+      :content => "User: #{record.user.name}, email:#{record.user.email} confirmed that, received the book '<a href='/books/#{record.book.id}'>#{record.book.title}</a>'"
+    )
+    @owner_notification.save
   end
 
   def self.owner_full_price_charged(record) #exchange
