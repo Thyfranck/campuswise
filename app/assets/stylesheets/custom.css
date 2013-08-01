@@ -623,3 +623,19 @@ div.price{
     right: 91px;
     max-width: none;
 }
+
+
+/*===============overwrite for book coursel height settings =================*/
+
+#books-slider{
+    background: url('/assets/new_top_bg.png') repeat scroll left bottom transparent;
+    height: 130px;
+}
+
+#books-slider-head {
+    height: 30px;
+}
+
+#books-slider-head .nav-link {
+    padding-top: 4px;
+}
