@@ -24,7 +24,7 @@
       </div>
     <% end %>
     <% if @book.new_record? %>
-      <div style="width:inherit">Type a keyword related to your books and you will get some quick suggestion, If you don't find your desired book then click on the search button to get more results. Or you can manually add a book.</div>
+      <div style="width:inherit">Type a keyword related to the book you want and you will get a few suggestions, if you don't find your desired book then click on the search button to get more results. Or you can manually add a book.</div>
       <br/>
       <%= form_tag search_path, :class => "form-horizontal", :remote => true do %>
         <div class="control-group">
