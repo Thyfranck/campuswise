@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    //setInterval('notification_count()',5000);
+//    setInterval('notification_count()',5000);
 })
 
 function notification_count(){

@@ -20,10 +20,10 @@
           <% if current_user %>
             <li class="nav_user_email"><%= current_user.email %>
               <%= link_to dashboard_path, :id => "notification_box" do %>
-                <% if current_user.dashboard_notifications.count < 10 %>
-                  <%= "0#{current_user.dashboard_notifications.count}" %>
+                <% if current_user.dashboard_notifications.where(:seen => false).count < 10 %>
+                  <%= "0#{current_user.dashboard_notifications.where(:seen => false).count}" %>
                 <% else %>
-                  <%= "#{current_user.dashboard_notifications.count}" %>
+                  <%= "#{current_user.dashboard_notifications.where(:seen => false).count}" %>
                 <% end %>
               <% end %>
             </li>
