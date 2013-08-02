@@ -7,91 +7,60 @@
         </div>
       </div>
       <div class="row">
-        <div class="carousel slide" id="myCarousel">
-          <div class="carousel-inner">
-            <% if @recent_books.limit(3).any? %>
-              <div class="item active">
-                <ul class="thumbnails offset1">
-                  <% @recent_books.limit(3).each_with_index do |book, index| %>
-                    <li class="<%= "offsetplplpl" if index == 0 %>" style="width: 230px;">
-                      <div class="slide-content">
-                        <%= link_to book_path(book) do %>
-                          <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px">
-                            <%= image_tag book.image_url(:book) %>
-                          </div>
-                          <div class="slider_book_text" style="float: left;width:146px;">
-                            <p class="title">
-                              <%= book.title.truncate(50) %>
-                            </p>
-                            <p class="author">
-                              by <%= book.author.truncate(50) %>
-                            </p>
-                          <% end %>
-                        </div>
+        <div class="carousel slide" id="mycarousel">
+          <div style="height:98px; padding-left: 7%" class="carousel-inner">
+            <ul class="offset1" style="padding-right: 7%; overflow: hidden">
+              <% @recent_books.limit(6).each do |book| %>
+                <li class="slide-li" >
+                  <div class="slide-content">
+                    <%= link_to book_path(book) do %>
+                      <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px">
+                        <%= image_tag book.image_url(:book) %>
                       </div>
-                    </li>
-                  <% end %>
-                </ul>
-              </div>
-            <% end %>
-            <% if @recent_books.limit(3).offset(3).any? %>
-              <div class="item">
-                <ul class="thumbnails offset1">
-                  <% @recent_books.limit(3).offset(3).each_with_index do |book, index| %>
-                    <li class="<%= "offsetpllplplp" if index == 0 %>" style="width: 230px;">
-                      <div class="slide-content">
-                        <%= link_to book_path(book) do %>
-                        <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px;">
-                          <%= image_tag book.image_url(:book) %>
-                        </div>
-                        <div class="slider_book_text" style="float: left;width:146px">
-                          <p class="title">
-                            <%= book.title.truncate(50) %>
-                          </p>
-                          <p class="author">
-                            by <%= book.author.truncate(50) %>
-                          </p>
-
-                        </div>
-                        <% end %>
-                      </div>
-                    </li>
-
-                  <% end %>
-                </ul>
-              </div>
-            <% end %>
-            <% if @recent_books.limit(3).offset(6).any? %>
-              <div class="item">
-                <ul class="thumbnails offset1">
-                  <% @recent_books.limit(3).offset(6).each_with_index do |book, index| %>
-                    <li class="<%= "offset1fgdfdf" if index == 0 %>" style="width: 230px;">
-                      <div class="slide-content">
-                        <%= link_to book_path(book) do %>
-                        <div class="slider_book_image" style="width: 70px;float: left;margin-right: 3px;">
-                          <%= image_tag book.image_url(:book) %>
-                        </div>
-                        <div class="slider_book_text" style="float: left;width:146px;">
-                          <p class="title">
-                            <%= book.title.truncate(50) %>
-                          </p>
-                          <p class="author">
-                            by <%= book.author.truncate(50) %>
-                          </p>
-
-                        </div>
-                        <% end %>
-                      </div>
-                    </li>
-                  <% end %>
-                </ul>
-              </div>
-            <% end %>
+                      <div class="slider_book_text" style="float: left;width:146px;">
+                        <p class="title">
+                          <%= book.title.truncate(50) %>
+                        </p>
+                        <p class="author">
+                          by <%= book.author.truncate(50) %>
+                        </p>
+                      <% end %>
+                    </div>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
           </div>
-          <a class="carousel-control left" href="#myCarousel" data-slide="prev">‹</a>
-          <a class="carousel-control right" href="#myCarousel" data-slide="next">›</a>
+          <%#*<a class="carousel-control left" href="#myCarousel" data-slide="prev">‹</a>%>
+          <%#*<a class="carousel-control right" href="#myCarousel" data-slide="next">›</a>%>
         </div>
+        
       </div>
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  function mycarousel_initCallback(carousel)
+  {
+    // Disable autoscrolling if the user clicks the prev or next button.
+    carousel.buttonNext.bind('click', function() {
+      carousel.startAuto(0);
+    });
+    carousel.buttonPrev.bind('click', function() {
+      carousel.startAuto(0);
+    });
+    // Pause autoscrolling if the user moves with the cursor over the clip.
+    carousel.clip.hover(function() {
+      carousel.stopAuto();
+    }, function() {
+      carousel.startAuto();
+    });
+  };
+
+  $('document').ready(function(){
+    jQuery('#mycarousel').jcarousel({ auto: 2, wrap: "circular", visible: 3, buttonNextHTML: '<a class="carousel-control right" href="#myCarousel">›</a>', buttonPrevHTML: '<a class="carousel-control left" href="#myCarousel">‹</a>'})
+  });
+
+
+</script>
