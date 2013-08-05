@@ -34,6 +34,9 @@
           <ul class="nav navbar-nav pull-right">
             <% if current_school.present? %>
               <% if current_user %>
+                <li class="nav_user_action ">
+                  <%= link_to "Dashboard", dashboard_path %>
+                </li>
                 <li class="nav_user_action dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     Account Settings
