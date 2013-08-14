@@ -1,12 +1,15 @@
 Hello <%= @user.name %>,<br/>
 <br/>
 
-Someone wants to <%= @exchange.package == "buy" ? "buy" : "borrow" %>
-your book titled: "<%= @book.title %>" at the price of <%= @exchange.counter_offer.present? ? "#{number_to_currency(@exchange.counter_offer.to_f, :prescision => 2)}" : "#{number_to_currency(@exchange.amount.to_f, :prescision => 2)}" %><br/>
+Someone wants to <%= @exchange.package == "buy" ? "purchase" : "borrow" %>
+your book titled: "<%= @book.title %>" for <%= @exchange.counter_offer.present? ? "#{number_to_currency(@exchange.counter_offer.to_f, :prescision => 2)}" : "#{number_to_currency(@exchange.amount.to_f, :prescision => 2)}." %><br/>
 <% unless @exchange.package == "buy" %>
-  From <%= @exchange.starting_date.to_date %> to <%= @exchange.package == "semester" ? "full semester" : "to next #{@exchange.duration.to_s + " " + (@exchange.package).pluralize(@exchange.duration)} (till #{@exchange.ending_date.to_date})" %>
+for <%= @exchange.package == "semester" ? "semester" : "#{@exchange.duration.to_s + " " + (@exchange.package).pluralize(@exchange.duration)}" %> from <%= @exchange.starting_date.to_date %> to <%= "#{@exchange.ending_date.to_date})." %>
 <% end %>
 <br/>
-To approve or ignore this just follow this link: <%= link_to "Link", @url %>.<br/>
+<br/>
+To approve or ignore this click <%= link_to "here", @url %>.<br/>
 <br/>
 Have a great day!<br/>
+
+-CampusWise
