@@ -1,0 +1,13 @@
+Dear <%= @user.name %>,
+<br/>
+<br/>
+You <%= @exchange.package == "buy" ? "purchased" : "borrowed" %> the book titled "<%= @book.title %>". Owner of this book says that, dropped-off the book to you at <%= @exchange.dropped_off_at.to_date %>.
+<br/>
+<br/>
+Please inform us <%= link_to "here", borrow_requests_url %> that you received the book. If you don't received the book yet inform us at admin@campuswise.com.
+<br/>
+<br/>
+Thank for using CampusWise book renting service.
+<br/>
+<br/>
+Have a nice day!

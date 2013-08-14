@@ -217,7 +217,7 @@ class Notify
     @admin_notification.save
   end
 
-  def self.admin_for_book_dropped_off(record) #exchange
+  def self.book_dropped_off(record) #exchange
     @admin_notification = record.dashboard_notifications.new(
       :admin_user_id => AdminUser.first.id,
       :content => "User: #{record.book.user.name}, email:#{record.book.user.email} says that he/she dropped off the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \""
@@ -229,19 +229,53 @@ class Notify
       :content => "Owner of the book titled '<a href='/books/#{record.book.id}'>#{record.book.title}</a>' says that gave you the book, please confirm us <a href='/borrow_requests' target='_blank'>here</a>"
     )
     @borrower_notification.save
+    Notification.owner_dropped_off_the_book(record).deliver
+    @to = record.user.phone
+    @body = "Owner of the book titled '#{record.book.title.truncate(30)}' confirms that dropped off the book to you. Please confirm us that you received the book. -CampusWise"
+    TwilioRequest.send_sms(@body, @to)
+    
+    @owner_notification = record.dashboard_notifications.new(
+      :user_id => record.book.user.id,
+      :content => "You dropped off the book '<a href='/books/#{record.book.id}'>#{record.book.title}</a>' at #{record.dropped_off_at.to_date}."
+    )
+    @owner_notification.save
   end
 
-  def self.admin_for_book_received(record) #exchange
+  def self.book_received(record)
     @admin_notification = record.dashboard_notifications.new(
       :admin_user_id => AdminUser.first.id,
       :content => "User: #{record.user.name}, email:#{record.user.email} says that he/she received the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \""
     )
+    @admin_notification.save
+    
+    @borrower_notification = record.dashboard_notifications.new(
+      :user_id => record.user.id,
+      :content => "You received the book '<a href='/books/#{record.book.id}'>#{record.book.title}</a>'."
+    )
+    @borrower_notification.save
+
     @owner_notification = record.dashboard_notifications.new(
       :user_id => record.book.user.id,
-      :content => "User: #{record.user.name}, email:#{record.user.email} confirmed that, received the book '<a href='/books/#{record.book.id}'>#{record.book.title}</a>'"
+      :content => "User: #{record.user.name}, email:#{record.user.email} confirmed us that received the book '<a href='/books/#{record.book.id}'>#{record.book.title}</a>' from you."
     )
     @owner_notification.save
+    Notification.borrower_received_the_book(record).deliver
+    @to = record.book.user.phone
+    @body = "#{record.package == 'buy' ? 'Buyer' : 'Borrower'} of the book titled '#{record.book.title.truncate(30)}' confirmed us that received the book from you. -CampusWise"
+    TwilioRequest.send_sms(@body, @to)
   end
+
+#  def self.admin_for_book_received(record) 
+#    @admin_notification = record.dashboard_notifications.new(
+#      :admin_user_id => AdminUser.first.id,
+#      :content => "User: #{record.user.name}, email:#{record.user.email} says that he/she received the book \"<a href='/admin/books/#{record.book.id}'>#{record.book.title.truncate(50)}</a> \""
+#    )
+#    @owner_notification = record.dashboard_notifications.new(
+#      :user_id => record.book.user.id,
+#      :content => "User: #{record.user.name}, email:#{record.user.email} confirmed that, received the book '<a href='/books/#{record.book.id}'>#{record.book.title}</a>'"
+#    )
+#    @owner_notification.save
+#  end
 
   def self.owner_full_price_charged(record) #exchange
     @dashboard = record.dashboard_notifications.new(

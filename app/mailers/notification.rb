@@ -196,4 +196,22 @@ class Notification < ActionMailer::Base
     mail(:to => @user.email,
       :subject => "We charged you for not returning a book -Campuswise")
   end
+
+  def owner_dropped_off_the_book(exchange)
+    @book = exchange.book
+    @exchange = exchange
+    @user = exchange.user
+    headers['X-SMTPAPI'] = "{\"category\" : \"Book dropped-off\"}"
+    mail(:to => @user.email,
+      :subject => "Owner dropped off the book '#{@book.title.truncate(30)}' to you - CampusWise")
+  end
+
+  def borrower_received_the_book(exchange)
+    @book = exchange.book
+    @exchange = exchange
+    @user = exchange.book.user
+    headers['X-SMTPAPI'] = "{\"category\" : \"Book received\"}"
+    mail(:to => @user.email,
+      :subject => "#{exchange.package == 'buy' ? 'Buyer' : 'Borrower'} received the book '#{@book.title.truncate(30)}' from you - CampusWise")
+  end
 end

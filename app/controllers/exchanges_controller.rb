@@ -175,14 +175,14 @@ class ExchangesController < ApplicationController
     elsif params[:status] == "not_returned" and @exchange.book.user == current_user
       Notify.delay.admin_for_book_not_returned(@exchange) if @exchange.update_attribute(:status, Exchange::STATUS[:not_returned])
     elsif params[:status] == "dropped_off" and @exchange.book.user == current_user
-      Notify.delay.admin_for_book_dropped_off(@exchange) if @exchange.update_attributes(:dropped_off => Exchange::STATUS[:dropped_off], :dropped_off_at => Time.now)
+      Notify.delay.book_dropped_off(@exchange) if @exchange.update_attributes(:dropped_off => Exchange::STATUS[:dropped_off], :dropped_off_at => Time.now)
     elsif params[:status] == "received" and @exchange.user == current_user
       if @exchange.package == "buy"
-        Notify.delay.admin_for_book_received(@exchange) if @exchange.update_attributes(:received => Exchange::STATUS[:received], :received_at => Time.now, :status =>  Exchange::STATUS[:received])
+        Notify.delay.book_received(@exchange) if @exchange.update_attributes(:received => Exchange::STATUS[:received], :received_at => Time.now, :status =>  Exchange::STATUS[:received])
       else
-        Notify.delay.admin_for_book_received(@exchange) if @exchange.update_attributes(:received => Exchange::STATUS[:received], :received_at => Time.now)
+        Notify.delay.book_received(@exchange) if @exchange.update_attributes(:received => Exchange::STATUS[:received], :received_at => Time.now)
       end
-      @exchange.update_attributes(:dropped_off => Exchange::STATUS[:dropped_off]) if @exchange.dropped_off.blank?
+      @exchange.update_attributes(:dropped_off => Exchange::STATUS[:dropped_off], :dropped_off_at => Time.now) if @exchange.dropped_off.blank?
     else
       @msg = "Unauthorized"
     end

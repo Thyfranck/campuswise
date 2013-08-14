@@ -1,0 +1,10 @@
+Dear <%= @user.name %>,
+<br/>
+<br/>
+You <%= @exchange.package == "buy" ? "sold" : "lend" %> the book titled "<%= @book.title %>". <%= @exchange.package == "buy" ? "Buyer" : "Borrower" %> of this book says that received the book from you.
+<br/>
+<br/>
+Thank for using CampusWise book renting service.
+<br/>
+<br/>
+Have a nice day!
