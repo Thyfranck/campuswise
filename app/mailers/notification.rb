@@ -214,4 +214,13 @@ class Notification < ActionMailer::Base
     mail(:to => @user.email,
       :subject => "#{exchange.package == 'buy' ? 'Buyer' : 'Borrower'} received the book '#{@book.title.truncate(30)}' from you - CampusWise")
   end
+
+  def offering_a_requested_book(requested_book_id, added_book_id)
+    @requested_book = Book.find(requested_book_id)
+    @added_book = Book.find(added_book_id)
+    @user = @requested_book.user
+    headers['X-SMTPAPI'] = "{\"category\" : \"Offering requested book\"}"
+    mail(:to => @user.email,
+      :subject => "Someone is offering your requested book '#{@requested_book.title.truncate(30)}'.- CampusWise")
+  end
 end

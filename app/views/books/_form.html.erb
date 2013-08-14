@@ -1,10 +1,12 @@
 <%= form_for @book, :html => { :class => "form-horizontal #{"edit_book" unless @book.new_record?}", :multipart => true } do |f| %>
   <fieldset>
     <legend>
-      <% if controller.action_name == "new" %>
-        Add a New
+      <% if session[:offer_book] %>
+        Offer This
       <% elsif controller.action_name == "search" %>
         Request a
+      <% elsif controller.action_name == "new"  %>
+        Add a New
       <% else %>
         <%= controller.action_name.capitalize %>
       <% end %>
@@ -23,7 +25,7 @@
         </ul>
       </div>
     <% end %>
-    <% if @book.new_record? %>
+    <% if @book.new_record? and session[:offer_book] == nil %>
       <div style="width:inherit">Type a keyword related to the book you want and you will get a few suggestions, if you don't find your desired book then click on the search button to get more results. Or you can manually add a book.</div>
       <br/>
       <%= form_tag search_path, :class => "form-horizontal", :remote => true do %>

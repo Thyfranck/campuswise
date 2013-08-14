@@ -14,8 +14,8 @@
       </tr>
     <% end %>
     <tr>
-      <td colspan="3" style="text-align: right">Total Credit</td>
-      <td style="text-align: right">+ <%= @user.credit.present? ? "#{number_to_currency(@user.credit, :prescision => 2)}" : "00.0" %></td>
+      <td colspan="3" style="text-align: right; background-color: wheat">Total Credit (After deducting CampusWise 10% service fee)</td>
+      <td style="text-align: right; background-color: wheat">+ <%= @user.credit.present? ? "#{number_to_currency(@user.credit, :prescision => 2)}" : "00.0" %></td>
     </tr>
     <tr>
       <td colspan="3" style="text-align: right">Total Withdraw</td>

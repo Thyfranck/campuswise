@@ -1,0 +1,13 @@
+Dear <%= @user.name %>,
+<br/>
+<br/>
+You requested for a book titled '<%= @requested_book.title %>'.
+<br/>
+<br/>
+Congratulation and great news! Someone just added your desired book. To get this book just click <%= link_to "here", book_url(@added_book) %>.
+<br/>
+<br/>
+Thank you for using CampusWise book renting service.
+<br/>
+<br/>
+Have a great day!

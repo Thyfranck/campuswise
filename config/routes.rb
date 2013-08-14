@@ -38,6 +38,7 @@ Campuswise::Application.routes.draw do
   match '/remove_notification' => 'users#remove_notification'
   match '/borrow_requests' => 'users#borrow_requests'
   match '/smsresponse' => 'exchanges#process_sms'
+  match '/odu' => 'static#home'
 
   match 'contact-us' => 'static#contact_us',          :as => :contact_us
   match 'terms-of-use' => 'static#terms',     :as => :terms
@@ -71,7 +72,7 @@ Campuswise::Application.routes.draw do
   resources :password_resets, :only => [:create, :edit, :update, :new]
 
   root :to => "static#home"
-#  root :to => "static#school_home"
+  #  root :to => "static#school_home"
 
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)

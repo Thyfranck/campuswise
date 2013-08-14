@@ -306,4 +306,17 @@ class Notify
     @body = "We charged the full price of the book '#{record.book.title.truncate(30)}',amount of $#{record.book.price.to_f} from you, as you didn't return the book timely - Campuswise"
     TwilioRequest.send_sms(@body, @to)  
   end
+
+  def self.offering_a_requested_book(requested_book_id, added_book_id)
+    @book = Book.find(requested_book_id)
+    @dashboard = DashboardNotification.new(
+      :user_id => @book.user.id,
+      :content => "Someone is offering your requested book '<a href='/books/#{@book.id}'>#{@book.title}</a>'. To get the book click <a href='/books/#{added_book_id}'>here</a>."
+    )
+    @dashboard.save
+    Notification.offering_a_requested_book(requested_book_id, added_book_id).deliver
+    @to = @book.user.phone
+    @body = "Someone is offering your requested book '#{@book.title.truncate(30)}',to get this book login our site. -CampusWise"
+    TwilioRequest.send_sms(@body, @to)
+  end
 end

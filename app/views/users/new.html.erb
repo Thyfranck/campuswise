@@ -4,7 +4,7 @@
   <%= form_for @user, :html => { :class => 'form-horizontal' } do |f| %>
     <fieldset>
       <legend>
-          Sign Up
+        Sign Up
       </legend>
 
       <% if @user.errors.any? %>
@@ -28,7 +28,7 @@
           <%= f.text_field :first_name,:class => 'text_field', :required => true %>
         </div>
       </div>
-      
+
       <div class="control-group">
         <%= f.label :last_name, :class => 'control-label' %>
         <div class="controls">
@@ -45,16 +45,275 @@
           </div>
         </div>
       <% end %>
- 
+
       <div class="form-actions <%= "no_background_color" if @user.new_record? %>">
-        <%= f.submit :class => 'btn btn-primary have_a_account' %>
+        <a href="#myModal" role="button" class="btn have_a_account" data-toggle="modal" id="continue">Sign Up</a>
         <% if @user.new_record? %>
           <%= link_to "I Already Have An Account", login_path(:school => @school), :class => "have_a_account btn btn-info" %>
         <% end %>
       </div>
-    <% end %>
-  </fieldset>
+    </fieldset>
+  </div>
+  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="myModalLabel">Terms and Conditions</h3>
+    </div>
+    <div class="modal-body">
+      <div style="height: 100px;">
+        <fieldset>
+          <p>
+            These Terms of use (“Terms”) govern your access to and use of the various services provided by CampusWise, LLC (the “Company”), including, but not limited to Company’s various websites, SMS, APIs, email notifications, applications, buttons, widgets, and/or the transmission of any messages to third parties through the Company system (the "Services"), and any information, text, graphics, photos or other materials uploaded, downloaded or appearing in connection or in relation to your use of the Services (collectively referred to as "Content"). Your access to and use of the Services are conditioned upon your acceptance of and compliance with these Terms. By accessing or using the Services provided by Company, its affiliates, subsidiaries you agree to be bound by these Terms. When used herein the term “Company” includes CampusWise, LLC. and any affiliates, subsidiaries, related third parties as well as all directors, officers, employees, managers and agents of the same. When used herein “you” or “your” includes any person, entity or partnership who accesses or uses the Services and any affiliates, subsidiaries, related third parties as well as all directors, officers, employees, managers and agents of the same. BY USING THE SITE, YOU AGREE TO THESE TERMS OF USE; IF YOU DO NOT AGREE, DO NOT USE THE SITE.
+          </p>
 
+          <h5>
+            Introduction
+          </h5>
+          <p>
+            Welcome to CampusWise, you agree to the following terms and general principles for the site. You are responsible for your use of the Services, for any Content you transmitted using the Company Services, and for any consequences thereof. The Content you submit, post, or display will be able to be viewed by third parties provided by you to Company. You shall only provide Content that you are comfortable sharing as if it was transmitted solely by you under these Terms.
+          </p>
+          <p>
+            The Services may include advertisements, which may be targeted to the Content or information on the Services, queries made through the Services, or other information. In consideration of Company granting you access to and use of the Services, you agree that Company and its third party providers and partners may place such advertising on the Services or in connection with the display of Content or information from the Services whether submitted by you or others.
+          </p>
+          <p>
+            You may use the Services only if you can form a binding contract with Company and are not a person barred from receiving services under the laws of the United States or other applicable jurisdiction. If you are accepting these Terms and using the Services on behalf of a company, organization, government, or other legal entity, you represent and warrant that you are authorized to do so. You may use the Services only in compliance with these Terms and all applicable local, state, national, and international laws, rules and regulations.
+          </p>
+          <p>
+            The Services that Company provides are always evolving and the form and nature of the Services that Twitter provides may change from time to time without prior notice to you. In addition, Company may stop or suspend (permanently or temporarily) providing the Services (or any features within the Services) to you or to users generally and may not be able to provide you with prior notice. We also retain the right to create limits on use of the Services at the sole discretion of Company at any time without prior notice to you.
+          </p>
 
-</div>
-<div class="span4"></div>
+          <p>
+            While using Company site, services, applications, and tools, you will not:
+          <ul>
+            <li>
+              post content or items in inappropriate categories or areas on our sites and services;
+            </li>
+            <li>
+              violate any laws, third party rights or our policies;
+            </li>
+            <li>
+              use our sites, services, applications, or tools if you are not able to form legally binding contracts or are temporarily or indefinitely suspended from using our sites, services, applications, or tools;
+            </li>
+            <li>
+              fail to deliver payment for items purchased or leased by you, unless the seller has materially changed the item's description after you bid, a clear typographical error is made, or you cannot reach the seller;
+            </li>
+            <li>
+              fail to deliver items purchased from you, unless the buyer fails to meet the posted terms, or you cannot reach the buyer;
+            </li>
+            <li>
+              manipulate the price of any item or interfere with other users' listings;
+            </li>
+            <li>
+              circumvent or manipulate our fee structure, the billing process, or fees owed to Company;
+            </li>
+            <li>
+              post false, inaccurate, misleading, defamatory, or libelous content;
+            </li>
+            <li>
+              take any action that may undermine the feedback or ratings systems (such as displaying, importing or exporting feedback information off of the sites or using it for purposes unrelated to Company);
+            </li>
+            <li>
+              circumvent any Company policy or determinations about your account status such as temporary or indefinite suspensions or other account holds, limitations or restrictions;
+            </li>
+            <li>
+              transfer by any manner any Company application or your Company account (including Feedback) and user ID to another party without our consent;
+            </li>
+            <li>
+              distribute or post spam, unsolicited or bulk electronic communications, chain letters, or pyramid schemes;
+            </li>
+            <li>
+              distribute viruses or any other technologies that may harm Company, or the interests or property of Company users;
+            </li>
+            <li>
+              export or re-export any Company applications, or tools except in compliance with the export control laws of any relevant jurisdictions and in accordance with posted rules and restrictions;
+            </li>
+            <li>
+              copy, modify, or distribute rights or content from the Company sites, services, applications, or tools or Company's copyrights and trademarks;
+            </li>
+            <li>
+              commercialize any Company application or any information or software associated with such application; or
+            </li>
+            <li>
+              harvest or otherwise collect information about users, including email addresses, without their consent.
+            </li>
+          </ul>
+          </p>
+
+          <h5>IP Ownership and Limited License</h5>
+          <p>
+            Company is the sole owner of the rights, title and interest in all the Services and related Intellectual Property of the Company system. For the purposes of this herein, “Intellectual Property” shall include all forms of intellectual property and rights recognized under the laws of the United States, any and all states within the United States and/or any foreign jurisdiction where the Services are being provided or used. These include, but are not limited to, patents, trademarks, trade dress, service marks, copyrights, or any other confidential information disclosed to the you and the website’s. Any feedback, comments, or suggestions you may provide regarding Company or its Services are entirely voluntary, and Company is free to use such feedback, comments, or suggestions as it sees fit and without any obligations thereto.
+          </p>
+
+          <h5>Privacy</h5>
+          <p>
+            Any information you provide to Company is subject to our Privacy Policy, which governs our collection and use of your information. You understand that through your use of the Services you consent to the collection and use (as set forth in the Privacy Policy) of this information, including the transfer of this information to the United States and/or other countries for storage, processing and use by Company. As part of providing you the Services, we may provide you with certain communications, such as service announcements and administrative messages. These communications are considered part of the Services, which you may not be able to opt-out from receiving.
+          </p>
+
+          <h5>Access to the Company System</h5>
+          <p>
+            Company hereby grants you a revocable, nontransferable and nonexclusive license to use the Company platform for distributing automated messages. You may not sublicense, modify, or reverse engineer any portion of the Company platform. Company reserves the right to revoke access to the platform, the Services and any Content.
+          </p>
+
+          <h5>Fees and Billing</h5>
+          <p>
+            Joining CampusWise and bidding on listed items is free. We do charge fees for using other Services, such as listing items. The fees we charge for using our Services are listed on our website, which we may change at our discretion. Changes to that schedule are effective after we provide you with at least fourteen days' notice by posting the changes on www.campuswise.com. We may choose to temporarily change the fees for our services for promotional events (for example, free listing days) or new services, and such changes are effective when we post the temporary promotional event or new service on the sites or in our applications.
+          </p>
+
+          <p>
+            Unless otherwise stated, all fees are quoted in United States Dollars. You are responsible for paying all fees and applicable taxes associated with our sites, Services, applications, and tools with a valid payment method by the payment due date. If your payment method fails or your account is past due, we may collect fees owed using other collection mechanisms. (This includes charging other payment methods on file with us, retaining collection agencies and legal counsel, and for accounts over 180 days past due, deducting the amount owed from your PayPal account balance.) In addition, you will be subject to late fees and we may suspend or restrict you from using our sites, Services, applications, and tools until full payment is made.  Company’s platform operates on a transactional basis.   Revenue is collected exclusively credit cards through a Stripe merchant account. Outgoing money to the users can happen three ways: bank account routing, PayPal, or credit card. You as the user will set your price for the product or service you are offering. You hereby agree to pay the Company’s posted rates. Should your account balance, for any reason, remain unpaid for more than 5 days, you hereby consent to a $50.00 late fee will be assessed for failure to pay. If, after 30 days, the account balance remains unpaid, Company may terminate your access to the Services and Content and charge a ten-percent (10%) interest rate on any unpaid balance, or the maximum amount under state law. Any and all payments made to Company in connection with the Services are final and non-refundable.
+          </p>
+
+          <p>
+            Company, or the collection agencies we retain, may also report information about your account to credit bureaus, and as a result, late payments, missed payments, or other defaults on your account may be reflected in your credit report. If you wish to dispute the information Company reported to a credit bureau (i.e., Experian, Equifax or TransUnion) please contact us at CampusWise, LLC, 111 Granby Street, Norfolk, VA 23510. If you wish to dispute the information a collection agency reported to a credit bureau regarding your Company account, you must contact the collection agency directly.
+          </p>
+
+          <h5>Limitation of Liability</h5>
+          <p>
+            THE LIMITATIONS OF THIS SUBSECTION SHALL APPLY TO ANY THEORY OF LIABILITY, WHETHER BASED ON WARRANTY, CONTRACT, STATUTE, TORT (INCLUDING NEGLIGENCE) OR OTHERWISE, AND WHETHER OR NOT THE TWITTER ENTITIES HAVE BEEN INFORMED OF THE POSSIBILITY OF ANY SUCH DAMAGE, AND EVEN IF A REMEDY SET FORTH HEREIN IS FOUND TO HAVE FAILED OF ITS ESSENTIAL PURPOSE.
+          </p>
+
+          <h5>Disclaimer of Warranty</h5>
+          <p>
+            All of Company’s Services are provided “as-is” and Company offers no warranty, expressed or implied, that all services will meet the client’s requirements, or that the Services will be uninterrupted, timely, error free or that any defects in the Service will be corrected. Company does not make any warranty pertaining to any Service or Content used in connection with your use of the Services. Company does not warrant the accuracy or reliability of the results provided by the Company platform and agrees all damages or loss of property resulting from the use of said data, spreadsheets, and results shall be the sole responsibility of you, the customer.
+          </p>
+
+          <p>
+            TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, COMPANY AND ITS SUBSIDIARIES OR AFFILIATES, OR ANY OFFICERS, DIRECTORS, EMPLOYEES OR AGENTS OF THE SAME SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOOD-WILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM (i) YOUR ACCESS TO OR USE OF OR INABILITY TO ACCESS OR USE ANY SERVICES PROVIDED BY COMPANY; (ii) ANY CONDUCT OR CONTENT OF ANY THIRD PARTY ON THE SERVICES, INCLUDING WITHOUT LIMITATION, ANY DEFAMATORY, OFFENSIVE OR ILLEGAL CONDUCT OF OTHER USERS OR THIRD PARTIES; (iii) ANY CONTENT OBTAINED FROM THE COMPANY OR ANY THIRD PARTY; OR (iv) UNAUTHORIZED ACCESS, USE OR ALTERATION OF YOUR TRANSMISSIONS OR CONTENT USING THE COMPANY SERVICES.
+          </p>
+
+          <p>
+            IN NO EVENT SHALL THE AGGREGATE LIABILITY OF COMPANY AND ITS SUBSIDIARIES OR AFFILIATES, OR ANY OFFICERS, DIRECTORS, EMPLOYEES OR AGENTS EXCEED THE GREATER OF ONE HUNDRED AND 00/100 U.S. DOLLARS ($100.00 USD) OR THE AMOUNT PAID TO COMPANY FOR ITS SERVICES, IF ANY, IN THE PAST SIX MONTHS FOR THE SERVICES GIVING RISE TO THE CLAIM.
+          </p>
+
+          <p>
+            Your access to and use of the Services or any Content are at your own risk. You understand and agree that the Services are provided to you on an "AS IS" and "AS AVAILABLE" basis. Without limiting the foregoing, to the maximum extent permitted under applicable law, COMPANY DISCLAIMS ALL WARRANTIES AND CONDITIONS, WHETHER EXPRESS OR IMPLIED, OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
+          </p>
+
+          <p>
+            Company further makes no warranty and disclaims all responsibility and liability for; (i) the completeness, accuracy, availability, timeliness, security or reliability of the Services or any Content; (ii) any harm to your computer system, loss of data, or other harm that results from your access to or use of the Services or any Content; (iii) the deletion of, or the failure to store or to transmit, any Content and other communications maintained by the Services; and (iv) whether the Services will meet your requirements or be available on an uninterrupted, secure, or error-free basis. No advice or information, whether oral or written, obtained from Company or through the Services, will create any warranty not expressly made herein.
+          </p>
+
+          <h5>Indemnification</h5>
+          <p>
+            To the maximum extent permitted by law You shall indemnify and hold harmless Company, from and against all liabilities, losses, costs, expenses, attorneys’ fees, and damages resulting from any negligent acts, omissions or willful misconduct by the client, the client’s use of the service and any breach of the terms and conditions of this agreement by the client including any violation of this agreement by the client or any other person using the client’s account including but not limited to any violation of any federal or state laws or regulations. Such indemnification shall apply to any theory of liability to any person or party, whether based on warranty, contract, statute, tort (including negligence) or otherwise, and whether or not Company has been informed of the possibility of such liability.
+          </p>
+
+          <h5>Modification to Company Services</h5>
+          <p>
+            Company reserves the right to modify or cancel any Services or remove any Content at any time for any reason, and Company shall not be held liable to you or any third party for any action or inaction resulting from such modification or discontinuance. Company also reserves the right to terminate or erase any data or information stored on the Company system at any time and you are responsible for storing a backup of any data stored by Company.
+          </p>
+
+          <p>
+            In any such cases, these Terms shall continue to apply in full force and effect in the event of the termination, suspension or modification of the Services provided by Company.
+          </p>
+
+          <h5>Modification to Contract</h5>
+          <p>
+            Company reserves the right to update and modify these terms at any time by posting the revisions to the Company website. You are responsible for regularly checking these terms for any changes and, by using the Services and Company system after such changes are made, you hereby agree to be bound by those changes.
+          </p>
+
+          <h5>Rules, Regulations and Guidelines</h5>
+          <p>
+            You are solely responsible and liable for the content of any audio, voice, sound or text transmissions sent through the Company system or via the use of the Services. Company has no control, nor responsibility, over such transmissions and shall not be expected to screen or otherwise approve of any transmission and, under no circumstance, shall be held liable for said content. Company does not endorse, support, represent, or guarantee the truthfulness, accuracy, completeness, or reliability of said content or endorse any opinions expressed through use of its services. The user understands that by using Company’s services, it may be exposed to content that might be offensive, harmful, inaccurate, or otherwise inappropriate. Under no circumstances will Company be liable for any content, including, but not limited to, any errors or omissions in any content, or any loss or damage of any kind incurred as a result of the use of any transmitted content.
+          </p>
+          <p>
+            You shall not use Company’s services to distribute any material (sound files, audio, voices, text messages), that may be construed by any recipient as obscene, hate speech, racist, malicious, fraudulent, libelous, or harassing, nor shall the client use the said services for any unethical, immoral or illegal activity. Company reserves the right (but does not have an obligation) to remove or refuse to distribute any content on the services and to suspend or terminate users without liability. Company also reserves the right to access, read, preserve, and disclose any information it reasonably believes is necessary to satisfy any applicable law, regulation, process, or government request; enforce its terms, including investigation of potential violations; detect, prevent, or otherwise address fraud, security, or technical issues; respond to support requests, and to protect its rights, property, or safety and the rights, property, or safety of its users or the public.
+          </p>
+          <p>
+            You agree to abide by all guidelines, rules and policies of Company and of the carriers connected to its Services. You are responsible for abiding by the rules, regulations and guidelines set forth by any state and federal law related to the use of the Services and any related transmission and such other laws which may include, but are not limited to, the Federal Trade Commission, the Federal Communication Commission, the United States Code, State Governments, and any local ordinances. Specifically, you are aware and will abide by the National Do Not Call Registry and individual states’ “Do Not Lists.” You agree not violate these or any other applicable Federal or State laws and represents and warrants that the Client’s use of Company will not cause Company to violate these or similar laws.
+          </p>
+          <p>
+            You agree, that in connection with the Services, all recipient contact information and numbers supplied to Company is “opt-in” information given by the recipient and you will not call, text or communicate with any recipient cell phone or mobile device without the expressed written permission of the recipient.
+            You are aware and understand the anti-solicitation provisions of various state and federal laws and all amendments thereto of laws, which include, but are not limited to the Federal Communication Commission’s regulations of the Federal Telephone Consumer Protection Act of 1991. You agree to not violate these provisions and represents and warrants that its use of Company’s Services will not cause Company to violate these or similar laws.
+          </p>
+          <p>
+            You understand and agree that Company will not be held responsible for any damages or fines for which you may be held liable to any third party due to the your failure to abide by these terms or any related state, federal or local law. You may view and refer to most, but not all, of these related regulations at the Federal Communications Commission’s Web site at http://www.fcc.gov and the Federal Trade Commission Web site at http://www.ftc.gov.
+          </p>
+          <p>
+            Please refer to your specific state’s Attorney General’s office or local government for any laws imposed at the State or local level.
+          </p>
+          <p>
+            You agree and will be held responsible for any act or omission that occurs in connection with your use of the Services, including the content transmission through the Company system. You agree to not use the Company system to:
+          <ol>
+            <li>
+              Deliver unsolicited messages (spam) in any form, including, but not limited to, the use of serial accounts, invitation spam, selling user names, malware/phishing, or any other form of spam.
+            </li>
+            <li>
+              Create a false identity in an attempt to mislead others as to the identity of the sender.
+            </li>
+            <li>
+              Transmit unlawful, harassing, libelous, abusive, threatening, harmful, vulgar, obscene or otherwise objectionable material of any kind or nature.
+            </li>
+            <li>
+              Transmit any material that may infringe the intellectual property rights or other rights of third parties, including, but not limited to, trademark, copyright, trade secrets or rights of publicity.
+            </li>
+          </ol>
+          </p>
+
+          <p>
+            These specific rules are not exhaustive and may be added to or amended and are not intended to represent the entirety of all the prohibited messages that could be sent through the Company system.
+          </p>
+
+          <p>
+            You agree not to use Company’s Services to:
+          <ol>
+            <li>
+              Access, tamper with, or use non-public areas of the services, Company’s computer systems, or its delivery processes;
+            </li>
+            <li>
+              Probe, scan, or test the vulnerability of any system or network or breach or circumvent the security or authentication measures;
+            </li>
+            <li>
+              Access or search or attempt to access or search the services by any means other than those specifically provided by Company;
+            </li>
+            <li>
+              Forge any TCP/IP header in any email or posting, or in any way use the Services to send altered, deceptive, or false source-identifying information; or
+            </li>
+            <li>
+              Interfere with or disrupt the access of any user. The Services may contain links to third-party websites or resources. You acknowledge and agree that Company is not responsible or liable for: (i) the availability or accuracy of such websites or resources; or (ii) the content, products, or services on or available from such websites or resources. Links to such websites or resources do not imply any endorsement by Company of such websites or resources or the content, products, or services available from such websites or resources. You acknowledge sole responsibility for and assume all risk arising from your use of any such websites or resources in connection with the Services.
+            </li>
+          </ol>
+          </p>
+
+          <p>
+            Company respects the intellectual property rights of others and expects users of the Services to do the same. We will respond to notices of alleged copyright infringement that comply with applicable law and are properly provided to us. If you believe that your Content has been copied in a way that constitutes copyright infringement, please provide us with the following information: (i) a physical or electronic signature of the copyright owner or a person authorized to act on their behalf; (ii) identification of the copyrighted work claimed to have been infringed; (iii) identification of the material that is claimed to be infringing or to be the subject of infringing activity and that is to be removed or access to which is to be disabled, and information reasonably sufficient to permit us to locate the material; (iv) your contact information, including your address, telephone number, and an email address; (v) a statement by you that you have a good faith belief that use of the material in the manner complained of is not authorized by the copyright owner, its agent, or the law; and (vi) a statement that the information in the notification is accurate, and, under penalty of perjury, that you are authorized to act on behalf of the copyright owner.
+          </p>
+
+          <h5>Registration</h5>
+          <p>
+            You will provide and update all relevant information to Company upon signing up for the Company system. You agree that you and/or your organization or entity shall assume all financial responsibilities for using the Company system.
+          </p>
+
+          <h5>General Provisions</h5>
+          <p>
+            These Terms, and the Company Privacy Policy are the entire and exclusive agreement between Company and you regarding the Services (excluding any services for which you have a separate agreement with Company that is explicitly in addition or in place of these Terms), and these terms supersede and replace any prior agreements between Company and you regarding the Services. Other than Company as defined herein, no other person or company will be third party beneficiaries to these terms.
+          </p>
+          <p>
+            Company may revise these terms from time to time, the most current version will always be posted on the Company website. By continuing to access or use the Services after any revisions become effective, you agree to be bound by the revised Terms.
+          </p>
+          <p>
+            The failure of Company to enforce any right or provision of these terms will not be deemed a waiver of such right or provision. In the event that any provision of these terms is held to be invalid or unenforceable, then that provision will be limited or eliminated to the minimum extent necessary, and the remaining provisions of these terms will remain in full force and effect.
+          </p>
+
+          <p>
+            These terms and any action related thereto will be governed by the laws of the Commonwealth of Virginia without regard to or application of its conflict of law provisions or your state or country of residence. All claims, legal proceedings or litigation arising in connection with the Services will be brought solely in the federal or state courts located in Virginia Beach, Virginia, United States, and you consent to the jurisdiction of and venue in such courts and waive any objection as to inconvenient forum.
+          </p>
+
+          <p>
+            If you are a government official, federal, state, or local government entity in the United States using the Services in your official capacity and legally unable to accept the controlling law, jurisdiction or venue clauses above, then those clauses do not apply to you. For such U.S. federal government entities, these Terms and any action related thereto will be governed by the laws of the United States of America (without reference to conflict of laws) and, in the absence of federal law and to the extent permitted under federal law, the laws of the Commonwealth of Virginia (excluding choice of law).
+          </p>
+
+          <p>
+            These terms and the Company Privacy Policy are the entire and exclusive agreement between Company and you regarding the Services (excluding any services for which you have a separate agreement with Company that is explicitly in addition or in place of these Terms), and these terms supersede and replace any prior agreements between Company and you regarding the Services.
+          </p>
+        </fieldset>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">I dont Agree</button>
+      <%= f.submit "I agree", :class => 'btn btn-primary' %>
+      <div class="amount_error" style="color:red"></div>
+    </div>
+  </div>
+<% end %>

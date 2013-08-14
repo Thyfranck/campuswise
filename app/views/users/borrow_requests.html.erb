@@ -7,6 +7,7 @@ You can manage your borrow requests Here.
     <li><a href="#tab2" data-toggle="tab">Waiting for Owner's Approval (<%= "#{@pending_for_owner.count}" %>)</a></li>
     <li><a href="#tab3" data-toggle="tab">Waiting for Your Approval (<%= "#{@pending_for_me.count}" %>)</a></li>
     <li><a href="#tab5" data-toggle="tab">Not returned / Not paid (<%= "#{@not_returned.count}" %>)</a></li>
+    <li><a href="#tab6" data-toggle="tab">History (<%= "#{@completed_transactions.count}" %>)</a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="tab1">
@@ -200,6 +201,61 @@ You can manage your borrow requests Here.
                     <li>Email: <%= User.find(exchange.user_id).email %></li>
                     <li>Phone: <%= User.find(exchange.user_id).phone %></li>
                   </ul>
+                </td>
+              </tr>
+            </tbody>
+          <% end %>
+        </table>
+      <% else %>
+        Currently Empty.
+      <% end %>
+    </div>
+
+    <div class="tab-pane" id="tab6">
+      <% if @completed_transactions.any? %>
+        <%= will_paginate @completed_transactions %>
+        <table class="table table-hover table-bordered">
+          <thead>
+          <th>Book Title</th>
+          <th>Borrowed / Purchased</th>
+          <th>Paid Amount</th>
+          <th>Borrowed Date</th>
+          <th>Returning Date</th>
+          <th>Book Owner's Info</th>
+          <th>Seller / Lender's info</th>
+          <th>Status</th>
+          </thead>
+          <% @completed_transactions.each do |transaction| %>
+            <tbody>
+              <tr>
+                <td><%= transaction.book_title %></td>
+                <td><%= transaction.package == "buy" ? "Purchased" : "Borrowed" %></td>
+                <td><%= transaction.amount %></td>
+                <% unless transaction.package == "buy"  %>
+                  <td><%= transaction.created_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= transaction.ending_date.strftime("%m/%d/%Y") %></td>
+                <% else %>
+                  <td>N/A</td>
+                  <td>N/A</td>
+                <% end %>
+                <td>
+                  <ul>
+                    <li>Name : <%= User.find(transaction.owner_id).name %></li>
+                    <li>Email: <%= User.find(transaction.owner_id).email %></li>
+                    <li>Phone: <%= User.find(transaction.owner_id).phone %></li>
+                    <li>Facebook: <%= User.find(transaction.owner_id).facebook %></li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Name : <%= User.find(transaction.user_id).name %></li>
+                    <li>Email: <%= User.find(transaction.user_id).email %></li>
+                    <li>Phone: <%= User.find(transaction.user_id).phone %></li>
+                    <li>Facebook: <%= User.find(transaction.user_id).facebook %></li>
+                  </ul>
+                </td>
+                <td>
+                  <%= transaction.status %>
                 </td>
               </tr>
             </tbody>

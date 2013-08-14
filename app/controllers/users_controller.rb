@@ -192,6 +192,7 @@ class UsersController < ApplicationController
     @pending_for_me = current_user.pending_reverse_exchanges.paginate(:page => params[:page], :per_page => 6)
     @lended = current_user.accepted_reverse_exchanges.paginate(:page => params[:page], :per_page => 6)
     @not_returned = current_user.not_returned_exchanges.paginate(:page => params[:page], :per_page => 6)
+    @completed_transactions = current_user.completed_transactions.paginate(:page => params[:page], :per_page => 20)
     respond_to do |format|
       format.html {render :layout => "dashboard"}
     end
@@ -220,10 +221,10 @@ class UsersController < ApplicationController
     end
   end
 
-  def history
-    @completed_transactions = current_user.completed_transactions.paginate(:page => params[:page], :per_page => 20)
-    respond_to do |format|
-      format.html {render layout: "dashboard"}
-    end
-  end
+#  def history
+#    @completed_transactions = current_user.completed_transactions.paginate(:page => params[:page], :per_page => 20)
+#    respond_to do |format|
+#      format.html {render layout: "dashboard"}
+#    end
+#  end
 end

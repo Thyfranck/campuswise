@@ -17,6 +17,13 @@ class BooksController < ApplicationController
 
   def new
     @book = current_user.books.new
+    if params[:offer_book]
+      session[:offer_book] = params[:offer_book]
+      @book.set_db(params[:offer_book])
+    else
+      session[:offer_book] = nil
+    end
+    
     if params[:google_book_id]
       @book.set_google(params[:google_book_id])
     end
@@ -45,6 +52,10 @@ class BooksController < ApplicationController
       end
       respond_to do |format|
         if @book.save
+          if session[:offer_book]
+            Notify.delay.offering_a_requested_book(session[:offer_book], @book.id) if @book.available == true
+            session[:offer_book] = nil
+          end
           format.html {redirect_to book_path(@book)}
           flash[:notice] = "Request Completed"
         else

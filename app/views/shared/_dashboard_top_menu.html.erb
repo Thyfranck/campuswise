@@ -102,18 +102,18 @@
     <%#*</ul>%>
   <%#*</li>%>
 
-  <li class="dropdown <%= "active" if current_page?(borrow_requests_path) or current_page?(history_user_path(current_user))%>">
-    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-      Manage Transactions
-      <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
+  <%#*<li class="dropdown <%= "active" if current_page?(borrow_requests_path) or current_page?(history_user_path(current_user))%>
+    <%#*<a class="dropdown-toggle" href="#" data-toggle="dropdown">%>
+      <%#*Manage Transactions%>
+      <%#*<b class="caret"></b>%>
+    <%#*</a>%>
+    <%#*<ul class="dropdown-menu">%>
       <li class="<%= "active" if current_page?(borrow_requests_path) %>">
-        <%= link_to "Borrow Requests", borrow_requests_path %>
+        <%= link_to "Transactions", borrow_requests_path %>
       </li>
-      <li class="<%= "active" if current_page?(history_user_path(current_user)) %>">
-        <%= link_to "History", history_user_path(current_user) %>
-      </li>
-    </ul>
-  </li>
+      <%#*<li class="<%= "active" if current_page?(history_user_path(current_user)) %>
+        <%#= link_to "History", history_user_path(current_user) %>
+      <%#*</li>%>
+    <%#*</ul>%>
+  <%#*</li>%>
 </ul>

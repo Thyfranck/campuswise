@@ -114,8 +114,16 @@
   <% end %>
 </div>
 
-
-
+<% if @book.user != current_user and @book.requested == true %>
+  <div class="span5 offset6">
+    Do you have this book?
+    <br/>
+    Then offer this book to the requester.
+    <br/>
+    <br/>
+    <%= link_to "Offer this book", new_book_path(:offer_book => @book.id), :class => 'btn btn-primary' %>
+  </div>
+<% end %>
 <%# if current_user and @book.user != current_user and current_user.billing_setting.blank? and @book.available == true %>
 <%#*<div class="span3 offset1">%>
 <%#*<h4 style="color:red">Please provide your payment info in payment settings to borrow/buy this book.</h4>%>
