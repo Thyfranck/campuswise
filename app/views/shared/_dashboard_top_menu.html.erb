@@ -26,7 +26,7 @@
     </ul>
   </li>
 
-  <li class="dropdown <%= "active" if current_page?(billing_setting_path(current_user.billing_setting)) || current_page?(new_billing_setting_path) || current_page?(wallet_user_path(current_user)) || current_page?(payment_methods_path) %>">
+  <li class="dropdown <%= "active" if current_page?(new_billing_setting_path) || current_page?(wallet_user_path(current_user)) || current_page?(payment_methods_path) %>">
     <a class="dropdown-toggle" href="#" data-toggle="dropdown">
       Payment Information
       <b class="caret"></b>

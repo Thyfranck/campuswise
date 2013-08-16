@@ -55,15 +55,15 @@ class Notify
     @to = @request_receiver.phone
     if record.counter_offer.present?
       if record.package == 'buy'
-        @body = "Someone wants to buy your book titled '#{@requested_book.title.truncate(20)}' for #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)} to negotiate goto our site -CampusWise"
+        @body = "Someone wants to buy your book titled '#{@requested_book.title.truncate(15)}' for #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)} to negotiate goto our site -CampusWise"
       else
-        @body = "Someone wants to borrow your book titled '#{@requested_book.title.truncate(20)}' for #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)} for #{record.package == "semester" ? "semester" : (record.duration.to_s + " " + record.package).pluralize(record.duration)} from #{record.starting_date.to_date} to #{record.ending_date.to_date} -CampusWise"
+        @body = "Someone wants to borrow your book titled'#{@requested_book.title.truncate(15)}'for #{Notify.helpers.number_to_currency(record.counter_offer.to_f, :prescision => 2)} for #{record.package == "semester" ? "semester" : (record.duration.to_s + " " + record.package).pluralize(record.duration)} from #{record.starting_date.to_date} to #{record.ending_date.to_date}-CampusWise"
       end
     else
       if record.package == 'buy'
-        @body = "Someone wants to buy your book titled '#{@requested_book.title.truncate(20)}' for #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)},to accept text 'ACCEPT #{record.id}',to ignore text 'REJECT #{record.id}' -CampusWise"
+        @body = "Someone wants to buy your book titled '#{@requested_book.title.truncate(15)}' for #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)},to accept text 'ACCEPT #{record.id}',to ignore text 'REJECT #{record.id}'-CampusWise"
       else
-        @body = "Someone wants to borrow your book titled '#{@requested_book.title.truncate(20)}' for #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)} for #{record.package == "semester" ? "semester" : (record.duration.to_s + " " + record.package).pluralize(record.duration)} from #{record.starting_date.to_date} to #{record.ending_date.to_date}, to accept text'ACCEPT #{record.id}',to ignore text 'REJECT #{record.id}'-CampusWise"
+        @body = "Someone wants to borrow your book titled'#{@requested_book.title.truncate(10)}'for #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)} for #{record.package == "semester" ? "semester" : (record.duration.to_s + " " + record.package).pluralize(record.duration)} from #{record.starting_date.to_date} to #{record.ending_date.to_date},to accept text'ACCEPT #{record.id}',to ignore 'REJECT #{record.id}'-CampusWise"
       end
     end
     TwilioRequest.send_sms(@body, @to)

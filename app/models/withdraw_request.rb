@@ -30,18 +30,21 @@ class WithdrawRequest < ActiveRecord::Base
   after_update :make_transaction_history
 
   def make_transaction_history
+    @user = self.user
     if self.status_was == WithdrawRequest::STATUS[:pending] and self.status == WithdrawRequest::STATUS[:paid]
       transaction = self.build_transaction(:user_id => self.user.id,
-        :description => "Withdrawed amount of #{helpers.number_to_currency(self.amount, :prescision => 2)} at #{self.updated_at.to_date} via your #{self.payment_method}.",
-        :amount => self.amount)
+        :description => "Withdraw request via your #{self.payment_method}.",
+        :credit => 0.0,
+        :debit => self.amount.to_f,
+        :amount => @user.transactions.last.amount.to_f - self.amount.to_f)
       transaction.save
     end
   end
 
   def check_credit
-    if self.user.credit.present?
-      if self.amount.to_f > self.user.credit.to_f
-        errors.add(:amount, "exceeds your total credit")
+    if self.user.current_balance.present?
+      if self.amount.to_f > self.user.current_balance.to_f
+        errors.add(:credit, "exceeds your current balance")
         return false
       else
         return true

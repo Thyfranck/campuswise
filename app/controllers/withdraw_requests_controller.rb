@@ -9,7 +9,7 @@ class WithdrawRequestsController < ApplicationController
 
   def new
     if current_user.payment_methods.any?
-      if current_user.credit.to_f > 0.0
+      if current_user.current_balance.to_f > 0.0
         session[:withdraw_request] = nil if session[:withdraw_request]
         @methods = current_user.payment_methods.map(&:payment_method_type)
         @withdraw_request = WithdrawRequest.new

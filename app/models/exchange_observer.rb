@@ -52,23 +52,25 @@ class ExchangeObserver < ActiveRecord::Observer
           @requested_book.update_attribute(:available, false)
           @payment_receiver = record.exchange.book.user
           @amount = record.payment_amount.to_f
-          @will_be_paid_to_user = @amount - (@amount/Constant::COMPANY_COMMISION_RATE)
-          @will_be_paid_to_user = @will_be_paid_to_user.to_f
-          @old_credit = @payment_receiver.credit.to_f or 0.0
-          @new_credit = @old_credit + @will_be_paid_to_user
-          @payment_receiver.update_attribute(:credit, @new_credit)
+          @service_fee = @amount * Constant::COMPANY_COMMISION_RATE.to_f/100
           
-          if @exchange.package == 'buy'
-            @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
-              :description => "Sold book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} and received amount of #{helpers.number_to_currency(@will_be_paid_to_user, :prescision => 2)}",
-              :amount => @will_be_paid_to_user)
-            @transaction.save
-            @exchange.update_attributes(:owner_id => @payment_receiver.id, :book_title => @requested_book.title)
-          else
-            @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
-              :description => "Lend the book titled '#{@exchange.book.title}' at #{@exchange.updated_at.to_date} for #{@exchange.package == 'semester' ? "full semester" : (@exchange.duration.to_s + " " + @exchange.package).pluralize(@exchange.duration)} and received amount of #{helpers.number_to_currency(@will_be_paid_to_user, :prescision => 2)}",
-              :amount => @will_be_paid_to_user)
-            @transaction.save
+          # earned money by selling/renting book
+          @transaction0 = @exchange.build_transaction(:user_id => @payment_receiver.id,
+            :description => "#{@exchange.package == "buy" ? "Sold" : "Lent"} book titled '#{@exchange.book.title}'.",
+            :credit => @amount,
+            :debit => 0.0,
+            :amount => @payment_receiver.transactions.present? ? (@payment_receiver.transactions.last.amount.to_f + @amount.to_f)  : @amount.to_f)
+          if @transaction0.save
+            # company commission deducted
+            @transaction1 = @exchange.build_transaction(:user_id => @payment_receiver.id,
+              :description => "CampusWise fee(#{COMPANY_COMMISION_RATE}%) for #{@exchange.package == "buy" ? "sell" : "lend"} of book titled '#{@exchange.book.title}'.",
+              :credit => 0.0,
+              :debit => @service_fee,
+              :amount => @transaction0.amount.to_f - @service_fee.to_f)
+            if @transaction1.save
+              #update exchange attribute incase the book is deleted
+              @exchange.update_attributes(:owner_id => @payment_receiver.id, :book_title => @requested_book.title)
+            end
           end
           Notify.delay.borrower_after_exchange_complete(record)
           Notify.delay.owner_after_exchange_complete(record)
@@ -79,19 +81,20 @@ class ExchangeObserver < ActiveRecord::Observer
             Delayed::Job.enqueue Jobs::ReminderJob.new(record), 0 , @sending_date, :queue => "book_return_reminder"
           end
         else
+          # full book charge
           if @exchange.status == Exchange::STATUS[:charge_pending]
-            @exchange.update_attributes(:status => Exchange::STATUS[:charged],:owner_id => @exchange.book.user.id, :book_title => @exchange.book.title)
             @payment_receiver = @exchange.book.user
-            @old_credit = @payment_receiver.credit.to_f or 0.0
-            @new_credit = @old_credit + @exchange.book.price.to_f
-            if @payment_receiver.update_attribute(:credit, @new_credit)
-              @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
-                :description => "Received amount of #{helpers.number_to_currency(@exchange.book.price.to_f, :prescision => 2)} for not receiving the book titled '#{@exchange.book.title.truncate(40)}' in time.",
-                :amount => @exchange.book.price.to_f)
-              @transaction.save
+            @exchange.update_attributes(:status => Exchange::STATUS[:charged])            
+            @transaction = @exchange.build_transaction(:user_id => @payment_receiver.id,
+              :description => "Received full book price of book titled '#{@exchange.book.title.truncate(40)}'.",
+              :credit => @exchange.book.price.to_f,
+              :debit => 0.0,
+              :amount => @payment_receiver.transactions.last.amount.to_f + @exchange.book.price.to_f)
+            @transaction.save
+            if @transaction.save
               Notify.delay.owner_full_price_charged(@exchange)
+              Notify.delay.borrower_full_price_charged(@exchange)
             end
-            Notify.delay.borrower_full_price_charged(@exchange)
           end
         end
       elsif record.status == Payment::STATUS[:failed]

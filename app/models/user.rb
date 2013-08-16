@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
 
   attr_accessible :email, :password, :password_confirmation, :current_password,
     :facebook, :phone_verification, :phone_verified,
-    :school_id, :phone, :credit, :debit, :first_name, :last_name
+    :school_id, :phone, :current_balance, :first_name, :last_name
 
   validates_uniqueness_of :email
   
@@ -57,7 +57,7 @@ class User < ActiveRecord::Base
   end
 
   def balance
-    self.credit.to_f - self.debit.to_f
+    self.current_balance
   end
 
   def check_if_email_changed
