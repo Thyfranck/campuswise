@@ -1,13 +1,7 @@
 Dear <%= @user.name %>,
 <br/>
 <br/>
-You wanted to <%= @exchange.package == "buy" ? "sell" : "lend" %> the book titled
-'<%= @book.title %>' at the price <%= number_to_currency(@exchange.amount.to_f, :prescision => 2) %>. But the <%= @exchange.package == "buy" ? "buyer" : "borrower" %>
-didn't agree with your requested price.
-<br/>
-<br/>
-The <%= @exchange.package == "buy" ? "buyer" : "borrower" %> canceled the <%= @exchange.package == "buy" ? "purchase" : "borrow" %> request.
-<br/>
+The person who requested the book titled '<%= @book.title %>'  rejected your last negotiation offer and has canceled his or her borrow request.
 <br/>
 <br/>
 -CampusWise

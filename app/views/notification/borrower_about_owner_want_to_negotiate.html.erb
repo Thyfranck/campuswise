@@ -1,15 +1,10 @@
 Dear <%= @user.name %>,
 <br/>
 <br/>
-You sent a <%= @exchange.package == "buy" ? "purchase" : "borrow" %> request for
-the book titled '<%= @book.title %>' at the price <%= number_to_currency(@exchange.counter_offer.to_f, :prescision => 2) %>.
-<%= @exchange.package == "buy" ? "Seller" : "Lender" %>
-wants to <%= @exchange.package == "buy" ? "sell" : "lend" %>
-the book at the price of <%= number_to_currency(@exchange.amount.to_f, :prescision => 2) %>.
+The owner of the book titled '<%= @book.title %>' that you requested would like to negotiate a price.
 <br/>
 <br/>
-To negotiate or accept or reject please login into our site <%= link_to "here", @url %>.
+To negotiate or accept or reject please click <%= link_to "here", @url %>.
 <br/>
 <br/>
-
 -CampusWise

@@ -1,7 +1,6 @@
 Hello <%= @user.name %>,<br/>
 <br/>
-Congratulation,<br/>
-You have successfully <%= @exchange.package == "buy" ? "purchased" : "borrowed" %> the book titled : " <%= @book.title %> " and payment amount of <%= number_to_currency(@exchange.amount.to_f, :prescision => 2)  %> was charged from your account.<br/>
+Congratulations, you have successfully <%= @exchange.package == "buy" ? "purchased" : "borrowed" %> the book titled "<%= @book.title %>" You can now view the book owner's contact information below.<br/>
 <br/>
 Here is your <%= @exchange.package == "buy" ? "purchase" : "borrow" %> details:
 <br/>

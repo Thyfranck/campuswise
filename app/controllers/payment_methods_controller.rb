@@ -29,6 +29,12 @@ class PaymentMethodsController < ApplicationController
   end
 
   def create
+    @methods = Constant::PAYMENT_METHOD_TYPE
+    if current_user.payment_methods.any?
+      current_user.payment_methods.each do |d|
+        @methods.delete(d.payment_method_type)
+      end
+    end
     if params[:payment_method]
       @payment_method = PaymentMethod.new(params[:payment_method])
       @payment_method.user_id = current_user.id

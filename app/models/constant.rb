@@ -10,7 +10,6 @@ class Constant
 
   PAYMENT_METHOD_TYPE = [
     "Bank Account",
-    "Credit Card",
     "Paypal"
   ]
 

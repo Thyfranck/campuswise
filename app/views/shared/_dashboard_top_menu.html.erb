@@ -2,53 +2,14 @@
   <li class="<%= "active" if current_page?(dashboard_path) %>">
     <%= link_to "Notifications", dashboard_path %>
   </li>
-  <%#*<li class="dropdown <%= "active" if current_page?(user_path(current_user)) || current_page?(edit_user_path(current_user)) || current_page?(change_password_user_path(current_user)) %>
-    <%#*<a class="dropdown-toggle" href="#" data-toggle="dropdown">%>
-      <%#*Account Information%>
-      <%#*<b class="caret"></b>%>
-    <%#*</a>%>
-    <%#*<ul class="dropdown-menu">%>
-      <%#*<li class="<%= "active" if current_page?(user_path(current_user)) %>
-        <%#= link_to "User Profile", user_path(current_user)%>
-      <%#*</li>%>
-      <%#*<li class="<%= "active" if current_page?(edit_user_path(current_user)) %>
-        <%#= link_to "Edit User Profile", edit_user_path(current_user)  %>
-      <%#*</li>%>
-      <%#*<li class="<%= "active" if current_page?(change_password_user_path(current_user)) %>
-        <%#= link_to "Change Password", change_password_user_path(current_user)  %>
-      <%#*</li>%>
-    <%#*</ul>%>
-  <%#*</li>%>
 
   <li class="<%= "active" if current_page?(new_book_path) and params[:requested].blank? %>">
     <%= link_to "Lend", new_book_path %>
   </li>
-<%#*<li class="<%= "active" if current_page?(books_path) %>
-<%#= link_to "My books", books_path %>
-<%#*</li>%>
-<%#*<li class="<%= "active" if current_page?(requested_books_path) %>
-<%#= link_to "Requested Books", requested_books_path %>
-<%#*</li>%>
 
-<%#*<li class="dropdown <%= "active" if current_page?(search_exchanges_path) || current_page?(borrow_requests_path) || current_page?(new_book_path(:requested => true)) %>
-<%#*<a class="dropdown-toggle" href="#" data-toggle="dropdown">
-<%#*Borrow%>
-<%#*<b class="caret"></b>
-<%#*</a>%>
-<%#*<ul class="dropdown-menu">
-<%#*<li class="dropdown-submenu">
-<%#*<a tabindex="-1" href="#">Borrow a Book</a>
-<%#*<ul class="dropdown-menu">%>
   <li class="<%= "active" if current_page?(search_exchanges_path) %>">
     <%= link_to "Borrow", search_exchanges_path %>
   </li>
-<%#*<li class="<%= "active" if current_page?(new_book_path) and params[:requested].present? %>
-<%#= link_to "Request a Book", new_book_path(:requested => true) %>
-<%#*</li>%>
-<%#*</ul>%>
-<%#*</li>%>
-<%#*</ul>%>
-<%#*</li>%>
 
   <li class="dropdown <%= "active" if current_page?(books_path) || current_page?(campus_bookshelf_books_path) %>">
     <a class="dropdown-toggle" href="#" data-toggle="dropdown">
@@ -65,55 +26,35 @@
     </ul>
   </li>
 
-  <%#*<li class="dropdown <%= "active" if controller.controller_name == "billing_settings" || current_page?(payment_methods_path) || current_page?(new_withdraw_request_path) || current_page?(wallet_user_path(current_user)) || current_page?(new_payment_method_path) %>
-    <%#*<a class="dropdown-toggle" href="#" data-toggle="dropdown">%>
-      <%#*Payments%>
-      <%#*<b class="caret"></b>%>
-    <%#*</a>%>
-    <%#*<ul class="dropdown-menu">%>
-      <%# if current_user.billing_setting.present? %>
-        <%#*<li class="<%= "active" if current_page?(billing_setting_path(current_user.billing_setting)) %>
-          <%#= link_to "Payment Settings", billing_setting_path(current_user.billing_setting) %>
-        <%#*</li>%>
-      <%# else %>
-        <%#*<li class="<%= "active" if current_page?(new_billing_setting_path) %>
-          <%#= link_to "Payment Settings", new_billing_setting_path %>
-        <%#*</li>%>
-      <%# end %>
-      <%#*<li class="<%= "active" if current_page?(wallet_user_path(current_user)) %>
-        <%#= link_to "My Wallet", wallet_user_path(current_user) %>
-      <%#*</li>%>
-      <%#*<li class="<%= "active" if current_page?(payment_methods_path) %>
-        <%#= link_to "Withdrawal Methods", payment_methods_path %>
-      <%#*</li>%>
-      <%#*<li class="<%= "active" if current_page?(new_withdraw_request_path) %>
-        <%#= link_to "Withdraw Funds", new_withdraw_request_path %>
-      <%#*</li>%>
-    <%#*</ul>%>
-  <%#*</li>%>
-
-  <%#*<li class="dropdown <%= "active" if current_page?(payment_methods_path) || current_page?(new_withdraw_request_path) || current_page?(wallet_user_path(current_user)) || current_page?(new_payment_method_path) %>
-    <%#*<a class="dropdown-toggle" href="#" data-toggle="dropdown">%>
-      <%#*Withdraw Funds%>
-      <%#*<b class="caret"></b>%>
-    <%#*</a>%>
-    <%#*<ul class="dropdown-menu">%>
-
-    <%#*</ul>%>
-  <%#*</li>%>
-
-  <%#*<li class="dropdown <%= "active" if current_page?(borrow_requests_path) or current_page?(history_user_path(current_user))%>
-    <%#*<a class="dropdown-toggle" href="#" data-toggle="dropdown">%>
-      <%#*Manage Transactions%>
-      <%#*<b class="caret"></b>%>
-    <%#*</a>%>
-    <%#*<ul class="dropdown-menu">%>
-      <li class="<%= "active" if current_page?(borrow_requests_path) %>">
-        <%= link_to "Transactions", borrow_requests_path %>
+  <li class="dropdown <%= "active" if current_page?(billing_setting_path(current_user.billing_setting)) || current_page?(new_billing_setting_path) || current_page?(wallet_user_path(current_user)) || current_page?(payment_methods_path) %>">
+    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+      Payment Information
+      <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+      <% if current_user.billing_setting.present? %>
+        <li class="<%= "active" if current_page?(billing_setting_path(current_user.billing_setting)) %>">
+          <%= link_to "Payment Settings", billing_setting_path(current_user.billing_setting) %>
+        </li>
+      <% else %>
+        <li class="<%= "active" if current_page?(new_billing_setting_path) %>">
+          <%= link_to "Payment Settings", new_billing_setting_path %>
+        </li>
+      <% end %>
+      <li class="<%= "active" if current_page?(wallet_user_path(current_user)) %>">
+        <%= link_to "My Wallet", wallet_user_path(current_user) %>
       </li>
-      <%#*<li class="<%= "active" if current_page?(history_user_path(current_user)) %>
-        <%#= link_to "History", history_user_path(current_user) %>
-      <%#*</li>%>
-    <%#*</ul>%>
-  <%#*</li>%>
+      <li class="<%= "active" if current_page?(payment_methods_path) %>">
+        <%= link_to "Withdrawal Methods", payment_methods_path %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="<%= "active" if current_page?(new_withdraw_request_path) %>">
+    <%= link_to "Withdraw Funds", new_withdraw_request_path %>
+  </li>
+
+  <li class="<%= "active" if current_page?(borrow_requests_path) %>">
+    <%= link_to "Transactions", borrow_requests_path %>
+  </li>
 </ul>

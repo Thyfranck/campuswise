@@ -71,7 +71,7 @@ class Notification < ActionMailer::Base
     @user = exchange.user
     @owner  = exchange.book.user
     @book = exchange.book
-    @url = login_url
+    @url = dashboard_url
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert - Negotiation\"}"
     mail(:to => @user.email,
       :subject => "#{@exchange.package == "buy" ? "Seller" : "Lender"} doesn't want to negotiate - CampusWise")
@@ -82,7 +82,7 @@ class Notification < ActionMailer::Base
     @user = exchange.user
     @owner  = exchange.book.user
     @book = exchange.book
-    @url = login_url
+    @url = dashboard_url
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert - Negotiation\"}"
     mail(:to => @user.email,
       :subject => "#{@exchange.package == "buy" ? "Seller" : "Lender"} want to negotiate - CampusWise")
@@ -93,7 +93,7 @@ class Notification < ActionMailer::Base
     @user = exchange.book.user
     @borrower  = exchange.user
     @book = exchange.book
-    @url = login_url
+    @url = dashboard_url
     headers['X-SMTPAPI'] = "{\"category\" : \"Exchange Alert - Negotiation\"}"
     mail(:to => @user.email,
       :subject => "#{@exchange.package == "buy" ? "Buyer" : "Borrower"} want to negotiate - CampusWise")
