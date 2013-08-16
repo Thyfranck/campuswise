@@ -171,7 +171,7 @@ class ExchangesController < ApplicationController
   def status
     @exchange = Exchange.find(params[:id])
     if params[:status] == "returned" and @exchange.book.user == current_user
-      Notify.delay.admin_for_book_returned(@exchange) if @exchange.update_attributes(:status => Exchange::STATUS[:returned],:owner_id => @exchange.book.user.id, :book_title => @exchange.book.title)
+      Notify.delay.admin_for_book_returned(@exchange) if @exchange.update_attributes(:status => Exchange::STATUS[:returned])
     elsif params[:status] == "not_returned" and @exchange.book.user == current_user
       Notify.delay.admin_for_book_not_returned(@exchange) if @exchange.update_attribute(:status, Exchange::STATUS[:not_returned])
     elsif params[:status] == "dropped_off" and @exchange.book.user == current_user

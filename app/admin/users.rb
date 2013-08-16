@@ -29,8 +29,7 @@ ActiveAdmin.register User do
       row :email
       row :phone
       row :facebook
-      row :credit
-      row :debit
+      row :current_balance
       row :activation_state
       row :created_at
       row :updated_at
@@ -61,13 +60,11 @@ ActiveAdmin.register User do
   member_action :pay, :method => :post do
     @user = User.find(params[:id])
     if @request = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).present?
-      if params[:amount].present? and @user.credit.to_f >= params[:amount].to_f
-        @new_credit = @user.credit.to_f - (@user.debit.to_f + params[:amount].to_f)
-        if @new_credit.to_f > 0
-          @new_debit = (@user.debit.to_f or 0.0) + params[:amount].to_f
-          if @user.update_attribute(:debit, @new_debit)
-            @request = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).first
-            @request.update_attribute(:status,WithdrawRequest::STATUS[:paid])
+      if params[:amount].present? and @user.current_balance.to_f >= params[:amount].to_f
+        @new_credit = @user.current_balance.to_f - params[:amount].to_f
+        if @new_credit.to_f >= 0
+          @request = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).first
+          if  @request.update_attribute(:status,WithdrawRequest::STATUS[:paid])
             @request.dashboard_notifications.first.destroy
             Notify.delay.user_for_withdraw(@request)
             redirect_to admin_user_path(@user)
@@ -76,7 +73,7 @@ ActiveAdmin.register User do
             redirect_to admin_user_path(@user), :notice => "Error Occured"
           end
         else
-           redirect_to admin_user_path(@user), :notice => "Insufficient fund"
+          redirect_to admin_user_path(@user), :notice => "Insufficient fund"
         end
       end
     else

@@ -1,30 +1,39 @@
 <% if @transactions.any? %>
-<%= link_to "Give Me My Money", new_withdraw_request_path, :class => 'btn btn-primary' %>
-<br/><br/>
+  <%= link_to "Give Me My Money", new_withdraw_request_path, :class => 'btn btn-primary' %>
+  <br/><br/>
+  <%= will_paginate @transactions %>
   <table class="table table-hover table-bordered">
     <thead>
-    <th colspan="3">Description</th>
-    <th style="text-align: right">Amount</th>
+    <th>Date</th>
+    <th >Description</th>
+    <th  style="text-align: right">Credit</th>
+    <th  style="text-align: right">Debit</th>
+    <th  style="text-align: right">Balance</th>
   </thead>
   <tbody>
-    <% @transactions.each do |transaction| %>
-      <tr>
-        <td colspan="3"><%= transaction.description %></td>
-        <td style="text-align: right"><%= transaction.transactable_type == "Exchange" ? "+ " : "- " %><%= number_to_currency(transaction.amount.to_f, :prescision => 2) %></td>
-      </tr>
+    <% @transactions.each_with_index do |transaction, index| %>
+        <tr>
+          <td><%= transaction.created_at.to_date %></td>
+          <td><%= transaction.description %></td>
+          <td  style="text-align: right"><%= number_to_currency(transaction.credit.to_f, :prescision => 2) %></td>
+          <td  style="text-align: right"><%= number_to_currency(transaction.debit.to_f, :prescision => 2) %></td>
+          <td  style="text-align: right"><%= number_to_currency(transaction.amount.to_f, :prescision => 2) %></td>
+        </tr>
+      <% if index == 19 %>
+        <tr>
+          <td  colspan="4" style="text-align: right">Beginning Balance</td>
+          <td  style="text-align: right"><%= number_to_currency(Transaction.find(transaction.id - 1).amount.to_f, :prescision => 2) %></td>
+        </tr>
+        <tr>
+          <td  colspan="4" style="text-align: right">Ending Balance</td>
+          <td  style="text-align: right"><%= number_to_currency(@transactions.first.amount.to_f, :prescision => 2) %></td>
+        </tr>
+        <tr>
+          <td  colspan="4" style="text-align: right">Change</td>
+          <td  style="text-align: right"><%= number_to_currency(@transactions.first.amount.to_f - Transaction.find(transaction.id - 1).amount.to_f, :prescision => 2) %></td>
+        </tr>
+      <% end %>
     <% end %>
-    <tr>
-      <td colspan="3" style="text-align: right; background-color: wheat">Total Credit (After deducting CampusWise 10% service fee)</td>
-      <td style="text-align: right; background-color: wheat">+ <%= @user.credit.present? ? "#{number_to_currency(@user.credit, :prescision => 2)}" : "00.0" %></td>
-    </tr>
-    <tr>
-      <td colspan="3" style="text-align: right">Total Withdraw</td>
-      <td style="text-align: right">- <%= @user.debit.present? ? "#{number_to_currency(@user.debit, :prescision => 2)}" : "00.0" %></td>
-    </tr>
-    <tr>
-      <td colspan="3" style="text-align: right">Total Balance</td>
-      <td style="text-align: right"><%= number_to_currency(@user.balance, :prescision => 2) %></td>
-    </tr>
   </tbody>
   </table>
 <% else %>
