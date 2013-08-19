@@ -213,7 +213,7 @@ class UsersController < ApplicationController
 
   def wallet
     @user = User.find(params[:id])
-    @transactions = @user.transactions.order("id DESC").paginate(:page => params[:page], :per_page => 20)
+    @transactions = @user.transactions.order("id DESC").paginate(:page => params[:page], :per_page => 5)
 #    @credit_transactions = @user.transactions.where(:transactable_type => Exchange).paginate(:page => params[:page], :per_page => 20)
 #    @debit_transactions = @user.transactions.where(:transactable_type => WithdrawRequest).paginate(:page => params[:page], :per_page => 20)
     respond_to do |format|

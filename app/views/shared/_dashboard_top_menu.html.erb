@@ -4,11 +4,11 @@
   </li>
 
   <li class="<%= "active" if current_page?(new_book_path) and params[:requested].blank? %>">
-    <%= link_to "Lend", new_book_path %>
+    <%= link_to "Lend/Sell", new_book_path %>
   </li>
 
   <li class="<%= "active" if current_page?(search_exchanges_path) %>">
-    <%= link_to "Borrow", search_exchanges_path %>
+    <%= link_to "Borrow/Buy", search_exchanges_path %>
   </li>
 
   <li class="dropdown <%= "active" if current_page?(books_path) || current_page?(campus_bookshelf_books_path) %>">
