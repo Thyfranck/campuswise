@@ -15,21 +15,25 @@
           <td><%= transaction.created_at.to_date %></td>
           <td><%= transaction.description %></td>
           <td  style="text-align: right"><%= number_to_currency(transaction.credit.to_f == 0 ? "-#{transaction.debit.to_f}" : transaction.credit.to_f , :prescision => 2) %></td>
-          <td  style="text-align: right"><%= number_to_currency(transaction.amount.to_f, :prescision => 2) %></td>
+          <td  style="text-align: right"><%= number_to_currency(transaction.amount.to_f, :prescision => 2)%></td>
         </tr>
-      <% if index == 4 %>
+      <% if index == 19 %>
         <tr>
-          <td  colspan="3" style="text-align: right">Beginning Balance</td>
-          <td  style="text-align: right"><%= number_to_currency(Transaction.find(transaction.id - 1).amount.to_f, :prescision => 2) %></td>
+          <td  colspan="3" style="text-align: right">Current Balance</td>
+          <td  style="text-align: right"><%= number_to_currency(current_user.transactions.last.amount.to_f, :prescision => 2) %></td>
         </tr>
-        <tr>
-          <td  colspan="3" style="text-align: right">Ending Balance</td>
-          <td  style="text-align: right"><%= number_to_currency(@transactions.first.amount.to_f, :prescision => 2) %></td>
-        </tr>
-        <tr>
-          <td  colspan="3" style="text-align: right">Change</td>
-          <td  style="text-align: right"><%= number_to_currency(@transactions.first.amount.to_f - Transaction.find(transaction.id - 1).amount.to_f, :prescision => 2) %></td>
-        </tr>
+        <%#*<tr>%>
+          <%#*<td  colspan="3" style="text-align: right">Beginning Balance</td>%>
+          <%#*<td  style="text-align: right"><%= number_to_currency(Transaction.find(transaction.id - 1).amount.to_f, :prescision => 2) %>
+        <%#*</tr>%>
+        <%#*<tr>%>
+          <%#*<td  colspan="3" style="text-align: right">Ending Balance</td>%>
+          <%#*<td  style="text-align: right"><%= number_to_currency(@transactions.first.amount.to_f, :prescision => 2) %>
+        <%#*</tr>%>
+        <%#*<tr>%>
+          <%#*<td  colspan="3" style="text-align: right">Change</td>%>
+          <%#*<td  style="text-align: right"><%= number_to_currency(@transactions.first.amount.to_f - Transaction.find(transaction.id - 1).amount.to_f, :prescision => 2) %>
+        <%#*</tr>%>
       <% end %>
     <% end %>
   </tbody>
