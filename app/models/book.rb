@@ -130,16 +130,20 @@ class Book < ActiveRecord::Base
     if self.image.blank?
       book = GoogleBooks.search("isbn:#{self.isbn}",{}, "4.2.2.1").first
       if book
-        image_link = book.image_link(:zoom => 1)
-        agent = Mechanize.new
-        agent.pluggable_parser.default = Mechanize::Download
         begin
-          @previous_image = File.open("tmp/books/book_#{self.user.id}.jpg").present?
-          File.delete("tmp/books/book_#{self.user.id}.jpg") if @previous_image
-        rescue Errno::ENOENT
+          image_link = book.image_link(:zoom => 1)
+          agent = Mechanize.new
+          agent.pluggable_parser.default = Mechanize::Download
+          begin
+            @previous_image = File.open("tmp/books/book_#{self.user.id}.jpg").present?
+            File.delete("tmp/books/book_#{self.user.id}.jpg") if @previous_image
+          rescue Errno::ENOENT
+          end
+          agent.get(image_link).save("#{Rails.root}/tmp/books/book_#{self.user.id}.jpg")
+          self.image = File.open("tmp/books/book_#{self.user.id}.jpg")
+        rescue
+          return true
         end
-        agent.get(image_link).save("#{Rails.root}/tmp/books/book_#{self.user.id}.jpg")
-        self.image = File.open("tmp/books/book_#{self.user.id}.jpg")
       else
         return true
       end
