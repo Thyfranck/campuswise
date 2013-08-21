@@ -63,7 +63,7 @@ class ExchangeObserver < ActiveRecord::Observer
           if @transaction0.save
             # company commission deducted
             @transaction1 = @exchange.build_transaction(:user_id => @payment_receiver.id,
-              :description => "CampusWise fee(#{Constant::COMPANY_COMMISION_RATE}%) for #{@exchange.package == "buy" ? "sell" : "lend"} of book titled '#{@exchange.book.title}'.",
+              :description => "CampusWise fee(#{Constant::COMPANY_COMMISION_RATE}%) for #{@exchange.package == "buy" ? "sale" : "lend"} of book titled '#{@exchange.book.title}'.",
               :credit => 0.0,
               :debit => @service_fee,
               :amount => @transaction0.amount.to_f - @service_fee.to_f)
