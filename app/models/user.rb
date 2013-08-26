@@ -138,6 +138,22 @@ class User < ActiveRecord::Base
     end
   end
 
+  def payment_method_info(payment_method)
+    pm = self.payment_methods.find_by_payment_method_type(payment_method)
+    info = ""
+    if pm.present?
+      if pm.payment_method_type == "Bank Account"
+        info += "Bank Name : #{pm.bank_name}<br/>"
+        info += "Bank Branch : #{pm.bank_branch}<br/>"
+        info += "Account Holder Name : #{pm.account_holder_name}<br/>"
+        info += "Account Number : #{pm.account_number}<br/>"
+      elsif pm.payment_method_type == "Paypal"
+        info += "Paypal Email : #{pm.paypal}<br/>"
+      end
+    end
+    info
+  end
+
   private  
   def generate_unique_token
     Digest::SHA1.hexdigest([Time.now, rand].join)
