@@ -43,4 +43,3 @@ end
 gem 'jquery-rails',"2.3.0"
 
 gem 'rvm-capistrano', '>= 1.1.0'
-gem 'capistrano-ext'
