@@ -65,7 +65,7 @@ ActiveAdmin.register User do
         if @new_credit.to_f >= 0
           @request = @user.withdraw_requests.where(:status => WithdrawRequest::STATUS[:pending]).first
           if  @request.update_attribute(:status,WithdrawRequest::STATUS[:paid])
-            @request.dashboard_notifications.first.destroy
+            @request.dashboard_notifications.first.destroy if @request.dashboard_notifications.present?
             Notify.delay.user_for_withdraw(@request)
             redirect_to admin_user_path(@user)
             flash[:notice] = "Request Completed"

@@ -130,13 +130,17 @@ class BooksController < ApplicationController
   def available
     @books = current_school.books.available_now.date_not_expired
     @books = @books.not_my_book(current_user.id) if current_user
-    @books = @books.search_for(params[:search]) if params[:search].present?
-    @books = @books.paginate(:page => params[:page], :per_page => 6)
-
     @needed_books = current_school.books.needed
-    @needed_books = @needed_books.search_for(params[:search]) if params[:search].present?
+    begin
+      @books = @books.search_for(params[:search]) if params[:search].present? 
+      @needed_books = @needed_books.search_for(params[:search]) if params[:search].present?
+    rescue ScopedSearch::QueryNotSupported
+      @search = params[:search].gsub(/\s/, '+')
+      @books = @books.search_for(@search) if params[:search].present?
+      @needed_books = @needed_books.search_for(@search) if params[:search].present?
+    end
+    @books = @books.paginate(:page => params[:page], :per_page => 6)
     @needed_books = @needed_books.paginate(:page => params[:page], :per_page => 6)
-
     @recent_books = current_school.books.available_now.date_not_expired.order("created_at desc").limit(10)
     @recent_needed_books = current_school.books.needed.order("created_at desc").limit(10)
     
