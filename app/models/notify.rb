@@ -116,7 +116,7 @@ class Notify
     @request_receiver = @requested_book.user
     @dashboard = record.dashboard_notifications.new(
       :user_id => @request_sender.id,
-      :content => "Your request for the book titled'<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)}</a>' was rejected by its owner. Please try again later."
+      :content => "Your request for the book titled'<a href='/books/#{record.book.id}' target='_blank'> #{record.book.title.truncate(25)}</a>' was rejected by its owner. Please check out other lenders/sellers."
     )
     @dashboard.save
     Notification.notify_book_borrower_reject_by_user(record).deliver

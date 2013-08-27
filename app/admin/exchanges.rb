@@ -18,6 +18,9 @@ ActiveAdmin.register Exchange do
       exchange.user.email
     end   
     column :status
+    column :package do |e|
+      e.package == "buy" ? "Sold" : "Borrowed"
+    end
     column :starting_date
     column :ending_date
     column :created_at

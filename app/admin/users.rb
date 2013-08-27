@@ -38,7 +38,7 @@ ActiveAdmin.register User do
   end
   
   action_item only:[:show] do
-    link_to "Pay", pay_form_admin_user_path(user)
+    link_to "Paid", pay_form_admin_user_path(user)
   end
   
   member_action :login do
@@ -67,7 +67,7 @@ ActiveAdmin.register User do
           if  @request.update_attribute(:status,WithdrawRequest::STATUS[:paid])
             @request.dashboard_notifications.first.destroy if @request.dashboard_notifications.present?
             Notify.delay.user_for_withdraw(@request)
-            redirect_to admin_user_path(@user)
+            redirect_to admin_withdraw_requests_path
             flash[:notice] = "Request Completed"
           else
             redirect_to admin_user_path(@user), :notice => "Error Occured"

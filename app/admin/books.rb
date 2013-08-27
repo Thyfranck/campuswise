@@ -5,6 +5,7 @@ ActiveAdmin.register Book do
   filter :user
   filter :title
   filter :available
+  filter :requested
   filter :available_from
   filter :returning_date
   filter :created_at
@@ -28,9 +29,18 @@ ActiveAdmin.register Book do
     column :available do |book|
       book.available == true ? "Yes" : "No"
     end
+    column :requested do |book|
+      book.requested == true ? "Yes" : "No"
+    end
+    column "Current Status" do |b|
+      if b.available == false and b.requested == false
+        b.exchanges.present? ? "#{b.exchanges.last.status} (#{b.exchanges.last.package == "buy" ? "Sold" : "Borrowed"})" : "Not Available"
+      else
+        "Available for #{b.available_for}"
+      end
+    end
     column :available_from
     column :returning_date
-    column :created_at
     default_actions
   end
 
@@ -51,9 +61,9 @@ ActiveAdmin.register Book do
         book.available == true ? "Yes" :
           link_to("No - Change", make_available_admin_book_path(book) , :confirm => "Are you sure to update the availability of this book?")
       end
-#      row :image do |book|
-#        image_tag(book.image, :height => 100)
-#      end
+      #      row :image do |book|
+      #        image_tag(book.image, :height => 100)
+      #      end
       
     end
   end

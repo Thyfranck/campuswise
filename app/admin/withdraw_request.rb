@@ -4,7 +4,7 @@ ActiveAdmin.register WithdrawRequest do
   actions :all, :except => [:new, :edit, :destroy]
 
   action_item only:[:show] do
-    link_to "Pay", pay_form_admin_user_path(withdraw_request.user)
+    link_to "Paid", pay_form_admin_user_path(withdraw_request.user)
   end
 
   index do
