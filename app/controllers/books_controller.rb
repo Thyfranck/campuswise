@@ -135,7 +135,7 @@ class BooksController < ApplicationController
       @books = @books.search_for(params[:search]) if params[:search].present? 
       @needed_books = @needed_books.search_for(params[:search]) if params[:search].present?
     rescue ScopedSearch::QueryNotSupported
-      @search = params[:search].gsub(/\s/, '+')
+      @search = params[:search].gsub(/\s/, '%')
       @books = @books.search_for(@search) if params[:search].present?
       @needed_books = @needed_books.search_for(@search) if params[:search].present?
     end
@@ -157,7 +157,12 @@ class BooksController < ApplicationController
   end
 
   def search
-    @books = Book.search_for(params[:value]).paginate(:page => params[:page], :per_page => 8)
+    begin
+      @books = Book.search_for(params[:value]).paginate(:page => params[:page], :per_page => 8)
+    rescue ScopedSearch::QueryNotSupported
+      @search = params[:value].gsub(/\s/, '%')
+      @books = Book.search_for(@search).paginate(:page => params[:page], :per_page => 8)
+    end
     if params[:next]
       session[:book_page] = session[:book_page] + 1
     else
@@ -221,7 +226,12 @@ class BooksController < ApplicationController
   def all
     @books = current_school.books.available_now.date_not_expired
     @books = @books.not_my_book(current_user.id) if current_user
-    @books = @books.search_for(params[:search]) if params[:search].present?
+    begin
+      @books = @books.search_for(params[:search]) if params[:search].present?
+    rescue ScopedSearch::QueryNotSupported
+      @search = params[:search].gsub(/\s/, '%')
+      @books = @books.search_for(@search) if params[:search].present?
+    end
     @books = @books.paginate(:page => params[:page], :per_page => 6)
 
     @recent_books = current_school.books.available_now.date_not_expired.order("created_at desc").limit(10)
