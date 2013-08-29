@@ -176,7 +176,7 @@ class Notification < ActionMailer::Base
     @amount = @request.amount.to_f
     headers['X-SMTPAPI'] = "{\"category\" : \"Withdraw Request\"}"
     mail(:to => @user.email,
-      :subject => "Congratulation your withraw request is complete. -Campuswise")
+      :subject => "Congratulations! Your withdraw request has been completed. -Campuswise")
   end
 
   def owner_full_price_charged(exchange)

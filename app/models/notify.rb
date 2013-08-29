@@ -144,12 +144,12 @@ class Notify
   def self.user_for_withdraw(record) #withdraw_request
     @dashboard = record.dashboard_notifications.new(
       :user_id => record.user.id,
-      :content => "Your withdraw request for amount #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)} is complete."
+      :content => "Your withdraw request for amount #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)} has been completed."
     )
     @dashboard.save
     Notification.notify_user_for_withdraw(record).deliver
     @to = record.user.phone
-    @body = "Your withdraw request for amount #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)} is complete. -CampusWise"
+    @body = "Your withdraw request for amount #{Notify.helpers.number_to_currency(record.amount.to_f, :prescision => 2)} has been completed. -CampusWise"
     TwilioRequest.send_sms(@body, @to)
   end
 

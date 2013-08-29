@@ -35,7 +35,7 @@ ActiveAdmin.register_page "Dashboard" do
             td "Total PAID Amount"
             td ": #{number_to_currency(Payment.sum(&:payment_amount).to_f, :prescision => 2)}"
             tr
-            td "Total Compay Revenue"
+            td "Total Company Revenue"
             td ": #{number_to_currency(Payment.sum(&:payment_amount) *(Constant::COMPANY_COMMISION_RATE)/100, :prescision => 2)}"
             tr
             td "Total Withdraw Request"
