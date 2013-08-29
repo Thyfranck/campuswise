@@ -1,6 +1,11 @@
 class Transaction < ActiveRecord::Base
-  attr_accessible :description, :transactable_id, :transactable_type, :user_id, :credit, :debit, :amount
+  attr_accessible :description, :transactable_id, :transactable_type,
+    :user_id, :credit, :debit, :amount, :status
 
+  STATUS = {
+    :pending => "PENDING",
+    :complete => "COMPLETE"
+  }
   belongs_to :user
   belongs_to :transactable, :polymorphic => true
 
@@ -11,6 +16,18 @@ class Transaction < ActiveRecord::Base
       return true
     else
       return false
-    end
+    end if self.status == Transaction::STATUS[:completed]
+  end
+
+  def credit_type?
+    self.credit != 0.0 and self.debit == 0.0
+  end
+
+  def pending?
+    self.status == Transaction::STATUS[:pending]
+  end
+
+  def complete?
+    self.status == Transaction::STATUS[:complete]
   end
 end

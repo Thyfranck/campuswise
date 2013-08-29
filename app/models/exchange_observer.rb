@@ -55,18 +55,16 @@ class ExchangeObserver < ActiveRecord::Observer
           @service_fee = @amount * Constant::COMPANY_COMMISION_RATE.to_f/100
           
           # earned money by selling/renting book
-          @transaction0 = @exchange.build_transaction(:user_id => @payment_receiver.id,
+          @transaction0 = @exchange.transactions.new(:user_id => @payment_receiver.id,
             :description => "#{@exchange.package == "buy" ? "Sold" : "Lent"} book titled '#{@exchange.book.title}'.",
             :credit => @amount,
-            :debit => 0.0,
-            :amount => @payment_receiver.transactions.present? ? (@payment_receiver.transactions.last.amount.to_f + @amount.to_f)  : @amount.to_f)
+            :debit => 0.0)
           if @transaction0.save
             # company commission deducted
-            @transaction1 = @exchange.build_transaction(:user_id => @payment_receiver.id,
+            @transaction1 = @exchange.transactions.new(:user_id => @payment_receiver.id,
               :description => "CampusWise fee(#{Constant::COMPANY_COMMISION_RATE}%) for #{@exchange.package == "buy" ? "sale" : "lend"} of book titled '#{@exchange.book.title}'.",
               :credit => 0.0,
-              :debit => @service_fee,
-              :amount => @transaction0.amount.to_f - @service_fee.to_f)
+              :debit => @service_fee)
             if @transaction1.save
               #update exchange attribute incase the book is deleted
               @exchange.update_attributes(:owner_id => @payment_receiver.id, :book_title => @requested_book.title)

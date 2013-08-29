@@ -13,7 +13,7 @@ class Exchange < ActiveRecord::Base
   belongs_to :book
   belongs_to :user
   has_many :dashboard_notifications, :as => :dashboardable
-  has_one :transaction, :as => :transactable
+  has_many :transactions, :as => :transactable
   has_many :payments
 
   validates :duration, :numericality => true, :unless => Proc.new{|b| b.package == "semester" or "buy"}
@@ -37,6 +37,20 @@ class Exchange < ActiveRecord::Base
   before_create :set_ending_date, :if => Proc.new{|b| b.ending_date == nil}
   before_create :set_status, :set_counter_offer_maker
   before_update :check_if_sold_book_not_returned
+  after_update :check_if_book_received
+
+  def check_if_book_received
+    if self.status == Exchange::STATUS[:received]
+      @transactions = self.transactions.order
+      @payment_receiver = User.find(self.owner_id)
+      @transactions.each do |transaction|
+        transaction.update_attributes(
+          :status => Transaction::STATUS[:completed],
+          :amount => transaction.credit_type? ? (@payment_receiver.current_balance.to_f + transaction.credit) : (@payment_receiver.current_balance.to_f - transaction.debit)
+        )
+      end
+    end
+  end 
   
   def check_if_sold_book_not_returned
     return false if self.status == Exchange::STATUS[:returned] and self.package == "buy"
