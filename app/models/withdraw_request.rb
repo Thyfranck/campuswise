@@ -36,7 +36,8 @@ class WithdrawRequest < ActiveRecord::Base
         :description => "Withdraw request via your #{self.payment_method}.",
         :credit => 0.0,
         :debit => self.amount.to_f,
-        :amount => @user.transactions.last.amount.to_f - self.amount.to_f)
+        :amount => @user.current_balance.to_f - self.amount.to_f,
+        :status => Transaction::STATUS[:complete])
       transaction.save
     end
   end

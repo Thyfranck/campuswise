@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   has_many :transactions
   
   def accepted_exchanges
-    self.exchanges.accepted
+    @exchanges = self.exchanges.where("status = ? and package != ? OR status = ?", Exchange::STATUS[:received], "buy", Exchange::STATUS[:accepted])
   end
 
   def pending_exchanges
@@ -21,12 +21,13 @@ class User < ActiveRecord::Base
 
   def completed_transactions
     @exchanges = Exchange.where("user_id = ? OR owner_id = ?", self.id, self.id)
-    @exchanges = @exchanges.where("status = ? OR status = ? OR status = ?", Exchange::STATUS[:returned], Exchange::STATUS[:received],Exchange::STATUS[:charged])
+    @exchanges = @exchanges.where("status = ? and package = ? OR status = ? OR status = ?", Exchange::STATUS[:received], "buy", Exchange::STATUS[:returned], Exchange::STATUS[:charged] )
+#    @exchanges = @exchanges.where("")
   end
   
   has_many :not_returned_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:not_returned]}'" ,:source => :exchanges #for request receiver(book owner)
   has_many :p_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:pending]}'" ,:source => :exchanges #for request receiver(book owner)
-  has_many :accepted_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:accepted]}'" ,:source => :exchanges #for request receiver(book owner)
+  has_many :accepted_reverse_exchanges, :through => :books, :conditions => "status = '#{Exchange::STATUS[:accepted]}' OR status = '#{Exchange::STATUS[:received]}' and package != 'buy'" ,:source => :exchanges #for request receiver(book owner)
 
   def pending_reverse_exchanges
     self.p_reverse_exchanges.includes(:payments).reject{|ex| ex.payments.present?}

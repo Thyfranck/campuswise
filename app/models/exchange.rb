@@ -40,17 +40,19 @@ class Exchange < ActiveRecord::Base
   after_update :check_if_book_received
 
   def check_if_book_received
-    if self.status == Exchange::STATUS[:received]
-      @transactions = self.transactions.order
-      @payment_receiver = User.find(self.owner_id)
-      @transactions.each do |transaction|
-        transaction.update_attributes(
-          :status => Transaction::STATUS[:completed],
-          :amount => transaction.credit_type? ? (@payment_receiver.current_balance.to_f + transaction.credit) : (@payment_receiver.current_balance.to_f - transaction.debit)
-        )
+    if self.status_was != Exchange::STATUS[:received] and self.status == Exchange::STATUS[:received]
+      self.transactions.each do |tr|
+        if tr.credit > 0
+          tr.status = Transaction::STATUS[:complete]
+          tr.amount = (tr.user.current_balance.to_f or 0.0) + tr.credit
+        else
+          tr.status = Transaction::STATUS[:complete]
+          tr.amount = tr.user.current_balance.to_f - tr.debit
+        end
+        tr.save
       end
     end
-  end 
+  end
   
   def check_if_sold_book_not_returned
     return false if self.status == Exchange::STATUS[:returned] and self.package == "buy"
@@ -92,7 +94,7 @@ class Exchange < ActiveRecord::Base
     else
       if self.duration < 1
         errors[:base] << "Invalid duration"
-        return false 
+        return false
       end
     end
   end
@@ -196,7 +198,7 @@ class Exchange < ActiveRecord::Base
         payment.status = Payment::STATUS[:pending]
       else
         payment = self.payments.new(:payment_amount => self.amount.to_f, :charge_id => response.id, :status => Payment::STATUS[:pending])
-      end      
+      end
       if payment.save
         if self.counter_offer.present?
           if self.counter_offer_last_made_by != self.user.id
@@ -206,7 +208,7 @@ class Exchange < ActiveRecord::Base
           end
         else
           #Notify.delay.borrower_proposal_accept(self)
-        end 
+        end
       end
     rescue => e
       logger.error e.message

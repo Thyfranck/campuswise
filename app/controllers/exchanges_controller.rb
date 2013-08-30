@@ -180,7 +180,7 @@ class ExchangesController < ApplicationController
       if @exchange.package == "buy"
         Notify.delay.book_received(@exchange) if @exchange.update_attributes(:received => Exchange::STATUS[:received], :received_at => Time.now, :status =>  Exchange::STATUS[:received])
       else
-        Notify.delay.book_received(@exchange) if @exchange.update_attributes(:received => Exchange::STATUS[:received], :received_at => Time.now)
+        Notify.delay.book_received(@exchange) if @exchange.update_attributes(:received => Exchange::STATUS[:received], :received_at => Time.now, :status =>  Exchange::STATUS[:received])
       end
       @exchange.update_attributes(:dropped_off => Exchange::STATUS[:dropped_off], :dropped_off_at => Time.now) if @exchange.dropped_off.blank?
     else

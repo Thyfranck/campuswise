@@ -9,18 +9,13 @@ class Transaction < ActiveRecord::Base
   belongs_to :user
   belongs_to :transactable, :polymorphic => true
 
-  after_save :update_users_current_balance
+  after_update :update_users_current_balance
 
   def update_users_current_balance
-    if self.user.update_attribute(:current_balance, self.amount)
-      return true
-    else
-      return false
-    end if self.status == Transaction::STATUS[:completed]
-  end
-
-  def credit_type?
-    self.credit != 0.0 and self.debit == 0.0
+    if self.status_was == Transaction::STATUS[:pending] and self.status == Transaction::STATUS[:complete]
+      self.user.current_balance = self.amount
+      self.user.save
+    end
   end
 
   def pending?
